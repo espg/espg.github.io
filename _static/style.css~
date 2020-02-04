@@ -1,0 +1,448 @@
+@charset "utf-8";
+/* 
+Maintained by Shane Grigsby
+email: shane.grigsby@colorado.edu
+With thanks to Trevor
+trevor.l.taylor@gmail.com
+*/
+
+* {
+	margin: 0;
+}
+
+html,body {
+	position:relative;
+	margin:0;
+	padding:0;
+	border:0;
+	color:#000;
+	background-color:#FFFFFF !important;
+	min-height:100%;
+ 	height:100% !important;
+  	height:100%;
+	font-size:100%;
+	font-family: Verdana, Geneva, sans-serif;
+	}
+#wrapper {
+	
+}
+/* header */
+#header2 {
+	font-size:1em;
+	text-align:left;
+	color:#FFF;
+	width:auto;
+	background: #006189 url(./gradient_1.png) repeat-x bottom left;
+	margin-right: -2em;
+	float:left;
+	padding:.5em;
+	padding-left:1em;
+	float: right;
+	-moz-border-radius-bottomleft: 25px;
+	-webkit-border-bottom-left-radius: 25px;
+	
+}
+#header {
+	background:url(Banner.png) repeat-x bottom left #006189;
+	height:150px;
+	width:auto;
+	clear:both;
+	padding:.5em;
+}
+#header h1 {font-size:250%; color:#FFF; margin:0; padding:0; margin-left:-999px; border:none;}
+/* end header */
+/*start menu */
+#menu {
+	width:auto;
+	height:auto;
+	text-align:left;
+	margin:0;
+	margin:0em 2em 3em 0;
+	font-size:1em;
+}
+#menu ul{
+	padding:0;
+	margin:0;
+	list-style:none;
+	
+}
+#menu ul li {
+	display:block;
+	float: left;
+	margin-left:0em;
+	margin-right:.2em;
+    /*Good Colors: 0561A5 005796 004E87 006189 */
+	background: #006189 url(./gradient_1.png) repeat-x bottom left;
+	-moz-border-radius-bottomleft: 15px;
+	-webkit-border-bottom-left-radius: 15px;
+	-moz-border-radius-bottomright: 15px;
+	-webkit-border-bottom-right-radius: 15px;
+	padding:.5em;
+}
+#menu ul li:hover {
+	background-image:none;
+}
+#menu a {text-decoration:none; 	color:#CCC; font-weight:bold; text-transform:capitalize;
+}
+
+/*locational awareness */
+#home #nav-home,
+#pub #nav-pub,
+#proj #nav-proj,
+#team #nav-team,
+#links #nav-links,
+#link5 #nav-link5  {
+	background: #0469B3 url(./notch_up.png) no-repeat bottom center;
+
+	}
+#home #nav-home a span,
+#pub #nav-pub a span,
+#proj #nav-proj a span,
+#team #nav-team a span,
+#links #nav-links a span,
+#link5 #nav-link5 a span {
+	color:#FFF !important;
+
+
+	}
+#home #nav-home a:hover,
+#pub #nav-pub a:hover,
+#proj #nav-proj a:hover,
+#team #nav-team a:hover,
+#links #nav-links a:hover,
+#link5 #nav-link5 a:hover {
+	color:#363942 !important;
+	}
+#home #nav-home a:hover span,
+#pub #nav-pub a:hover span,
+#proj #nav-proj a:hover span,
+#team #nav-team a:hover span,
+#links #nav-links a:hover span,
+#link5 #nav-link5 a:hover span {
+	
+	
+	}
+/* end locational awareness */
+/* end menu */
+
+/* start content */
+#jochan h1, #jochan h2, #jochan h3, #jochan h4,#jochan h5, #jochan h6 {
+	font-family:Helvetica, "Trebuchet MS", Arial, sans-serif; 
+	color:#EF9C00; 
+	text-transform:capitalize;
+	margin:.2em 0 .3em 0;
+	font-weight:normal;
+}
+#column {
+	float:left;
+	padding:1em;
+	margin:1.5em 1em .5em -0.7em;
+	min-width:150px;
+	max-width:350px;
+	border:thin solid #CCC;
+	background:url(./gradient_1.png) bottom left repeat-x #FFF;
+}
+#content {
+	padding:1.2em;
+	float: left;
+	width:auto;
+	background:url(./gradient_2.png) top left repeat-x;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-family:Helvetica, "Trebuchet MS", Arial, sans-serif;
+    color:#0469B3;  
+	text-transform:capitalize;
+	margin:.2em 0 .3em 0;
+	font-weight:normal;
+}
+h4, h5, h6 {font-weight:bold;}
+#column h1, #column h2, #column h3, #column h4, #column h5, #column h6 {border-bottom: 1px solid #ccc;}
+p {padding:.5em 0 1em 0; 	line-height:150%; margin:0;}
+img {border:0 !important; padding:7px;}
+#footer img {border:0 !important; padding:0px;}
+button {
+	background:#288E17 url(./gradient_1.png) bottom left repeat-x; 
+	padding:2px; 
+	color:#FFF; 
+	font-weight:bold;
+	border:0;
+	-moz-border-radius-topright: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+}
+button:hover {background:#288E17 url(./gradient_2.png) top left repeat-x;}
+dt {font-weight:bold;}
+hr {color:#288E17}
+a:link, a:visited {text-decoration:none; color:#288E17}
+a:hover {text-decoration:underline}
+blockquote {
+	background:url(./quote.png) no-repeat left top;
+	margin:0;
+	padding: 10px 30px 10px 35px;
+	font-style:italic;
+}
+.blockquotesource {font-style:normal; text-align:right;}
+/* end content */
+
+/* fix menu links that are displayed twice */
+
+.toctree-wrapper.compound {
+    display: none !important;
+}
+
+/* start footer */
+#footer {
+	clear:both;
+	min-height:108px;
+	width:auto;
+	padding:20px 1px 1px 1px;
+	color:#FFF;
+	margin-bottom:0px;
+    /* A7D6D5 BEE0DF */
+	background:#BEE0DF bottom center url(http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png) no-repeat;
+}
+#footer a {color:#006189; }
+#center-footer {
+		margin-left: 45%;
+		padding-top:0px;
+}
+#left-footer {
+	float:left;
+	padding-top:0px;
+	clear:left;
+}
+#right-footer {color:#FFF;
+/*temporary until rest of footer is in place */
+/*padding-top:117px;*/
+	float:right;
+	margin: -5px 0px;
+/* end temp */
+}
+#footer-right a {color:#FFF; font-size:75%}
+#footer-right a:hover {color:#FFF; text-decoration:underline;}
+
+/* end footer */
+
+/* This provides scale independent footers */
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -35px;
+}
+.footer .push {
+	height: 150px;
+}
+
+/*end*/
+/*Lightbox*/
+#lightbox{      position: absolute;     left: 0; width: 100%; z-index: 100; text-align: center; line-height: 0;}
+#lightbox img{ width: auto; height: auto;}
+#lightbox a img{ border: none; }
+
+#outerImageContainer{ position: relative; background-color: #fff; width: 250px; height: 250px; margin: 0 auto; }
+#imageContainer{ padding: 10px; }
+
+#loading{ position: absolute; top: 40%; left: 0%; height: 25%; width: 100%; text-align: center; line-height: 0; }
+#hoverNav{ position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 10; }
+#imageContainer>#hoverNav{ left: 0;}
+#hoverNav a{ outline: none;}
+
+#prevLink, #nextLink{ width: 49%; height: 100%; background-image: url(data:image/gif;base64,AAAA); /* Trick IE into showing hover */ display: block; }
+#prevLink { left: 0; float: left;}
+#nextLink { right: 0; float: right;}
+#prevLink:hover, #prevLink:visited:hover { background: url(../images/prevlabel.gif) left 15% no-repeat; }
+#nextLink:hover, #nextLink:visited:hover { background: url(../images/nextlabel.gif) right 15% no-repeat; }
+
+#imageDataContainer{ font: 10px Verdana, Helvetica, sans-serif; background-color: #fff; margin: 0 auto; line-height: 1.4em; overflow: auto; width: 100% ; }
+
+#imageData{     padding:0 10px; color: #666; }
+#imageData #imageDetails{ width: 70%; float: left; text-align: left; }
+#imageData #caption{ font-weight: bold; }
+#imageData #numberDisplay{ display: block; clear: left; padding-bottom: 1.0em; }
+#imageData #bottomNavClose{ width: 66px; float: right;  padding-bottom: 0.7em; outline: none;}   
+
+#overlay{ position: absolute; top: 0; left: 0; z-index: 90; width: 100%; height: 500px; background-color: #000; }
+
+
+/* side bar styling
+#body ul.current a { color: #00FFFF; }
+#E6E6FA
+F0F8FF
+*/
+div.sidebar li.toctree-l2 a {
+  background-color: #F0F8FF;
+  border: none;
+  margin-left: 1em;
+  border-bottom: 1px solid #dddddd;
+}
+
+div.sidebar li.toctree-l3 a {
+  background-color: transparent;
+  border: none;
+  margin-left: 2em;
+  border-bottom: 1px solid #dddddd;
+  border-left: medium none !important;
+}
+
+div.sidebar li.toctree-l2.current.current a {
+  border-left: 5px solid #fcaf3e;
+}
+
+div.sidebar li.toctree-l2.current a {
+  border-left: medium none;
+}
+
+
+div.sidebar li.toctree-l2 a {
+  border-left: medium none;
+}
+
+div.sidebar li.toctree-l3.current a {
+  border-left: medium none;
+}
+
+div.sidebar ul.toctree-l3 a {
+    border-left: none;
+}
+.highlight code, .highlight pre {
+color:#fdce93;
+background-color:#3f3f3f;
+}
+
+.highlight .hll {
+background-color:#222;
+}
+
+.highlight .err {
+color:#e37170;
+background-color:#3d3535;
+}
+
+.highlight .k {
+color:#f0dfaf;
+}
+
+.highlight .p {
+color:#41706f;
+}
+
+.highlight .cs {
+color:#cd0000;
+font-weight:700;
+}
+
+.highlight .gd {
+color:#cd0000;
+}
+
+.highlight .ge {
+color:#ccc;
+font-style:italic;
+}
+
+.highlight .gr {
+color:red;
+}
+
+.highlight .go {
+color:gray;
+}
+
+.highlight .gs {
+color:#ccc;
+font-weight:700;
+}
+
+.highlight .gu {
+color:purple;
+font-weight:700;
+}
+
+.highlight .gt {
+color:#0040D0;
+}
+
+.highlight .kc {
+color:#dca3a3;
+}
+
+.highlight .kd {
+color:#ffff86;
+}
+
+.highlight .kn {
+color:#dfaf8f;
+font-weight:700;
+}
+
+.highlight .kp {
+color:#cdcf99;
+}
+
+.highlight .kr {
+color:#cdcd00;
+}
+
+.highlight .ni {
+color:#c28182;
+}
+
+.highlight .ne {
+color:#c3bf9f;
+font-weight:700;
+}
+
+.highlight .nn {
+color:#8fbede;
+}
+
+.highlight .vi {
+color:#ffffc7;
+}
+
+.highlight .c,.preview-zenburn .highlight .g,.preview-zenburn .highlight .cm,.preview-zenburn .highlight .cp,.preview-zenburn .highlight .c1 {
+color:#7f9f7f;
+}
+
+.highlight .l,.preview-zenburn .highlight .x,.preview-zenburn .highlight .no,.preview-zenburn .highlight .nd,.preview-zenburn .highlight .nl,.preview-zenburn .highlight .nx,.preview-zenburn .highlight .py,.preview-zenburn .highlight .w {
+color:#ccc;
+}
+
+.highlight .n,.preview-zenburn .highlight .nv,.preview-zenburn .highlight .vg {
+color:#dcdccc;
+}
+
+.highlight .o,.preview-zenburn .highlight .ow {
+color:#f0efd0;
+}
+
+.highlight .gh,.preview-zenburn .highlight .gp {
+color:#dcdccc;
+font-weight:700;
+}
+
+.highlight .gi,.preview-zenburn .highlight .kt {
+color:#00cd00;
+}
+
+.highlight .ld,.preview-zenburn .highlight .s,.preview-zenburn .highlight .sb,.preview-zenburn .highlight .sc,.preview-zenburn .highlight .sd,.preview-zenburn .highlight .s2,.preview-zenburn .highlight .se,.preview-zenburn .highlight .sh,.preview-zenburn .highlight .si,.preview-zenburn .highlight .sx,.preview-zenburn .highlight .sr,.preview-zenburn .highlight .s1,.preview-zenburn .highlight .ss {
+color:#cc9393;
+}
+
+.highlight .m,.preview-zenburn .highlight .mf,.preview-zenburn .highlight .mh,.preview-zenburn .highlight .mi,.preview-zenburn .highlight .mo,.preview-zenburn .highlight .il {
+color:#8cd0d3;
+}
+
+.highlight .na,.preview-zenburn .highlight .nt {
+color:#9ac39f;
+}
+
+.highlight .nb,.preview-zenburn .highlight .nc,.preview-zenburn .highlight .nf,.preview-zenburn .highlight .bp,.preview-zenburn .highlight .vc {
+color:#efef8f;
+}

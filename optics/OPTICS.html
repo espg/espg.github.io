@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Comparing OPTICS Implementations (2013) &#8212; Shane Grigsby&#39;s website</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Teaching" href="../teaching/index.html" />
+    <link rel="prev" title="OPTICS Benchmark" href="Benchmarking.html" /> 
+  </head><body>
+<style type="text/css">
+/*<![CDATA[*/
+body {
+background-color: #FFFFFF; 
+}
+/*]]>*/
+</style>
+<body id="index">
+<div class="wrapper">
+<div class="clearfix"></div>
+    <div id="header">
+        <!--<img src="graphics/title.png" alt="title_goes_here"/> -->
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="comparing-optics-implementations-2013">
+<h1>Comparing OPTICS Implementations (2013)<a class="headerlink" href="#comparing-optics-implementations-2013" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>The OPTICS algorithm is a density based segmentation algorithm
+that orders objects into a hierarchical ordering. It has a number of useful
+properties, such working with convex/concave clusters, requiring few input
+parameters, and not requiring <em>a priori</em> knowledge of the number of clusters
+that are to be segmented. The output from OPTICS is strictly speaking just
+an ordering of points, but this ordering can be ‘scanned’ to produce output
+that is essentially identical to DBSCAN.</p>
+<p>The OPTICS algorithm uses pairwise distances to order objects (usually
+points) by a variety of distance and density metrics. The handling of these
+pairwise distances are the primary bottleneck for both CPU and memory
+utilization.</p>
+</div>
+<div class="section" id="test-setup">
+<h2>Test Setup<a class="headerlink" href="#test-setup" title="Permalink to this headline">¶</a></h2>
+<p>The run time of OPTICS is heavily dependent on the underlying spatial
+structure of the dataset. Random generations of data
+from uniform distributions don’t give meaningful results; fractal geometry
+gives meaningful clusters, but is not representative of the type of data
+that we are usually segmenting. For these tests, I’ve used a ‘small’ real
+world data set; the results that are discussed generalize in a
+predictable manner.</p>
+<p>The data set consists of a radial scan of 302867 LiDAR points. The scan is
+of grape vines in the central valley, so the
+objects that we are interested in segmenting are leaves. Most leaves are
+between 15 and 30 centimeters, so an epsilon of 70 cm is used to give
+confidence that we can extract outliers larger than 30 centimeters. Note
+that the units in the code below are given in millimeters, hence an
+<em>epsilon</em> value of 700. Because the scan is radial, the optimal
+<em>MinPts</em> parameter is different close to scanner compared to further away;
+a value of 5 is used to match the furthest clusters (the radial scan was
+clipped to a radius of 5 meters to somewhat alleviate the variable density).</p>
+</div>
+<div class="section" id="balltree-optics">
+<h2>Balltree OPTICS<a class="headerlink" href="#balltree-optics" title="Permalink to this headline">¶</a></h2>
+<p>My implementation of OPTICS uses a balltree for neighborhood lookups, and
+runs in three steps. The first step constructs the modified balltree, which
+is implemented with a processing queue to track algorithm progress.</p>
+<img alt="../_images/Slide1.png" src="../_images/Slide1.png" />
+<p>The second step is to preprocess the neighborhood size using <em>prep_optics</em>,
+which calculates at what radius a point becomes an object, and also the
+number of points that are adjacent a give point at the input epsilon
+parameter. This step simplifies the logic of later loops, and also speeds
+the algorithm. Since the lookups don’t need to be done in any particular
+order, they could be implemented in parallel, further optimizing this step.</p>
+<img alt="../_images/Slide2.png" src="../_images/Slide2.png" />
+<p>The final step is the actual OPTICS loop, which is also the most intensive;
+it is run by calling <em>build_optics</em></p>
+<img alt="../_images/Slide3.png" src="../_images/Slide3.png" />
+<p>At this point, the OPTICS ordering is done, although a final step will
+extract the DBSCAN equivalent labels for a given epsilon.</p>
+<img alt="../_images/Slide4.png" src="../_images/Slide4.png" />
+<p>Summing the above gives a runtime of 831.588 seconds for the OPTICS
+ordering, with an additional 7.127 seconds for the extraction (total
+838.715 seconds with extraction).</p>
+</div>
+<div class="section" id="cdist-optics">
+<h2>cdist OPTICS<a class="headerlink" href="#cdist-optics" title="Permalink to this headline">¶</a></h2>
+<p>The cdist OPTICS implementation conforms more to the scikit-learn
+API, and can be run in a single step:</p>
+<img alt="../_images/Slide5.png" src="../_images/Slide5.png" />
+<p>With a runtime of 56474.643 seconds, the cdist OPTICS runs more
+than 67 times slower then the balltree OPTICS implementation. Memory usage
+for cdist OPTICS is 150MB (balltree OPTICS stays at 250MB).</p>
+</div>
+<div class="section" id="implications">
+<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h2>
+<p>The cdist implementation of OPTICS is basically invariant in runtime with
+respect to epsilon parameter value. Memory usage is O(n), but runtime is
+O(n^2). The balltree implementation is same with regard to memory [O(n)],
+but runs in O(n*log(n)) time for reasonable values of epsilon; as epsilon
+approaches infinity, the expected run time approaches O(n^2). The general
+runtime expectation for the balltree version of OPTICS is shown below.</p>
+<img alt="../_images/epsilon_impacts.png" src="../_images/epsilon_impacts.png" />
+<p>Basically, smaller query distance results in more objects, but they process
+faster due to having small list to sort, and having smaller numbers of
+points to calculate distances for. As dataset get larger, it may be
+appropriate to run small epsilon values and agglomerate to larger objects.</p>
+<p>Increasing the number of points by expanding the scan radius would result
+in a linear or sublinear increase in processing time for balltree OPTICS;
+for cdist, the increase would be exponential (doubling density of points
+without expanding the range would cause balltree OPTICS to increase
+exponentially as well).</p>
+<p>In summery, the order of magnitude difference in processing time is
+expected to widen with larger datasets, especially with datasets that are
+sparse.</p>
+</div>
+<div class="section" id="scikit-learn-thoughts">
+<h2>Scikit-learn thoughts<a class="headerlink" href="#scikit-learn-thoughts" title="Permalink to this headline">¶</a></h2>
+<p>There is currently a gap in scikits learn for handling large unlabeled
+data sets, as pointed out by <a class="reference external" href="http://peekaboo-vision.blogspot.com/2013/01/machine-learning-cheat-sheet-for-scikit.html:">Andy.</a></p>
+<img alt="../_images/cheat_sheet.png" src="../_images/cheat_sheet.png" />
+<p>Processing data sets in the billions is only feasible in OPTICS by
+utilizing focal processing and spatial query trees. The balltree algorithm
+could be brought more in line with the scikit-learn API by constructing the
+balltree, running prep_optics, and building the ordering with the ‘fit’
+method. The extraction to DBSCAN could be called using ‘predict’.</p>
+<p>Since balltree implements 20 different distance metrics, extending OPTICS
+to take different distance metrics should simply be a matter of passing
+a construction flag.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div id="disqus_thread" class="body comments"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rugo-us'; // required: replace example with your forum shortname
+        // The following are highly recommended additional parameters. Remove the slashes in front to use.
+        var disqus_identifier = window.location.pathname;
+        // var disqus_url = 'http://example.com/permalink-to-page.html';
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </div>
+        <div class="sidebar">
+    
+          <h3>Table of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">OPTICS Algorithm</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Benchmarking.html">OPTICS Benchmark</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Comparing OPTICS Implementations (2013)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-setup">Test Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#balltree-optics">Balltree OPTICS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cdist-optics">cdist OPTICS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implications">Implications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scikit-learn-thoughts">Scikit-learn thoughts</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../teaching/index.html">Teaching</a></li>
+</ul>
+
+<strong>Last Updated: Feb 03, 2020</strong>
+<h3><a href="../_sources/optics/OPTICS.rst.txt"
+        rel="nofollow">Show Source</a></h3>
+    
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="push"></div>
+</div>
+<div id="footer">
+    <!-- start footer -->
+
+    <div id="right-footer">
+        <a href="http://colorado.edu" title="University of Colorado, Boulder">
+<img src="http://cires1.colorado.edu/shane/_static/cu_logo2.png" border="none" alt="University of Colorado, Boulder" /></a>                                 
+    </div>
+        <div id="left-footer">
+            <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
+                <img src="http://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
+                "Cooperative Institute for Research in Environmental Sciences" /></a>
+        </div><!-- end footer -->
+        
+  </body>
+</html>

@@ -1,0 +1,40 @@
+*************
+Shane Grigsby
+*************
+
+.. figure:: 12828545_10209023848340295_5190138515747847678_o.jpg
+    :width: 200px
+    :height: 150px
+    :alt: Shane 
+    :align: right
+    
+I'm currently a doctoral candidate at the University of Colorado, Boulder,
+where I work as a research assistant at the `Cooperative Institute for
+Research in Environmental Sciences (CIRES) <http://cires.colorado.edu>`__ for
+my advisor `Waleed Abdalati <https://en.wikipedia.org/wiki/Waleed_Abdalati>`__.
+My research focuses on understanding the dynamic changes in the polar
+regions, particularly changes that are happening on the Greenland and
+Antarctic ice sheets. In addition to `polar field work
+<http://ciresblogs.colorado.edu/firncover/>`__, I use both remote sensing
+and machine learning to better characterize crevasses throughout the ice
+sheets. The name **rugous** refers to *"having a rough, ridged,
+or wrinkled surface"*, which reminds me of how crevasses fields look when
+you fly over them.
+
+My CV is here: :download:`pdf <./Curriculum_Vitae_Grigsby_2_pages__may_2016.pdf>`.
+
+Contact Information
+===================
+
+My office is in CIRES, S236, and my email is `shane.grigsby@colorado.edu
+<mailto:shane.grigsby@colorado.edu>`__. I occasionally post pull requests and
+code to `github as espg <http://github.com/espg>`__.
+
+.. toctree::
+    :includehidden:
+    :maxdepth: 4
+
+    Home <self>
+    publications/index
+    optics/index
+    teaching/index

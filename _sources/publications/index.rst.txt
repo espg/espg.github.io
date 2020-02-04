@@ -1,0 +1,30 @@
+Publications & Talks
+=====================
+
+`My google scholar page <https://scholar.google.com/citations?user=2nWPYDsAAAAJ&hl=en>`__
+
+2016
+----
+
+- Colgan, W., Rajaram, H., Abdalati, W., McCutchan, C., Mottram, R., Moussavi, M., **Grigsby, S.** (2016). “Glacier Crevasses: Observations, Models and Mass Balance Implications.” *Reviews of Geophysics*. `doi:10.1002/2015RG000504 <https://doi.org/10.1002/2015RG000504>`__ [:download:`download pdf <./Colgan_et_al-2016-Reviews_of_Geophysics.pdf>`]
+- Pope, A., Scambos, T. A., Moussavi, M., Tedesco, M., Willis, M., Shean, D., & **Grigsby, S.** (2016) “Estimating supraglacial lake depth in western Greenland using Landsat 8 and comparison with other multispectral methods”, *The Cryosphere*, 10, 15-27, `doi:10.5194/tc-10-15-2016 <https://doi.org/10.5194/tc-10-15-2016>`__ [:download:`download pdf <./Pope_et_al_2016_the_cryosphere.pdf>`]
+- Moussavi, M. S., Abdalati, W., Pope, A., Scambos, T., Tedesco, M., MacFerrin, M., & **Grigsby, S.** (2016). “Derivation and validation of supraglacial lake volumes on the Greenland Ice Sheet from high-resolution satellite imagery.”, *Remote Sensing of Environment*, 183, 294-303. `doi:10.1016/j.rse.2016.05.024 <https://doi.org/10.1016/j.rse.2016.05.024>`__ :download:`download pdf <./Moussavi_et_al_2016_RSE.pdf>`
+
+2015
+----
+
+- **Grigsby, S. P.**, Hulley, G. C., Roberts, D. A., Scheele, C., Ustin, S. L., & Alsina, M. M. (2015). “Improved surface temperature estimates with MASTER/AVIRIS sensor fusion.” *Remote Sensing of Environment*. `doi:10.1016/j.rse.2015.05.019 <https://doi/10.1016/j.rse.2015.05.019>`__ [:download:`download pdf <./Grigsby_2015__RSE_9430.pdf>`]
+
+
+Talks
+------
+
+Here are some of the talks that I have given-- some are hosted by the 
+inviting organization.
+
+- SciPy 2017 talk `video <https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=video&cd=1&cad=rja&uact=8&ved=0ahUKEwi4_7mNgLXVAhVp64MKHTG3DVIQtwIIIjAA&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DSS_PTr-xHwc&usg=AFQjCNEKSlt87RAuwgBsM_6mOSORYT0tdg>`__; slides and supporting material can be found `here <https://github.com/espg/SciPy-2017-Grigsby>`__ .
+
+.. toctree::
+    :hidden:   
+    :maxdepth: 4
+	
