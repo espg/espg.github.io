@@ -195,6 +195,11 @@ blockquote {
     display: none !important;
 }
 
+/* RemarkBox */
+#remarkbox-div {
+    padding-bottom: 150px;
+}
+
 /* start footer */
 #footer {
 	clear:both;
@@ -236,7 +241,7 @@ blockquote {
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
-	margin: 0 auto 35px;
+	margin: 0 auto -35px;
 }
 .footer .push {
 	height: 150px;
