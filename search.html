@@ -79,15 +79,11 @@ background-color: #FFFFFF;
     var HYVOR_TALK_CONFIG = {
         url: false,
         id: false
+        loadMode: "click",
+        clickId: "my-button"
     };
 </script>
-<script async type="text/javascript" src="//talk.hyvor.com/web-api/embed"></script>
-
-<script src="https://unpkg.com/commentbox.io/dist/commentBox.min.js">
-const commentBox = require('commentbox.io');
-commentBox('5668246833332224-proj');
-</script>
-<div class="commentbox"></div>
+<button id="my-button">Show Comments</button>
 
         </div>
         <div class="sidebar">
