@@ -343,8 +343,6 @@ line 2 in magma.nix from <code class="code docutils literal notranslate"><span c
     ifrm.setAttribute("id", "remarkbox-iframe");
     ifrm.setAttribute("scrolling", "no");
     ifrm.setAttribute("src", rb_src);
-    ifrm.setAttribute("onload", "this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';");
-    ifrm.setAttribute("sandbox", "allow-same-origin");
     ifrm.setAttribute("frameborder", "0");
     ifrm.setAttribute("tabindex", "0");
     ifrm.setAttribute("title", "Remarkbox");
@@ -360,12 +358,11 @@ line 2 in magma.nix from <code class="code docutils literal notranslate"><span c
     },
     document.getElementById("remarkbox-iframe")
   );
+  var iframe = document.getElementById("remarkbox-iframe");
+  iframe.onload = function(){
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+    }
 </script>
-<div id=clearhack>
-    <p>
-    "O.o"
-    </p>
-</div>
 
         </div>
         <div class="sidebar">
