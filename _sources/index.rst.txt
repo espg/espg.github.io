@@ -38,3 +38,4 @@ code to `github as espg <http://github.com/espg>`__.
     publications/index
     optics/index
     teaching/index
+    linux/index

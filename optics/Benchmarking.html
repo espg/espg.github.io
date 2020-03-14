@@ -108,9 +108,9 @@ div.nboutput.container div.prompt pre {
 /* all prompts */
 div.nbinput.container div.prompt,
 div.nboutput.container div.prompt {
-    min-width: 4ex;
-    padding-top: 0.4em;
-    padding-right: 0.4em;
+    min-width: 4.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
     text-align: right;
     flex: 0;
 }
@@ -134,7 +134,6 @@ div.nboutput.container div.prompt pre {
 /* input/output area */
 div.nbinput.container div.input_area,
 div.nboutput.container div.output_area {
-    padding: 0.4em;
     -webkit-flex: 1;
     flex: 1;
     overflow: auto;
@@ -207,6 +206,27 @@ div.nboutput.container div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
 
 /* Some additional styling taken form the Jupyter notebook CSS */
 div.rendered_html table {
@@ -292,9 +312,9 @@ Populating the interactive namespace from numpy and matplotlib
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="k">import</span> <span class="n">joblib</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">DBSCAN</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster.optics</span> <span class="k">import</span> <span class="n">OPTICS</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">joblib</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster.optics</span> <span class="kn">import</span> <span class="n">OPTICS</span>
 </pre></div>
 </div>
 </div>
@@ -472,7 +492,7 @@ Populating the interactive namespace from numpy and matplotlib
 <span></span><span class="c1"># Setting up benchmarks</span>
 <span class="c1"># Taken from Jake Vanderplas</span>
 <span class="c1"># https://jakevdp.github.io/blog/2013/04/29/benchmarking-nearest-neighbor-searches-in-python/</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
 <span class="k">def</span> <span class="nf">average_time</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the average time over N runs&quot;&quot;&quot;</span>
@@ -878,7 +898,7 @@ Populating the interactive namespace from numpy and matplotlib
     <div id="disqus_thread" class="body comments"></div>
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'rugo-us'; // required: replace example with your forum shortname
+        var disqus_shortname = 'espg-github-io'; // required: replace example with your forum shortname
         // The following are highly recommended additional parameters. Remove the slashes in front to use.
         var disqus_identifier = window.location.pathname;
         // var disqus_url = 'http://example.com/permalink-to-page.html';
@@ -894,6 +914,7 @@ Populating the interactive namespace from numpy and matplotlib
 
         </div>
         <div class="sidebar">
+          
     
           <h3>Table of Contents</h3>
           <ul class="current">
@@ -909,12 +930,14 @@ Populating the interactive namespace from numpy and matplotlib
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../teaching/index.html">Teaching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 </ul>
 
-<strong>Last Updated: Feb 03, 2020</strong>
+<strong>Last Updated: Mar 13, 2020</strong>
 <h3><a href="../_sources/optics/Benchmarking.ipynb.txt"
         rel="nofollow">Show Source</a></h3>
     
+
 
         </div>
         <div class="clearer"></div>
@@ -929,6 +952,11 @@ Populating the interactive namespace from numpy and matplotlib
     <div id="right-footer">
         <a href="http://colorado.edu" title="University of Colorado, Boulder">
 <img src="http://cires1.colorado.edu/shane/_static/cu_logo2.png" border="none" alt="University of Colorado, Boulder" /></a>                                 
+    </div>
+    <div id="center-footer">
+        <a href="http://mines.edu/glaciology" title="Colorado School of Mines">
+<img src="https://www.mines.edu/wp-content/uploads/assets/logo_eee_4c_r.png" border="none" alt="Colorado School of Mines" /></a>                                 
+
     </div>
         <div id="left-footer">
             <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">

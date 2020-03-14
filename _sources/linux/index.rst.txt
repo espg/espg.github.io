@@ -1,0 +1,14 @@
+Linux Tricks
+============
+
+I use Linux for both my personal machine, and in most of my professional work
+environments. Getting things working can take quite a bit work (depending), so
+hopefully some what is documented here is also useful to others.
+
+.. _my github page.: https://github.com/espg/OPTICS
+
+.. toctree::
+    :hidden:   
+    :maxdepth: 4
+	
+    nix

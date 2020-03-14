@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Reproducible Builds Using Nix &#8212; Shane Grigsby&#39;s website</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Linux Tricks" href="index.html" /> 
+  </head><body>
+<style type="text/css">
+/*<![CDATA[*/
+body {
+background-color: #FFFFFF; 
+}
+/*]]>*/
+</style>
+<body id="index">
+<div class="wrapper">
+<div class="clearfix"></div>
+    <div id="header">
+        <!--<img src="graphics/title.png" alt="title_goes_here"/> -->
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="reproducible-builds-using-nix">
+<h1>Reproducible Builds Using Nix<a class="headerlink" href="#reproducible-builds-using-nix" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Before I was scientist, I worked for UnixOps supporting research computing–
+mainly building software. The fact that the University of Colorado, Boulder
+campus needed almost a dozen system admins to build and rebuild software tells
+you something about how much of a hassle it is; builds are often cryptic,
+requirements conflict, and things constantly break between versions.</p>
+<p>I’ve used various package managers over the years– homebrew when I had a mac,
+pip and conda for python, and various linux platform specific managers like
+pacman and apt-get. None of them have been particularly great; homebrew tends
+to be a mess and is specific to only OS X. Conda and pip work ok, but they only
+manage python packages, and reasonably complex software always includes
+non-python dependencies… linear algebra routines for numerics written in
+fortran or C, hdf5 libraries, and projection libraries like GDAL come to mind
+most quickly. Things have actually gotten worse in the last couple years with
+machine learning; builds now expect cuda, and some frameworks are working on
+multi-gpu instances. Getting software up and running is a hassle, to say
+nothing of trying to have a colleague replicate your setup when you share code.</p>
+</div>
+<div class="section" id="nix">
+<h2>Nix<a class="headerlink" href="#nix" title="Permalink to this headline">¶</a></h2>
+<p>For about the past two years I’ve been using nix to create reproducible,
+portable builds. It is by no means perfect– but it is better than anything
+else that I’ve tried <em>by far</em>. The major highlights:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Builds don’t break. They may take sometime to figure out, but once they
+work, they keep working.</p></li>
+<li><p>Builds are portable. If it builds on my linux tablet, it will build on my
+HPC cluster. I can email a colleague a human readable text file, and they
+can replicate by working environment using a single command from the
+command line.</p></li>
+<li><p>It’s reasonably cross platform. Linux builds work perfectly between
+distros. MacOS tends to be compatible for most things…but some of their
+display stuff is strange enough that tweaks are occasionally needed.</p></li>
+<li><p>Declarations are functional. I specify what I want, not how to do it. Nix
+files are short, and tend to be understandable.</p></li>
+<li><p>Multiple builds are both possible, and encouraged. You can maintain
+libraries built with different options for different projects, even when
+those libraries conflict. Need hdf4 for a project, but don’t want to break
+hdf5? No problem, the dependency tree for each install has it’s own
+namespace.</p></li>
+</ul>
+</div></blockquote>
+<p>Despite the above advantages, I maintain a love/hate relationship with nix.
+Nix is best described as a language, and the documentation is very much geared
+toward getting you to learn the language, instead of helping you to solve
+common tasks. Because the real world is messy (new versions that have bugs,
+old versions that don’t, or vice versa), getting certain things to work can be
+hacky, and unintuitive.</p>
+</div>
+<div class="section" id="a-reproducible-cuda-and-gpu-environment">
+<h2>A Reproducible CUDA and GPU environment<a class="headerlink" href="#a-reproducible-cuda-and-gpu-environment" title="Permalink to this headline">¶</a></h2>
+<p>Recently, some of my work has been running Gaussian Process models for
+stochastic simulation, specifically on flight lines that have acquired lidar
+data over the Antarctic… which is to say that we have a lot of data, and run
+time for numeric Monte Carlo simulation is non-trivial. Gaussian Processes has
+two steps: fitting a model, and running the stochastic simulation. Both take
+about the same amount of runtime. Running prun in ipython shows that the vast
+majority of the runtime is dominated by just three function calls: cholesky,
+cho_solve, and multivariate_normal. CuPy does a great job at handling
+cholesky– and in fact, multivariate_normal can be rewritten to use cholesky,
+which is exactly what I’ve done in this PR xxxxx. However, the last function,
+cho_solve is a hassle.</p>
+<p>When I was working for the Intel Big Data ISTC back in 2013 and 2014, one of
+the projects that they funded was scalapack, headed up by Jack Dongarra, and
+he expanded (or rather, branched) that project to a new linear algebra system
+called magma XXXXX. Magma is a set of solvers for heterogeneous compute
+environments, and will used both CPUs and GPUs, in some cases utilizing
+multiple GPUs. Ideally, a large matrix starts in system memory, and magma
+sends pieces of the problem to GPUs, so that solvers are using a hybrid
+approach.</p>
+<p>My normal approach to computing with nix is to define a default.nix script in
+the working directory for my project, and then create the build environment
+using the nix-shell command within the directory; assuming nix is installed
+and in your path, it will check for default.nix and execute the build for you,
+setting all library and executable paths for you, along with whatever
+environmental variables that you need. Here’s what my default.nix files looks
+like to build magma</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  stable <span class="o">?</span> <span class="nb">import</span> <span class="p">(</span><span class="nb">builtins</span><span class="o">.</span>fetchTarball <span class="p">{</span>
+             <span class="ss">url =</span> <span class="s2">&quot;https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz&quot;</span><span class="p">;</span>
+             <span class="c1"># Hash obtained using `nix-prefetch-url --unpack &lt;url&gt;`</span>
+             <span class="ss">sha256 =</span> <span class="s2">&quot;0q2m2qhyga9yq29yz90ywgjbn9hdahs7i8wwlq7b55rdbyiwa5dy&quot;</span><span class="p">;</span>
+           <span class="p">})</span> <span class="p">{},</span>
+  current <span class="o">?</span> <span class="nb">import</span> <span class="p">(</span><span class="nb">builtins</span><span class="o">.</span>fetchTarball <span class="p">{</span>
+             <span class="ss">url =</span> <span class="s2">&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span><span class="p">;</span>
+             <span class="c1"># Hash obtained using `nix-prefetch-url --unpack &lt;url&gt;`</span>
+             <span class="ss">sha256 =</span> <span class="s2">&quot;0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92&quot;</span><span class="p">;</span>
+             <span class="p">})</span> <span class="p">{}</span>
+<span class="p">}:</span>
+</pre></div>
+</div>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note, nix-channel == 19.03</span>
+<span class="c1"># magma derivation doesn&#39;t find mkl libs properly on 19.09</span>
+<span class="c1"># ...although magma can be built on 19.09 using openblas</span>
+
+<span class="k">let</span>
+  <span class="ss">mag =</span> pkgs<span class="o">.</span>callPackage <span class="o">.</span><span class="l">/magma.nix</span><span class="p">{};</span>
+<span class="k">in</span>
+
+<span class="k">with</span> stable<span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>stdenv<span class="o">.</span>mkDerivation <span class="k">rec</span> <span class="p">{</span>
+  <span class="ss">name =</span> <span class="s2">&quot;env&quot;</span> <span class="p">;</span>
+  <span class="ss">env =</span> buildEnv <span class="p">{</span> <span class="ss">name =</span> name<span class="p">;</span> <span class="ss">paths =</span> buildInputs<span class="p">;</span> <span class="p">};</span>
+  <span class="ss">buildInputs =</span> <span class="p">[</span> git hdf5 mkl mag cudatoolkit
+    <span class="p">(</span>python37<span class="o">.</span>buildEnv<span class="o">.</span>override <span class="p">{</span>
+      <span class="ss">ignoreCollisions =</span> <span class="no">true</span><span class="p">;</span>
+      <span class="ss">extraLibs =</span> <span class="k">with</span> python37Packages<span class="p">;</span> <span class="p">[</span>
+        <span class="p">(</span>numpy<span class="o">.</span>override <span class="p">{</span> <span class="ss">blas =</span> mkl<span class="p">;</span> <span class="p">})</span>
+        pandas
+        <span class="c1">#scikitlearn ## Needs custom build</span>
+        pyproj
+        gdal
+        notebook
+        cython
+        matplotlib
+        pip
+        wheel
+      <span class="p">];</span>
+     <span class="p">})</span>
+    <span class="p">];</span>
+</pre></div>
+</div>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>shellHook = &#39;&#39;
+  alias pip=&quot;PIP_PREFIX=&#39;$(pwd)/_build/pip_packages&#39; \pip&quot;
+  export PYTHONPATH=&quot;$(pwd)/_build/pip_packages/lib/python3.7/site-packages:\
+                     $PYTHONPATH&quot;
+  export CUDA_PATH=${pkgs.cudatoolkit}
+  export LD_LIBRARY_PATH=&quot;/run/opengl-driver:$CUDA_PATH/lib:\
+                          ${pkgs.cudatoolkit.lib}/lib:${mag}/lib&quot;
+  export LDFLAGS=&quot;-L/lib -L$LD_LIBRARY_PATH&quot;
+  export MAGMA=${mag}
+  unset SOURCE_DATE_EPOCH&#39;&#39;;}
+</pre></div>
+</div>
+<p>Ok, so what’s going on here? If you’ve ever used nix-shell or nix in general,
+you’re probably used to the first line of default.nix looking something like
+this <code class="code docutils literal notranslate"><span class="pre">with</span> <span class="pre">import</span> <span class="pre">&lt;nixpkgs&gt;</span> <span class="pre">{};</span></code>, which is fine…but less portable. Nix
+packages are pinned to a channel, which updates every 6 months, but this isn’t
+automatic. If you email someone a nix script with <code class="code docutils literal notranslate"><span class="pre">with</span> <span class="pre">import</span> <span class="pre">&lt;nixpkgs&gt;</span>
+<span class="pre">{};</span></code>, you have no idea what their nix-channel is set to; are they on stable,
+unstable, or 18.03? Nix derivations that work for you once, will always work
+in the future– assuming that you execute them against the same channel. If
+you use a different channel, they might not build because of changes in the
+underlying channel, or they might have different behavior. Case in point: the
+above code builds great for nix-channel 19.03, but doesn’t build using Intel’s
+math kernel library (MKL) on channel 19.09 as a backend for magma. Why? Who
+knows, maybe there’s something I could change in default.nix or magma.nix that
+would make it use MKL…but I can guarantee that whoever executes the above
+version will get my same build, so I can sidestep the question of if it will
+build with MKL in the future because I’m being explicit to use an older
+version. The first couple lines download a tar archive of what nix-channel
+looked like for the 2019 March branch, unpacks it, and uses those package
+definitions, regardless of what channel whoever receives it is on. The other
+branch ‘current’ isn’t actually needed, but is included to illustrate that you
+can mix and match packages between branches– if gdal has a feature in 19.09
+that you need (or a bug in 19.03 that you want to avoid), you can build
+everything using 19.03, and then specify per package when you want to use a
+newer or older branch. As an explicit example, if you wanted a different build
+of hdf5, all you would do is change line x from <code class="code docutils literal notranslate"><span class="pre">hdf5</span></code> to
+<code class="code docutils literal notranslate"><span class="pre">current.hdf5</span></code> ; python packages are nested one layer of abstraction in,
+so to change gdal, you’d probably move it out of the python package section to
+buildInputs and specify <code class="code docutils literal notranslate"><span class="pre">current.python36Packages.gdal</span></code>.</p>
+<p>Moving on, <code class="code docutils literal notranslate"><span class="pre">with</span> <span class="pre">stable;</span></code> sets the default to use stable instead of
+current. Grammar for nix expects most statements to terminate with a
+semicolon, although this isn’t the case for individual list items which are
+white space delimited per item. The block</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="k">let</span>
+  <span class="ss">mag =</span> pkgs<span class="o">.</span>callPackage <span class="o">.</span><span class="l">/magma.nix</span><span class="p">{};</span>
+<span class="k">in</span>
+</pre></div>
+</div>
+<p>Imports our own custom package declaration for magma; the above expects one local
+file to be present, magma.nix, which looks like this:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> stdenv<span class="p">,</span> fetchurl<span class="p">,</span> cmake<span class="p">,</span> gfortran<span class="p">,</span> cudatoolkit<span class="p">,</span> libpthreadstubs<span class="p">,</span> openblas
+<span class="p">,</span> mklSupport <span class="o">?</span> <span class="no">true</span><span class="p">,</span> mkl <span class="o">?</span> <span class="no">null</span> <span class="p">}:</span>
+
+<span class="k">assert</span> <span class="o">!</span>mklSupport <span class="o">||</span> mkl <span class="o">!=</span> <span class="no">null</span><span class="p">;</span>
+
+<span class="k">with</span> stdenv<span class="o">.</span>lib<span class="p">;</span>
+
+<span class="k">let</span> <span class="ss">version =</span> <span class="s2">&quot;2.5.0&quot;</span><span class="p">;</span>
+
+<span class="k">in</span> stdenv<span class="o">.</span>mkDerivation <span class="p">{</span>
+  <span class="ss">pname =</span> <span class="s2">&quot;magma&quot;</span><span class="p">;</span>
+  <span class="k">inherit</span> version<span class="p">;</span>
+  <span class="ss">src =</span> fetchurl <span class="p">{</span>
+    <span class="ss">url =</span> <span class="s2">&quot;https://icl.cs.utk.edu/projectsfiles/magma/downloads/magma-</span><span class="si">${</span>version<span class="si">}</span><span class="s2">.tar.gz&quot;</span><span class="p">;</span>
+    <span class="ss">sha256 =</span> <span class="s2">&quot;0czspk93cv1fy37zyrrc9k306q4yzfxkhy1y4lj937dx8rz5rm2g&quot;</span><span class="p">;</span>
+    <span class="ss">name =</span> <span class="s2">&quot;magma-</span><span class="si">${</span>version<span class="si">}</span><span class="s2">.tar.gz&quot;</span><span class="p">;</span>
+  <span class="p">};</span>
+
+  <span class="ss">buildInputs =</span> <span class="p">[</span> gfortran cudatoolkit libpthreadstubs cmake <span class="p">]</span>
+    <span class="o">++</span> <span class="p">(</span><span class="k">if</span> mklSupport <span class="k">then</span> <span class="p">[</span> mkl <span class="p">]</span> <span class="k">else</span> <span class="p">[</span> openblas <span class="p">]);</span>
+
+
+  <span class="ss">cmakeFlags =</span> <span class="p">[</span> <span class="s2">&quot;-DBUILD_SHARED_LIBS=ON&quot;</span>
+        <span class="s2">&quot;-DCMAKE_CXX_FLAGS=-fPIC&quot;</span>
+        <span class="s2">&quot;-DCMAKE_C_FLAGS=-fPIC&quot;</span> <span class="p">];</span>
+
+  <span class="ss">doCheck =</span> <span class="no">false</span><span class="p">;</span>
+
+  <span class="ss">MKLROOT =</span> optionalString mklSupport mkl<span class="p">;</span>
+
+  <span class="ss">preConfigure =</span> <span class="s1">&#39;&#39;</span>
+<span class="s1">    export CC=</span><span class="si">${</span>cudatoolkit<span class="o">.</span>cc<span class="si">}</span><span class="s1">/bin/gcc CXX=</span><span class="si">${</span>cudatoolkit<span class="o">.</span>cc<span class="si">}</span><span class="s1">/bin/g++</span>
+<span class="s1">  &#39;&#39;</span><span class="p">;</span>
+
+  <span class="ss">enableParallelBuilding=</span><span class="no">true</span><span class="p">;</span>
+  <span class="ss">buildFlags =</span> <span class="p">[</span> <span class="s2">&quot;magma&quot;</span> <span class="s2">&quot;magma_sparse&quot;</span> <span class="p">];</span>
+
+  <span class="c1"># MAGMA&#39;s default CMake setup does not care about installation. So we copy files directly.</span>
+  <span class="ss">installPhase =</span> <span class="s1">&#39;&#39;</span>
+<span class="s1">    mkdir -p $out</span>
+<span class="s1">    mkdir -p $out/include</span>
+<span class="s1">    mkdir -p $out/lib</span>
+<span class="s1">    mkdir -p $out/lib/pkgconfig</span>
+<span class="s1">    cp -a ../include/*.h $out/include</span>
+<span class="s1">    #cp -a sparse-iter/include/*.h $out/include</span>
+<span class="s1">    #cp -a lib/*.a $out/lib</span>
+<span class="s1">    cp -a lib/*.so $out/lib</span>
+<span class="s1">    cat ../lib/pkgconfig/magma.pc.in                   | \</span>
+<span class="s1">    sed -e s:@INSTALL_PREFIX@:&quot;$out&quot;:          | \</span>
+<span class="s1">    sed -e s:@CFLAGS@:&quot;-I$out/include&quot;:    | \</span>
+<span class="s1">    sed -e s:@LIBS@:&quot;-L$out/lib -lmagma -lmagma_sparse&quot;: | \</span>
+<span class="s1">    sed -e s:@MAGMA_REQUIRED@::                       \</span>
+<span class="s1">        &gt; $out/lib/pkgconfig/magma.pc</span>
+<span class="s1">  &#39;&#39;</span><span class="p">;</span>
+
+  <span class="ss">meta =</span> <span class="k">with</span> stdenv<span class="o">.</span>lib<span class="p">;</span> <span class="p">{</span>
+    <span class="ss">description =</span> <span class="s2">&quot;Matrix Algebra on GPU and Multicore Architectures&quot;</span><span class="p">;</span>
+    <span class="ss">license =</span> licenses<span class="o">.</span>bsd3<span class="p">;</span>
+    <span class="ss">homepage =</span> <span class="l">http://icl.cs.utk.edu/magma/index.html</span><span class="p">;</span>
+    <span class="ss">platforms =</span> platforms<span class="o">.</span>unix<span class="p">;</span>
+    <span class="ss">maintainers =</span> <span class="k">with</span> maintainers<span class="p">;</span> <span class="p">[</span> tbenst <span class="p">];</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This file is actually nearly identical to this XXXX, but is slightly modified
+to build a dynamic library, and also to show how to build things outside of the
+nixpkgs tree–a useful skill to have when writing your own package derivations
+from scratch, or when modifying things to your liking. More specifically, you
+can’t modify anything in the nixpkgs tree that is built when you setup nix; any
+changes have to specified outside of the tree, either in the default.nix file,
+or in a local file that it calls. The magma.nix file differs from githubXXXX in
+that it builds a dynamic library instead of a static one, and tells magma to
+use MKL instead of libatlas or openblas. Using MKL could actually be specified
+from the default.nix file substituting <code class="code docutils literal notranslate"><span class="pre">(magma.overrides</span> <span class="pre">{</span> <span class="pre">mklSupport</span> <span class="pre">=</span>
+<span class="pre">true;})</span></code> in place of <code class="code docutils literal notranslate"><span class="pre">mag</span></code> on line xxx…but we would still have to
+import the right nixpkgs branch, and that still wouldn’t build a shared
+library. Since the magma build file is being changed anyway, we can just change
+line 2 in magma.nix from <code class="code docutils literal notranslate"><span class="pre">mklSupport</span> <span class="pre">?</span> <span class="pre">false</span></code> to <code class="code docutils literal notranslate"><span class="pre">mklSupport</span> <span class="pre">?</span>
+<span class="pre">true</span></code> and avoid using the override within default.nix.</p>
+</div>
+<div class="section" id="cdist-optics">
+<h2>cdist OPTICS<a class="headerlink" href="#cdist-optics" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="implications">
+<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="scikit-learn-thoughts">
+<h2>Scikit-learn thoughts<a class="headerlink" href="#scikit-learn-thoughts" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div id="disqus_thread" class="body comments"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'espg-github-io'; // required: replace example with your forum shortname
+        // The following are highly recommended additional parameters. Remove the slashes in front to use.
+        var disqus_identifier = window.location.pathname;
+        // var disqus_url = 'http://example.com/permalink-to-page.html';
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </div>
+        <div class="sidebar">
+          
+    
+          <h3>Table of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics/index.html">OPTICS Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../teaching/index.html">Teaching</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Linux Tricks</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Reproducible Builds Using Nix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nix">Nix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-reproducible-cuda-and-gpu-environment">A Reproducible CUDA and GPU environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cdist-optics">cdist OPTICS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implications">Implications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scikit-learn-thoughts">Scikit-learn thoughts</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<strong>Last Updated: Mar 13, 2020</strong>
+<h3><a href="../_sources/linux/nix.rst.txt"
+        rel="nofollow">Show Source</a></h3>
+    
+
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="push"></div>
+</div>
+<div id="footer">
+    <!-- start footer -->
+
+    <div id="right-footer">
+        <a href="http://colorado.edu" title="University of Colorado, Boulder">
+<img src="http://cires1.colorado.edu/shane/_static/cu_logo2.png" border="none" alt="University of Colorado, Boulder" /></a>                                 
+    </div>
+    <div id="center-footer">
+        <a href="http://mines.edu/glaciology" title="Colorado School of Mines">
+<img src="https://www.mines.edu/wp-content/uploads/assets/logo_eee_4c_r.png" border="none" alt="Colorado School of Mines" /></a>                                 
+
+    </div>
+        <div id="left-footer">
+            <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
+                <img src="http://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
+                "Cooperative Institute for Research in Environmental Sciences" /></a>
+        </div><!-- end footer -->
+        
+  </body>
+</html>
