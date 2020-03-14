@@ -208,11 +208,14 @@ blockquote {
 }
 #footer a {color:#006189; }
 #center-footer {
-		margin-left: 45%;
-		padding-top:0px;
+		/* margin-left: 45%; */
+        margin-top: -10px;
+		padding-top: 0px;
+        float:right;
+        padding-right:15em;
 }
 #left-footer {
-	float:left;
+	float:left; 
 	padding-top:0px;
 	clear:left;
 }
