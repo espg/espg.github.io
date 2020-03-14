@@ -151,7 +151,8 @@ like to build magma
                                 ${pkgs.cudatoolkit.lib}/lib:${mag}/lib"
         export LDFLAGS="-L/lib -L$LD_LIBRARY_PATH"
         export MAGMA=${mag}
-        unset SOURCE_DATE_EPOCH'';}
+        unset SOURCE_DATE_EPOCH'';
+      }
 
 Ok, so what's going on here? If you've ever used nix-shell or nix in general,
 you're probably used to the first line of default.nix looking something like

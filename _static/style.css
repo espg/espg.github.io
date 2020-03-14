@@ -142,6 +142,9 @@ html,body {
 	border:thin solid #CCC;
 	background:url(./gradient_1.png) bottom left repeat-x #FFF;
 }
+.document {
+    margin-left: 10px;
+}
 #content {
 	padding:1.2em;
 	float: left;
@@ -195,10 +198,6 @@ blockquote {
     display: none !important;
 }
 
-/* RemarkBox */
-#remarkbox-div {
-    padding-bottom: 150px;
-}
 
 /* start footer */
 #footer {
