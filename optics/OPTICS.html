@@ -179,6 +179,8 @@ a construction flag.</p>
     ifrm.setAttribute("id", "remarkbox-iframe");
     ifrm.setAttribute("scrolling", "no");
     ifrm.setAttribute("src", rb_src);
+    ifrm.setAttribute("onload", "this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';");
+    ifrm.setAttribute("sandbox", "allow-same-origin");
     ifrm.setAttribute("frameborder", "0");
     ifrm.setAttribute("tabindex", "0");
     ifrm.setAttribute("title", "Remarkbox");
