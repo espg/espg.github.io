@@ -279,7 +279,7 @@ shared library. Since the magma build file is being changed anyway, we can just
 change line 2 in magma.nix from :code:`mklSupport ? false` to :code:`mklSupport
 ?  true` and avoid using the override within default.nix.
 
-The development environment
+Using the environment
 =====================
 
 The point of all this is to make an environment that works for development-- the
@@ -334,7 +334,7 @@ Once the stochastic simulation code is finished, we can roll the git and pip ins
 their own nix file which is imported to default.nix. In the meantime, we can move
 the build from our development box to a HPC or cloud service with a minimum of work-- just
 two files, one nix command, followed by two git pulls and three pip installs to access multi
-GPU computing from an jupyter notebook.
+GPU computing from a jupyter notebook.
 
 
 .. toctree::

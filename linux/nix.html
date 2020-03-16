@@ -353,8 +353,8 @@ shared library. Since the magma build file is being changed anyway, we can just
 change line 2 in magma.nix from <code class="code docutils literal notranslate"><span class="pre">mklSupport</span> <span class="pre">?</span> <span class="pre">false</span></code> to <code class="code docutils literal notranslate"><span class="pre">mklSupport</span>
 <span class="pre">?</span>&#160; <span class="pre">true</span></code> and avoid using the override within default.nix.</p>
 </div>
-<div class="section" id="the-development-environment">
-<h2>The development environment<a class="headerlink" href="#the-development-environment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="using-the-environment">
+<h2>Using the environment<a class="headerlink" href="#using-the-environment" title="Permalink to this headline">¶</a></h2>
 <p>The point of all this is to make an environment that works for development– the
 code that is getting hacked on is changing, and isn’t prepackaged or ready to be
 prepackaged. That’s why the default.nix has the python packages pip and wheel,
@@ -402,7 +402,7 @@ it is pip installed after the build).</p>
 their own nix file which is imported to default.nix. In the meantime, we can move
 the build from our development box to a HPC or cloud service with a minimum of work– just
 two files, one nix command, followed by two git pulls and three pip installs to access multi
-GPU computing from an jupyter notebook.</p>
+GPU computing from a jupyter notebook.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -437,7 +437,7 @@ GPU computing from an jupyter notebook.</p>
 <li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nix">Nix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#a-reproducible-cuda-gpu-environment">A Reproducible CUDA &amp; GPU environment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-development-environment">The development environment</a><ul class="simple">
+<li class="toctree-l3"><a class="reference internal" href="#using-the-environment">Using the environment</a><ul class="simple">
 </ul>
 </li>
 </ul>
