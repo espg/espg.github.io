@@ -37,5 +37,4 @@ code to `github as espg <http://github.com/espg>`__.
     Home <self>
     publications/index
     optics/index
-    teaching/index
     linux/index
