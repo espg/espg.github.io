@@ -1,19 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>OPTICS Benchmark &#8212; Shane Grigsby&#39;s website</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OPTICS Benchmark &#8212; Shane Grigsby</title>
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -99,7 +100,7 @@ on this point is described in the narrative documentation of OPTICS).</p>
 </div>
 <div class="section" id="testing-data">
 <h2>Testing Data<a class="headerlink" href="#testing-data" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># For test data</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span> <span class="c1"># For test data</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This dataset is availible at:</span>
@@ -216,7 +217,7 @@ on this point is described in the narrative documentation of OPTICS).</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
     <span class="n">eps_times_OPT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="n">epsilon</span>
+    <span class="k">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
@@ -273,7 +274,7 @@ not</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
     <span class="n">eps_times_OPT_40k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="n">epsilon</span>
+    <span class="k">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
@@ -380,7 +381,7 @@ not</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz400k</span><span class="p">)</span>
     <span class="n">eps_times_OPT_400k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="n">epsilon</span>
+    <span class="k">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eps_times_DB_400k</span><span class="p">,</span><span class="n">eps_times_OPT_400k</span>
@@ -418,7 +419,6 @@ not</p>
 
         </div>
         <div class="sidebar">
-          
     
           <h3>Table of Contents</h3>
           <ul>
@@ -432,7 +432,6 @@ not</p>
 <h3><a href="../_sources/optics/Benchmarking_.rst.txt"
         rel="nofollow">Show Source</a></h3>
     
-
 
         </div>
         <div class="clearer"></div>

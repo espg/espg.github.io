@@ -93,7 +93,7 @@ environmental variables that you need. Here's what my default.nix files looks
 like to build magma (the long literal at the end breaks syntax highlighting):
 
 .. code-block:: nix
-    :linenos:
+    :emphasize-lines: 27
 
     # Note, nix-channel == 19.03
     # magma derivation doesn't find mkl libs properly on 19.09
@@ -176,10 +176,10 @@ included to illustrate that you can mix and match packages between branches--
 if GDAL has a feature in 19.09 that you need (or a bug in 19.03 that you want
 to avoid), you can build everything using 19.03, and then specify per package
 when you want to use a newer or older branch. As an explicit example, if you
-wanted a different build of hdf5, all you would do is change line 27 from
-:code:`hdf5` to :code:`current.hdf5` ; python packages are nested one layer of
-abstraction in, so to change gdal, you'd probably move it out of the python
-package section to buildInputs and specify
+wanted a different build of hdf5, all you would do is change line 27
+(emphasized) from :code:`hdf5` to :code:`current.hdf5` ; python packages are
+nested one layer of abstraction in, so to change gdal, you'd probably move it
+out of the python package section to buildInputs and specify
 :code:`current.python36Packages.gdal`.
 
 Moving on, :code:`with stable;` sets the default to use stable instead of
@@ -273,7 +273,7 @@ or in a local file that it calls. The magma.nix file differs from the github
 version in that it builds a dynamic library instead of a static one, and tells
 magma to use MKL instead of libatlas or openblas. Using MKL could actually be
 specified from the default.nix file substituting :code:`(magma.overrides {
-mklSupport = true;})` in place of :code:`mag` on line 27...but we would have to
+mklSupport = true;})` in place of :code:`mag` on the emphasized line...but we would have to
 import the right nixpkgs branch (unstable), and that still wouldn't build a
 shared library. Since the magma build file is being changed anyway, we can just
 change line 2 in magma.nix from :code:`mklSupport ? false` to :code:`mklSupport

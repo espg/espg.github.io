@@ -1,19 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>Reproducible Builds Using Nix &#8212; Shane Grigsby&#39;s website</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Reproducible Builds Using Nix &#8212; Shane Grigsby</title>
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Linux Tricks" href="index.html" /> 
@@ -68,22 +69,22 @@ nothing of trying to have a colleague replicate your setup when you share code.<
 portable builds. It is by no means perfect– but it is better than anything
 else that I’ve tried <em>by far</em>. The major highlights:</p>
 <ul class="simple">
-<li><p>Builds don’t break. They may take sometime to figure out, but once they
-work, they keep working.</p></li>
-<li><p>Builds are portable. If it builds on my linux tablet, it will build on my
+<li>Builds don’t break. They may take sometime to figure out, but once they
+work, they keep working.</li>
+<li>Builds are portable. If it builds on my linux tablet, it will build on my
 HPC cluster. I can email a colleague a human readable text file, and they
 can replicate by working environment using a single command from the
-command line.</p></li>
-<li><p>It’s reasonably cross platform. Linux builds work perfectly between
+command line.</li>
+<li>It’s reasonably cross platform. Linux builds work perfectly between
 distros. MacOS tends to be compatible for most things…but some of their
-display stuff is strange enough that tweaks are occasionally needed.</p></li>
-<li><p>Declarations are functional. I specify what I want, not how to do it. Nix
-files are short, and tend to be understandable.</p></li>
-<li><p>Multiple builds are both possible, and encouraged. You can maintain
+display stuff is strange enough that tweaks are occasionally needed.</li>
+<li>Declarations are functional. I specify what I want, not how to do it. Nix
+files are short, and tend to be understandable.</li>
+<li>Multiple builds are both possible, and encouraged. You can maintain
 libraries built with different options for different projects, even when
 those libraries conflict. Need hdf4 for a project, but don’t want to break
 hdf5? No problem, the dependency tree for each install has it’s own
-namespace.</p></li>
+namespace.</li>
 </ul>
 <p>Despite the above advantages, I maintain a love/hate relationship with nix.
 Nix is best described as a language, and the documentation is very much geared
@@ -121,61 +122,7 @@ and in your path, it will check for default.nix and execute the build for you,
 setting all library and executable paths for you, along with whatever
 environmental variables that you need. Here’s what my default.nix files looks
 like to build magma (the long literal at the end breaks syntax highlighting):</p>
-<div class="highlight-nix notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55</pre></div></td><td class="code"><div class="highlight"><pre><span></span># Note, nix-channel == 19.03
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span># Note, nix-channel == 19.03
 # magma derivation doesn&#39;t find mkl libs properly on 19.09
 # ...although magma can be built on 19.09 using openblas
 
@@ -201,8 +148,8 @@ with stable;
 stdenv.mkDerivation rec {
   name = &quot;env&quot; ;
   env = buildEnv { name = name; paths = buildInputs; };
-  buildInputs = [ git hdf5 mkl mag cudatoolkit
-    (python37.buildEnv.override {
+<span class="hll">  buildInputs = [ git hdf5 mkl mag cudatoolkit
+</span>    (python37.buildEnv.override {
       ignoreCollisions = true;
       extraLibs = with python37Packages; [
         (numpy.override { blas = mkl; })
@@ -231,7 +178,7 @@ stdenv.mkDerivation rec {
     unset SOURCE_DATE_EPOCH&#39;&#39;;
   }
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Ok, so what’s going on here? If you’ve ever used nix-shell or nix in general,
 you’re probably used to the first line of default.nix looking something like
 this <code class="code docutils literal notranslate"><span class="pre">with</span> <span class="pre">import</span> <span class="pre">&lt;nixpkgs&gt;</span> <span class="pre">{};</span></code>, which is fine…but less portable. Nix
@@ -256,10 +203,10 @@ included to illustrate that you can mix and match packages between branches–
 if GDAL has a feature in 19.09 that you need (or a bug in 19.03 that you want
 to avoid), you can build everything using 19.03, and then specify per package
 when you want to use a newer or older branch. As an explicit example, if you
-wanted a different build of hdf5, all you would do is change line 27 from
-<code class="code docutils literal notranslate"><span class="pre">hdf5</span></code> to <code class="code docutils literal notranslate"><span class="pre">current.hdf5</span></code> ; python packages are nested one layer of
-abstraction in, so to change gdal, you’d probably move it out of the python
-package section to buildInputs and specify
+wanted a different build of hdf5, all you would do is change line 27
+(emphasized) from <code class="code docutils literal notranslate"><span class="pre">hdf5</span></code> to <code class="code docutils literal notranslate"><span class="pre">current.hdf5</span></code> ; python packages are
+nested one layer of abstraction in, so to change gdal, you’d probably move it
+out of the python package section to buildInputs and specify
 <code class="code docutils literal notranslate"><span class="pre">current.python36Packages.gdal</span></code>.</p>
 <p>Moving on, <code class="code docutils literal notranslate"><span class="pre">with</span> <span class="pre">stable;</span></code> sets the default to use stable instead of
 current. Grammar for nix expects most statements to terminate with a
@@ -347,7 +294,7 @@ or in a local file that it calls. The magma.nix file differs from the github
 version in that it builds a dynamic library instead of a static one, and tells
 magma to use MKL instead of libatlas or openblas. Using MKL could actually be
 specified from the default.nix file substituting <code class="code docutils literal notranslate"><span class="pre">(magma.overrides</span> <span class="pre">{</span>
-<span class="pre">mklSupport</span> <span class="pre">=</span> <span class="pre">true;})</span></code> in place of <code class="code docutils literal notranslate"><span class="pre">mag</span></code> on line 27…but we would have to
+<span class="pre">mklSupport</span> <span class="pre">=</span> <span class="pre">true;})</span></code> in place of <code class="code docutils literal notranslate"><span class="pre">mag</span></code> on the emphasized line…but we would have to
 import the right nixpkgs branch (unstable), and that still wouldn’t build a
 shared library. Since the magma build file is being changed anyway, we can just
 change line 2 in magma.nix from <code class="code docutils literal notranslate"><span class="pre">mklSupport</span> <span class="pre">?</span> <span class="pre">false</span></code> to <code class="code docutils literal notranslate"><span class="pre">mklSupport</span>
@@ -425,7 +372,6 @@ GPU computing from a jupyter notebook.</p>
 
         </div>
         <div class="sidebar">
-          
     
           <h3>Table of Contents</h3>
           <ul class="current">
@@ -450,7 +396,6 @@ GPU computing from a jupyter notebook.</p>
 <h3><a href="../_sources/linux/nix.rst.txt"
         rel="nofollow">Show Source</a></h3>
     
-
 
         </div>
         <div class="clearer"></div>
