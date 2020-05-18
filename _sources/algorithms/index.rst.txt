@@ -1,15 +1,9 @@
-.. ASPRS documentation master file, created by
-   sphinx-quickstart on Fri Oct 26 10:13:39 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Algorithms
 ================
 
 These are mainly related to distance and density.
 
-OPTICS Algorithm
-----------------
+**OPTICS Algorithm**
 
 OPTICS, or 'Ordering Points To Identify Clustering Structure', is a
 density based clustering algorithm that I developed for segmentation of 

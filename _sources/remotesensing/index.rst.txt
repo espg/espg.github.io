@@ -6,7 +6,9 @@
 Remote sensing
 ================
 
-Various common and specialized remote sensing tasks.
+Remote sensing is what I spend the majority of my time doing. 
+Here is place for various common and specialized remote sensing
+tasks and examples. See the submenu at right. -->
 
 
 .. toctree::

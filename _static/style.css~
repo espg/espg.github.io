@@ -22,7 +22,7 @@ html,body {
   	height:100%;
 	font-size:100%;
 	font-family: Verdana, Geneva, sans-serif;
-    zoom: 90%;
+    zoom: 75%;
 	}
 
 .document li,ol {
