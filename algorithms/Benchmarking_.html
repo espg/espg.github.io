@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>OPTICS Benchmark &#8212; Shane Grigsby</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  
+  
+  <style type="text/css">
+    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
+    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
+    ul.postlist a {font-style: italic;}
+    ul.postlist-style-disc {list-style-type: disc;}
+    ul.postlist-style-none {list-style-type: none;}
+    ul.postlist-style-circle {list-style-type: circle;}
+  </style>
+
+  </head><body>
+<style type="text/css">
+/*<![CDATA[*/
+body {
+background-color: #FFFFFF; 
+}
+/*]]>*/
+</style>
+<body id="index">
+<div class="wrapper">
+<div class="clearfix"></div>
+    <div id="header">
+        <!--<img src="graphics/title.png" alt="title_goes_here"/> -->
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="optics-benchmark">
+<h1>OPTICS Benchmark<a class="headerlink" href="#optics-benchmark" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-data-for-benchmarks">
+<h2>Test data for benchmarks<a class="headerlink" href="#test-data-for-benchmarks" title="Permalink to this headline">¶</a></h2>
+<p>For these benchmarks I’m going to use real data– the data is
+heterogenous, large, and publicly available. More specifically, the
+benchmark data is a set of ~8.5 million filtered LiDAR data points,
+collected by the National Ecological Observation Network (NEON) in 2013
+over the D17 study domain site. More information about the field
+campaign and data can be found
+<a class="reference external" href="http://www.neoninc.org/data-resources/papers-publications/tm-005-neon-2013-airborne-campaign-domain-17-terrestrial-and">*here*</a>
+. The data is spread over a rectangle that is slightly larger than a
+kilometer and half North/South by 0.75 kilometers East/West. A (very)
+corse view of the of the points is shown below, with arbitrary units of
+relative density:</p>
+<p>For these benchmarks (and for the plot above), I have filtered out the
+ground points; the remaining unstructured three-dimensional points are
+randomly dispersed vegetation clumps– mostly trees of various sizes,
+but also some bushes. An ideal clustering of this data set would resolve
+individual trees (or bushes) as objects.</p>
+<p>The filtered data set for these benchmarks is available
+<a class="reference external" href="http://cires1.colorado.edu/shane/extractionLAS_subset.hdf">**here**</a>
+for those wishing to run their own benchmarks. I’ll be using X, Y, Z
+locations for OPTICS and DBSCAN, but there are 10 dimensions included in
+the data set (additional spectral data from simultaneously flown
+spectroradiometer) for those curious about how the clustering performs
+in higher dimensional space. As the Jake Vanderplas has already
+documented and benchmarked higher dimensional search trees, these
+benchmarks will focus on only the three dimensional case, and will vary
+the epsilon and min samples parameters instead.</p>
+<p>The main comparison here is between the OPTICS and DBSCAN algorithms
+when given identical input parameters and data. The two clustering
+approaches give nearly identical results with the same input parameters,
+so we will only be looking at runtime. DBSCAN will (or at least should)
+always be faster than OPTICS, and for small datasets will in fact be
+<em>much</em> faster– for this reason, the data set here is purposely large,
+as a practical use of the OPTICS algorithm is for large data sets where
+multiple cluster extraction a varying epsilons is desired (more detail
+on this point is described in the narrative documentation of OPTICS).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">pylab</span> <span class="n">inline</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Populating</span> <span class="n">the</span> <span class="n">interactive</span> <span class="n">namespace</span> <span class="kn">from</span> <span class="nn">numpy</span> <span class="ow">and</span> <span class="n">matplotlib</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="s1">&#39;~/Software/scikit-learn/&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">grigsbye</span><span class="o">/</span><span class="n">Software</span><span class="o">/</span><span class="n">scikit</span><span class="o">-</span><span class="n">learn</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">joblib</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster.optics</span> <span class="kn">import</span> <span class="n">OPTICS</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-data">
+<h2>Testing Data<a class="headerlink" href="#testing-data" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span> <span class="c1"># For test data</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This dataset is availible at:</span>
+<span class="c1"># http://cires1.colorado.edu/shane/extractionLAS_subset.hdf</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="s1">&#39;/Users/grigsbye/Desktop/Tasha/extractionLAS_subset.hdf&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">subset</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">8505072</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Trivial / small</span>
+<span class="n">subset4k</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">256450</span><span class="p">)</span> <span class="o">&amp;</span>
+                  <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">256455</span><span class="p">)</span> <span class="o">&amp;</span>
+                  <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">4110525</span><span class="p">)</span> <span class="o">&amp;</span>
+                  <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">4110575</span><span class="p">)]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">subset4k</span><span class="p">)</span> <span class="c1"># 5 by 50 meters</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">4183</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz4k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">subset4k</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">xyz4k</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xyz4k</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">xyz4k</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset4k</span><span class="o">.</span><span class="n">X</span><span class="p">[:],</span><span class="n">subset4k</span><span class="o">.</span><span class="n">Y</span><span class="p">[:],</span><span class="n">subset4k</span><span class="o">.</span><span class="n">Z</span><span class="p">[:]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Medium</span>
+<span class="n">subset40k</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">256440</span><span class="p">)</span> <span class="o">&amp;</span>
+                   <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">256460</span><span class="p">)</span> <span class="o">&amp;</span>
+                   <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">4110500</span><span class="p">)</span> <span class="o">&amp;</span>
+                   <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">4110600</span><span class="p">)]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">subset40k</span><span class="p">)</span> <span class="c1"># 20 by 100 meters</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">41624</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz40k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">subset40k</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">xyz40k</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xyz40k</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">xyz40k</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset40k</span><span class="o">.</span><span class="n">X</span><span class="p">[:],</span><span class="n">subset40k</span><span class="o">.</span><span class="n">Y</span><span class="p">[:],</span><span class="n">subset40k</span><span class="o">.</span><span class="n">Z</span><span class="p">[:]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Large ... this crashes DBSCAN at large epsilons</span>
+<span class="n">subset400k</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">256200</span><span class="p">)</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">256700</span><span class="p">)</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">4110500</span><span class="p">)</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">4110600</span><span class="p">)]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">subset400k</span><span class="p">)</span> <span class="c1"># 500 by 100 meters</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">398359</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz400k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">subset400k</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">xyz400k</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xyz400k</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">xyz400k</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset400k</span><span class="o">.</span><span class="n">X</span><span class="p">[:],</span><span class="n">subset400k</span><span class="o">.</span><span class="n">Y</span><span class="p">[:],</span><span class="n">subset400k</span><span class="o">.</span><span class="n">Z</span><span class="p">[:]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># BIG ... not used, but included for the curious</span>
+<span class="n">subset4000k</span> <span class="o">=</span> <span class="n">subset</span><span class="p">[(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">256250</span><span class="p">)</span> <span class="o">&amp;</span>
+                     <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">X</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">256650</span><span class="p">)</span> <span class="o">&amp;</span>
+                     <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&gt;</span> <span class="mi">4109500</span><span class="p">)</span> <span class="o">&amp;</span>
+                     <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Y</span><span class="p">[:]</span> <span class="o">&lt;</span> <span class="mi">4111000</span><span class="p">)]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">subset4000k</span><span class="p">)</span> <span class="c1"># 400 by 1500 meters</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">3978624</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz4000k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">subset4000k</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">xyz4000k</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xyz4000k</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">xyz4000k</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset4000k</span><span class="o">.</span><span class="n">X</span><span class="p">[:],</span><span class="n">subset4000k</span><span class="o">.</span><span class="n">Y</span><span class="p">[:],</span><span class="n">subset4000k</span><span class="o">.</span><span class="n">Z</span><span class="p">[:]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setting up benchmarks</span>
+<span class="c1"># Taken from Jake Vanderplas</span>
+<span class="c1"># https://jakevdp.github.io/blog/2013/04/29/benchmarking-nearest-neighbor-searches-in-python/</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="k">def</span> <span class="nf">average_time</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the average time over N runs&quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+<span class="c1">#        print(i)</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">+=</span> <span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">t</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">N</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nsample</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">500</span><span class="p">]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">nsample</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">9</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">epsilons</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">20.0</span><span class="p">,</span><span class="mf">50.0</span><span class="p">,</span><span class="mf">100.0</span><span class="p">,</span><span class="mf">250.0</span><span class="p">]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">11</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying eps benchmark</span>
+<span class="n">eps_times_DB</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eps_times_OPT</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">:</span>
+    <span class="n">benchmark_dbscan</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputDB</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_dbscan</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
+    <span class="n">eps_times_DB</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputDB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">benchmark_cluster</span> <span class="o">=</span> <span class="n">OPTICS</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
+    <span class="n">eps_times_OPT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">print</span> <span class="n">epsilon</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
+<span class="mf">0.3</span>
+<span class="mf">0.6</span>
+<span class="mf">1.2</span>
+<span class="mf">2.5</span>
+<span class="mf">5.0</span>
+<span class="mf">10.0</span>
+<span class="mf">20.0</span>
+<span class="mf">50.0</span>
+<span class="mf">100.0</span>
+<span class="mf">250.0</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying samples benchmark</span>
+<span class="n">eps_times_DB_</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eps_times_OPT_</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">nsamples</span> <span class="ow">in</span> <span class="n">nsample</span><span class="p">:</span>
+    <span class="n">benchmark_dbscan</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+    <span class="n">outputDB</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_dbscan</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
+    <span class="n">eps_times_DB_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputDB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">benchmark_cluster</span> <span class="o">=</span> <span class="n">OPTICS</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+    <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
+    <span class="n">eps_times_OPT_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1">#print nsamples</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying min_points plot</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_DB_</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_OPT_</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">semilogy</span><span class="p">()</span>
+<span class="n">semilogx</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span>
+</pre></div>
+</div>
+<img alt="../_images/Benchmarking_21_1.png" src="../_images/Benchmarking_21_1.png" />
+<p>Note: Because of both long run times, and crashes with DBSCAN, some
+cells below were run on previous iPython kernels, and cell numbering is
+not</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying eps benchmark</span>
+<span class="n">eps_times_DB_40k</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eps_times_OPT_40k</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">:</span>
+    <span class="n">benchmark_dbscan</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputDB</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_dbscan</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
+    <span class="n">eps_times_DB_40k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputDB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">benchmark_cluster</span> <span class="o">=</span> <span class="n">OPTICS</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
+    <span class="n">eps_times_OPT_40k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">print</span> <span class="n">epsilon</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
+<span class="mf">0.3</span>
+<span class="mf">0.6</span>
+<span class="mf">1.2</span>
+<span class="mf">2.5</span>
+<span class="mf">5.0</span>
+<span class="mf">10.0</span>
+<span class="mf">20.0</span>
+<span class="mf">50.0</span>
+<span class="mf">100.0</span>
+<span class="mf">250.0</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span><span class="n">eps_times_DB</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;DBSCAN&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span><span class="n">eps_times_OPT</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;OPTICS&#39;</span><span class="p">)</span>
+<span class="n">semilogy</span><span class="p">()</span>
+<span class="n">semilogx</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epsilon Distance&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Runtime: Seconds&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x11133c410</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/Benchmarking_24_1.png" src="../_images/Benchmarking_24_1.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eps_times_DB_40k</span><span class="p">,</span><span class="n">eps_times_OPT_40k</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">([</span><span class="mf">0.3324090639750163</span><span class="p">,</span>
+  <span class="mf">0.4331480662027995</span><span class="p">,</span>
+  <span class="mf">0.4585415522257487</span><span class="p">,</span>
+  <span class="mf">0.6865076224009196</span><span class="p">,</span>
+  <span class="mf">1.3512890338897705</span><span class="p">,</span>
+  <span class="mf">2.991980711619059</span><span class="p">,</span>
+  <span class="mf">6.290017286936442</span><span class="p">,</span>
+  <span class="mf">18.496273676554363</span><span class="p">,</span>
+  <span class="mf">84.68666569391887</span><span class="p">,</span>
+  <span class="mf">121.54244637489319</span><span class="p">,</span>
+  <span class="mf">120.43232997258504</span><span class="p">],</span>
+ <span class="p">[</span><span class="mf">8.212754408518473</span><span class="p">,</span>
+  <span class="mf">13.50602944691976</span><span class="p">,</span>
+  <span class="mf">26.57088589668274</span><span class="p">,</span>
+  <span class="mf">65.20482174555461</span><span class="p">,</span>
+  <span class="mf">155.14100941022238</span><span class="p">,</span>
+  <span class="mf">250.5828684171041</span><span class="p">,</span>
+  <span class="mf">302.9867091178894</span><span class="p">,</span>
+  <span class="mf">304.2664025624593</span><span class="p">,</span>
+  <span class="mf">304.4731384118398</span><span class="p">,</span>
+  <span class="mf">298.53870995839435</span><span class="p">,</span>
+  <span class="mf">303.42804169654846</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying samples benchmark</span>
+<span class="n">eps_times_DB_40k_</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eps_times_OPT_40k_</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">nsamples</span> <span class="ow">in</span> <span class="n">nsample</span><span class="p">:</span>
+    <span class="n">benchmark_dbscan</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+    <span class="n">outputDB</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_dbscan</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
+    <span class="n">eps_times_DB_40k_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputDB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">benchmark_cluster</span> <span class="o">=</span> <span class="n">OPTICS</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+    <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
+    <span class="n">eps_times_OPT_40k_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1">#print nsamples</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span><span class="n">eps_times_DB_40k</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;DBSCAN&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span><span class="n">eps_times_OPT_40k</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;OPTICS&#39;</span><span class="p">)</span>
+<span class="n">semilogy</span><span class="p">()</span>
+<span class="n">semilogx</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epsilon Distance&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Runtime: Seconds&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x1463a0110</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/Benchmarking_27_1.png" src="../_images/Benchmarking_27_1.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying min_points plot</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_DB_40k_</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_OPT_40k_</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">semilogy</span><span class="p">()</span>
+<span class="n">semilogx</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span>
+</pre></div>
+</div>
+<img alt="../_images/Benchmarking_28_1.png" src="../_images/Benchmarking_28_1.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying eps benchmark</span>
+<span class="n">eps_times_DB_400k</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eps_times_OPT_400k</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">[</span><span class="mi">6</span><span class="p">:]:</span>
+    <span class="n">benchmark_dbscan</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputDB</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_dbscan</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz400k</span><span class="p">)</span>
+    <span class="n">eps_times_DB_400k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputDB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">benchmark_cluster</span> <span class="o">=</span> <span class="n">OPTICS</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz400k</span><span class="p">)</span>
+    <span class="n">eps_times_OPT_400k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">print</span> <span class="n">epsilon</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eps_times_DB_400k</span><span class="p">,</span><span class="n">eps_times_OPT_400k</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">epsilons</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">[:</span><span class="mi">6</span><span class="p">],</span><span class="n">eps_times_DB_400k</span><span class="p">[:</span><span class="mi">6</span><span class="p">],</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;DBSCAN&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">epsilons</span><span class="p">[:</span><span class="mi">6</span><span class="p">],</span><span class="n">eps_times_OPT_400k</span><span class="p">[:</span><span class="mi">6</span><span class="p">],</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;OPTICS&#39;</span><span class="p">)</span>
+<span class="n">semilogy</span><span class="p">()</span>
+<span class="n">semilogx</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epsilon Distance&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Runtime: Seconds&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+  <div class="section">
+  
+  
+  </div>
+
+          </div>
+        </div>
+      </div>
+
+    <div id="hyvor-talk-view"></div>
+<script type="text/javascript">
+    var HYVOR_TALK_WEBSITE = 294; // DO NOT CHANGE THIS
+    var HYVOR_TALK_CONFIG = {
+        url: false,
+        id: false
+    };
+</script>
+<script async type="text/javascript" src="//talk.hyvor.com/web-api/embed"></script>
+
+        </div>
+        <div class="sidebar">
+          
+    
+          <h3>Table of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../remotesensing/index.html">Remote sensing</a></li>
+</ul>
+
+<strong>Last Updated: May 17, 2020</strong>
+<h3><a href="../_sources/algorithms/Benchmarking_.rst.txt"
+        rel="nofollow">Show Source</a></h3>
+    
+
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="push"></div>
+</div>
+<div id="footer">
+    <!-- start footer -->
+
+    <div id="left-footer">
+        <a href="http://mines.edu/glaciology" title="Colorado School of Mines">
+<img src="https://www.mines.edu/wp-content/uploads/assets/logo_eee_4c_r.png" 
+            border="none" alt="Colorado School of Mines" style="width:500px;" /></a>                                 
+
+    </div>
+        <div id="right-footer">
+            <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
+                <img src="http://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
+                "Cooperative Institute for Research in Environmental Sciences" /></a>
+        </div><!-- end footer -->
+        
+  </body>
+</html>

@@ -23,6 +23,12 @@ you fly over them.
 
 My CV is here: :download:`pdf <./Curriculum_Vitae_Grigsby_2_pages__may_2016.pdf>`.
 
+**2020 posts:**
+
+.. postlist:: 3
+    :list-style: disk
+    :sort:
+
 Contact Information
 ===================
 
@@ -36,5 +42,6 @@ code to `github as espg <http://github.com/espg>`__.
 
     Home <self>
     publications/index
-    optics/index
+    algorithms/index
     linux/index
+    remotesensing/index

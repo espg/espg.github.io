@@ -1,23 +1,36 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Reproducible Builds Using Nix &#8212; Shane Grigsby</title>
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Linux Tricks" href="index.html" /> 
+    <link rel="next" title="Remote sensing" href="../remotesensing/index.html" />
+    <link rel="prev" title="Linux Tricks" href="index.html" />
+   
+  
+  
+  <style type="text/css">
+    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
+    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
+    ul.postlist a {font-style: italic;}
+    ul.postlist-style-disc {list-style-type: disc;}
+    ul.postlist-style-none {list-style-type: none;}
+    ul.postlist-style-circle {list-style-type: circle;}
+  </style>
+
   </head><body>
 <style type="text/css">
 /*<![CDATA[*/
@@ -69,22 +82,22 @@ nothing of trying to have a colleague replicate your setup when you share code.<
 portable builds. It is by no means perfect– but it is better than anything
 else that I’ve tried <em>by far</em>. The major highlights:</p>
 <ul class="simple">
-<li>Builds don’t break. They may take sometime to figure out, but once they
-work, they keep working.</li>
-<li>Builds are portable. If it builds on my linux tablet, it will build on my
+<li><p>Builds don’t break. They may take sometime to figure out, but once they
+work, they keep working.</p></li>
+<li><p>Builds are portable. If it builds on my linux tablet, it will build on my
 HPC cluster. I can email a colleague a human readable text file, and they
 can replicate by working environment using a single command from the
-command line.</li>
-<li>It’s reasonably cross platform. Linux builds work perfectly between
+command line.</p></li>
+<li><p>It’s reasonably cross platform. Linux builds work perfectly between
 distros. MacOS tends to be compatible for most things…but some of their
-display stuff is strange enough that tweaks are occasionally needed.</li>
-<li>Declarations are functional. I specify what I want, not how to do it. Nix
-files are short, and tend to be understandable.</li>
-<li>Multiple builds are both possible, and encouraged. You can maintain
+display stuff is strange enough that tweaks are occasionally needed.</p></li>
+<li><p>Declarations are functional. I specify what I want, not how to do it. Nix
+files are short, and tend to be understandable.</p></li>
+<li><p>Multiple builds are both possible, and encouraged. You can maintain
 libraries built with different options for different projects, even when
 those libraries conflict. Need hdf4 for a project, but don’t want to break
 hdf5? No problem, the dependency tree for each install has it’s own
-namespace.</li>
+namespace.</p></li>
 </ul>
 <p>Despite the above advantages, I maintain a love/hate relationship with nix.
 Nix is best described as a language, and the documentation is very much geared
@@ -355,6 +368,30 @@ GPU computing from a jupyter notebook.</p>
 </div>
 </div>
 
+  <div class="section">
+  
+    
+
+
+<div class="section">
+  <span style="float: left;">
+  
+  </span>
+  <span>&nbsp;</span>
+  <span style="float: right;">
+  
+  Next: 
+  <a href="../remotesensing/VIIRS_Cloud_Masking.html">
+    Cloud Masking in python using VIIRS
+    
+  </a>
+  
+  </span>
+</div>
+
+  
+  
+  </div>
 
           </div>
         </div>
@@ -372,12 +409,13 @@ GPU computing from a jupyter notebook.</p>
 
         </div>
         <div class="sidebar">
+          
     
           <h3>Table of Contents</h3>
           <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../optics/index.html">OPTICS Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Linux Tricks</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Reproducible Builds Using Nix</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
@@ -390,12 +428,14 @@ GPU computing from a jupyter notebook.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../remotesensing/index.html">Remote sensing</a></li>
 </ul>
 
-<strong>Last Updated: Mar 16, 2020</strong>
+<strong>Last Updated: May 17, 2020</strong>
 <h3><a href="../_sources/linux/nix.rst.txt"
         rel="nofollow">Show Source</a></h3>
     
+
 
         </div>
         <div class="clearer"></div>

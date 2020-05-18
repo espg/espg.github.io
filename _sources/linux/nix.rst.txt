@@ -336,6 +336,12 @@ the build from our development box to a HPC or cloud service with a minimum of w
 two files, one nix command, followed by two git pulls and three pip installs to access multi
 GPU computing from a jupyter notebook.
 
+.. post:: 15 March, 2020
+   :tags: Linux, CUDA
+   :category: Example, How To
+   :author: Shane
+   :location: Boulder, CO
+   :excerpt: 2
 
 .. toctree::
     :maxdepth: 4

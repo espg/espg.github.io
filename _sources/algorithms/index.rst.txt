@@ -1,0 +1,30 @@
+.. ASPRS documentation master file, created by
+   sphinx-quickstart on Fri Oct 26 10:13:39 2012.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Algorithms
+================
+
+These are mainly related to distance and density.
+
+OPTICS Algorithm
+----------------
+
+OPTICS, or 'Ordering Points To Identify Clustering Structure', is a
+density based clustering algorithm that I developed for segmentation of 
+LiDAR points. It was also `my first pull request <https://github.com/scikit-learn/scikit-learn/pull/1984/>`_.
+
+My implementation of the OPTICS algorithm was `merged <https://github.com/scikit-learn/scikit-learn/pull/11547>`_
+into sklearn for `release 0.21 <https://scikit-learn.org/stable/whats_new/v0.21.html#version-0-21-1>`_,
+and is available in all current versions. You can find the module documentation `here <https://scikit-learn.org/stable/modules/generated/sklearn.cluster.OPTICS.html>`_, with more 
+`descriptive and narrative documentation here <https://scikit-learn.org/stable/modules/clustering.html#optics>`_;
+there's also `demo code <https://scikit-learn.org/stable/auto_examples/cluster/plot_optics.html#sphx-glr-auto-examples-cluster-plot-optics-py>`_.
+
+
+.. toctree::
+    :hidden:   
+    :maxdepth: 4
+	
+    Benchmarking.ipynb
+    OPTICS

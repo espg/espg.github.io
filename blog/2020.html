@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;no title&gt; &#8212; Shane Grigsby</title>
+    <title>Posted in 2020 &#8212; Shane Grigsby</title>
     <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
@@ -18,6 +18,8 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
    
+  
+  <link rel="alternate" type="application/atom+xml"  href="../blog/atom.xml" title="Posted in 2020">
   
   
   <style type="text/css">
@@ -53,42 +55,130 @@ background-color: #FFFFFF;
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p>Things that I would like to have working:</p>
-<ul class="simple">
-<li><p>Ambient light sensor (autodim)</p></li>
-<li><p>GPS location output</p></li>
-<li><p>wireshark (waiting on provider)</p></li>
-<li><p>Raw image support in terminal / ranger</p></li>
-<li><p>Reply to calendar events</p></li>
-<li><p>Clear microsoft trash</p></li>
-<li><p>Decent restart script for mopidy</p></li>
-</ul>
-<p>Things that I would like to setup:</p>
-<ul class="simple">
-<li><p>Neovim and spacevim</p></li>
-<li><p>home-manager</p></li>
-<li><p>trezor / dashlane</p></li>
-<li><p>googler (terminal)</p></li>
-<li><p>taskell</p></li>
-<li><p>tldr (man pages)</p></li>
-<li><p>Battery improvements</p></li>
-<li><p>Touchbar support</p></li>
-<li><p>4K framerate upscaler</p></li>
-<li><p>Decent media player</p></li>
-<li><p>Sandboxed applications</p></li>
-<li><p>vim colorization</p></li>
-<li><p>slack command line</p></li>
-</ul>
-<p>Things that are broken:</p>
-<ul class="simple">
-<li><p>Finger print scanner</p></li>
-<li><p>Microphone</p></li>
-<li><p>Back camera (don’t care)</p></li>
-</ul>
-
   <div class="section">
+
+    <h1>
+      
+      Posted in
+      
+      2020
+      
+    </h1>
+    
+    
+
+    <div class="section">
+      <h2><a href="../remotesensing/VIIRS_Cloud_Masking.html">Cloud Masking in python using VIIRS</a></h2>
+
+      <ul class="ablog-archive">
+      <li>
+      
+        17 May 2020
+      
+      </li>
+        
+
   
+
   
+
+  
+
+  
+
+  
+  </ul>
+      <p>Cloud masking is an common problem for remote sensing; clouds often contaminate signals (like ICESat returns), or completely obscure spectral data for visible and multispectral sensors (like Landsat, Sentinel-2, or commercial imagery). There are two common approaches to masking out clouds:</p>
+
+      <p><a href="../remotesensing/VIIRS_Cloud_Masking.html">Read more ...</a></p>
+      <hr>
+    </div>
+    
+
+    <div class="section">
+      <h2><a href="../linux/nix.html">Reproducible Builds Using Nix</a></h2>
+
+      <ul class="ablog-archive">
+      <li>
+      
+        15 March 2020
+      
+      </li>
+        
+
+  
+  <li id="author"><span>Author:</span>
+    
+      
+      <a href="author/shane.html">Shane</a>
+      
+    </li>
+  
+
+  
+  <li id="location"><span>Location:</span>
+    
+      
+      <a href="location/boulder.html">Boulder</a>,
+      
+    
+      
+      <a href="location/co.html">CO</a>
+      
+    </li>
+  
+
+  
+
+  
+  <li id="category"><span>Category:</span>
+    
+      
+      <a href="category/example.html">Example</a>,
+      
+    
+      
+      <a href="category/how-to.html">How To</a>
+      
+    </li>
+  
+
+  
+  <li id="tags"><span>Tags:
+      </span>
+    
+      
+      <a href="tag/linux.html">Linux</a>
+      
+    
+      
+      <a href="tag/cuda.html">CUDA</a>
+      
+    </li>
+  
+  </ul>
+      <p>Before I was a scientist, I worked for UnixOps supporting research computing–
+mainly building software. The fact that the University of Colorado, Boulder
+campus needed almost a dozen system admins to build and rebuild software tells
+you something about how much of a hassle it is; builds are often cryptic,
+requirements conflict, and things constantly break between versions.</p>
+<p>I’ve used various package managers over the years– homebrew when I had a mac,
+pip and conda for python, and various linux platform specific managers like
+pacman and apt-get. None of them have been particularly great; homebrew tends
+to be a mess and is specific to only OS X. Conda and pip work ok, but they only
+manage python packages, and reasonably complex software always includes
+non-python dependencies… linear algebra routines for numerics written in
+fortran or C, hdf5 libraries, and projection libraries like GDAL come to mind
+most quickly. Things have actually gotten worse in the last couple years with
+machine learning; builds now expect CUDA, and some frameworks are working on
+multi-gpu instances. Getting software up and running is a hassle, to say
+nothing of trying to have a colleague replicate your setup when you share code.</p>
+
+      <p><a href="../linux/nix.html">Read more ...</a></p>
+      <hr>
+    </div>
+    
+    
   </div>
 
           </div>
@@ -114,13 +204,10 @@ background-color: #FFFFFF;
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Linux Tricks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../remotesensing/index.html">Remote sensing</a></li>
 </ul>
 
-<strong>Last Updated: May 17, 2020</strong>
-<h3><a href="../_sources/linux/wishlist.rst.txt"
-        rel="nofollow">Show Source</a></h3>
     
 
 
