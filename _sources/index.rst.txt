@@ -8,11 +8,12 @@ Shane Grigsby
     :alt: Shane 
     :align: right
     
-I'm currently a postdoctoral fellow at the Colorado School of Mines, with Dr.
-Matthew Siegfried. I completed my doctoral degree in 2019 under for my advisor
-`Dr. Waleed Abdalati <https://en.wikipedia.org/wiki/Waleed_Abdalati>`__,  at
-the University of Colorado, Boulder, where I still hold a research appointment
-at the `Cooperative Institute for Research in Environmental Sciences (CIRES)
+I'm currently a postdoctoral fellow at the Colorado School of Mines, with
+`Matthew Siegfried <https://www.mines.edu/glaciology/people/siegfried/>`__. I
+completed my doctoral degree in 2019 under my advisor `Waleed Abdalati
+<https://en.wikipedia.org/wiki/Waleed_Abdalati>`__, at the University of
+Colorado, Boulder, where I still hold a research appointment at the
+`Cooperative Institute for Research in Environmental Sciences (CIRES)
 <http://cires.colorado.edu>`__.  My research focuses on understanding the
 dynamic changes in the polar regions, particularly changes that are happening
 on the Greenland and Antarctic ice sheets. In addition to `polar field work
@@ -25,6 +26,7 @@ My resume is here: :download:`pdf <./grigsby_resume_2019.pdf>`.
 
 .. postlist:: 3
     :list-style: disk
+    :date: %A, %B %d, %Y 
     :sort:
 
 Contact Information

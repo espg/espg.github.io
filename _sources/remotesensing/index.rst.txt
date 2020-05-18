@@ -6,10 +6,11 @@
 Remote sensing
 ================
 
-Remote sensing is what I spend the majority of my time doing. 
-Here is place for various common and specialized remote sensing
-tasks and examples. See the submenu at right. -->
-
+Here is place for various common and specialized remote sensing tasks and
+examples. Remote sensing is what I spend the majority of my time doing. My
+primary modalities of remote sensing are in the optical domain; this includes
+active laser remote sensing, passive multispectral & hyperspectral, as well as
+thermal sensors.  
 
 .. toctree::
     :hidden:   
