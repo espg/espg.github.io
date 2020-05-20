@@ -14,10 +14,10 @@ completed my doctoral degree in 2019 under my advisor `Waleed Abdalati
 <https://en.wikipedia.org/wiki/Waleed_Abdalati>`__, at the University of
 Colorado, Boulder, where I still hold a research appointment at the
 `Cooperative Institute for Research in Environmental Sciences (CIRES)
-<http://cires.colorado.edu>`__.  My research focuses on understanding the
+<https://cires.colorado.edu>`__.  My research focuses on understanding the
 dynamic changes in the polar regions, particularly changes that are happening
 on the Greenland and Antarctic ice sheets. In addition to `polar field work
-<http://ciresblogs.colorado.edu/firncover/>`__, I use both remote sensing and
+<https://ciresblogs.colorado.edu/firncover/>`__, I use both remote sensing and
 machine learning to better characterize crevasses throughout the ice sheets.
 
 My resume is here: :download:`pdf <./grigsby_resume_2019.pdf>`.
@@ -35,7 +35,7 @@ Contact Information
 My CU office is in CIRES, S236, and my emails are `grigsby@mines.edu
 <mailto:grigsby@mines.edu>`__, and `shane.grigsby@colorado.edu
 <mailto:shane.grigsby@colorado.edu>`__. I occasionally post pull requests and
-code to `github as espg <http://github.com/espg>`__.
+code to `github as espg <https://github.com/espg>`__.
 
 .. toctree::
     :includehidden:
