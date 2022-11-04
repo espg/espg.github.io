@@ -24,7 +24,9 @@ html,body {
 	font-family: Verdana, Geneva, sans-serif;
     zoom: 80%;
 	}
-
+figure.align-right {
+    float: right;
+}
 .document li,ol {
 	margin-left: 2.5em;
 }
