@@ -1,0 +1,319 @@
+.. _bootstrap:
+
+.. highlight:: python
+
+***************************************
+Setting up a modern linux desktop in 2020
+***************************************
+
+I tend to use Linux the way that lots of people do; as a development
+environment. Setting up machine learning environments, building software in
+CUDA or python, doing cloud optimized backups-- all that stuff is great. Easy
+in fact, or at least easier than Windows or Mac OSX. The problem is that only
+some of my work is on the command line or in a text editor; in fact, the
+majority of my work as a scientist is 'office work', i.e., responding to
+emails, having meetings on zoom, scheduling meetings on zoom, reading or
+editing or reviewing documents, and so on.
+
+The 'office' side of linux has always been a huge pain point. While there's
+obviously been an attempt to port functionality over in LibreOffice and
+OpenOffice, for my professional obligations, these aren't really realistic
+solutions. For better or worse, `docx` is the standard file format, and 
+colleagues send those back and forth all the time. While you can open and edit
+`docx` files in Libre or Open Office, often times I need higher order
+fidelity... for example, a one page document or cover letter needs to be one
+page, and the formatting in Libre is just 'close', not 'exact', so your one
+page white paper for a program manager might actually spill over a line or two
+when you really need it not to. Or, even more common, some one sends you a
+document with track changes that you need to add edits on top of, without
+mangling the document. The same issues are present with powerpoint of course--
+you want to know how the presentation will look like ***in powerpoint***, in
+part because your might not be presenting on your computer.
+
+There's been some progress on all of this over the years...more and more,
+people are using google docs for collaborative edits, and you can always force
+presentations using an export to pdf slides. But the core problem is that
+getting an office suite working in linux is a bit of hassle, leading to things
+like dual boots or virtual machines and a whole lot of context switching. I've
+been stubbornly trying to get a working desktop and office setup working *in
+linux* for a few years now, polishing and fixing bugs along the way. I think
+it covers most cases, so I figured that it would be worth documenting, both
+for myself, and for anyone else frustrated with being forced out of
+penguin-land every time they need to open a powerpoint or respond to a
+calendar invite.
+
+Goals
+-----
+
+There are two things that define (or used to define, before covid) my work
+habits. First, I'm distractable, and second, I'm mobile. The latter point is
+that I work on airplanes, or in the field, or at conferences with no wifi.
+These environments stop me from, say, just using Microsoft Office in the cloud
+using my web browser, or all of googles alternatives. I want my email as IMAP,
+so that I can read, search, delete, and so on during a 14-hour flight to Asia,
+or in a National Park. The first point, is that I don't *want* to do
+everything in a web browser. Opening chrome is a great way to check your
+calendar, but also a great way to end up checking news, or shopping, or just
+generally not working. The more I can stay in tools that are designed to
+handle just email, or a calendar, or a document, the more I can get done in a
+work day.
+
+So, to make things more explicit, here is what I'm looking for:
+
+ - Word. Not a 'word processor', but actual Word.
+ - PowerPoint. See above.
+ - Excel. I hate it, but sometimes people send you stuff.
+ - Email. Not in the browser, stored locally. Works with my phone.
+ - Calendar. Works with my phone. Works with invites.
+ - Pdf functionality.
+ - Music, so I can listen while doing emails. Integrates with spotify.
+
+It's not a terribly unreasonable list, and there's a zoo of different tools
+for some of these items...but the real trick is actually getting them to work
+**together**. That's harder. Most of workflow is email based, so that will be
+the central thing that everything else revolves around...but we'll look at
+Microsoft stuff first since it's short.
+
+Word, PowerPoint, Excel
+-----------------------
+
+I write most of my papers in latex (locally, or on overleaf/authorea with
+coauthors), and google docs is good for real time editing...but I still get,
+and will always get documents with track changes that need more comments. As
+discussed above, I need Microsoft office to work with these documents; in
+linux, that leaves your with three choices.
+
+ 1. Use a virtual machine like virtualbox
+ 2. Use wine to run windows binaries
+ 3. Use WSL to run linux binaries
+
+I've tried all three options; none are particularly great, but option 2 seems
+to suck the least in 2020 with my setup. I have Word and Excel installed from
+Office 2016, and PowerPoint installed from Office 2013. I could install
+PowerPoint 2016, but it crashes on load...which means I can open **most** 
+`pptx` files. All of these programs do better with simple files...which is
+sadly not what most the files that I get are. Most word files I work with are
+large, and have figures embedded...possibly equations too. I have scripts for
+Word, PowerPoint, and Excel in my ~/bin folder named word, powerpoint, and
+excel that look like this:
+
+```
+#!/usr/bin/env bash
+
+wine ~/.wine/drive_c/Program\ Files/Microsoft\ Office/Office14/POWERPNT.EXE "$*"
+```
+
+They work great for opening and looking at files-- just running `word
+filename.docx` opens things up. Every once and a while, office will complain
+about a license because it forgets that it's already been activated a half
+dozen times, and the Office products spew useless temp files on my desktop
+that have to be deleted...but they work. They open files, and they display
+things correctly. I've had some issues with equations in word, and animations
+in powerpoint, but for 95% of files, everything is **exactly** like how it is
+on whoever's screen that originally sent me the file. There is one quirk with
+opening files, wine doesn't understand absolute pathnames (?!?), only relative
+paths...so you have to cd to the directory with the file that you want to
+open, or describe the path relative to your current directory.
+
+Editing files is fine-- as in not great, but acceptable. Word crashes somewhat
+frequently, so I save via keyboard shortcut every minute or two just out of
+habit. It's honestly hard to tell how much of that is just Word at this
+point; I've always been able to crash that program, regardless of platform. It
+happens probably more frequently than it would in virtual machine or in
+windows...but not so much that it isn't usable, and again, it also crashes in
+my virtual machine and other boot drives. Crashes do increase with file
+complexity, so big proposals or 100+ slide powerpoint deck as more brittle
+than a word doc that doesn't have any figures or track changes attached.
+
+I have Office installed in a virtual machine, and on a windows partition as a
+backup for if there's some edge case where I absolutely can't get an equation
+or something to render, but neither option is great. VirtualBox has a delay in
+receiving keyboard input, and also sometimes will duplicate a keystroke or
+space-- which is way more disruptive to editing and writing flow then having
+to restart from a wine crash 1 to 3 times an hour. Powerpoint and Word both
+work flawlessly in Windows 10 of course (well, they still crash, but only 1 to
+3 times a week), so I tried to run WSL in Windows 10...but the results are not
+usable. That may change at some point, as they are actively developing the
+subsystem...but currently, you can't mount linux block devices in WSL, which
+means that there's no way to mount your linux filesystem in WSL, so you have
+to copy all your documents through some intermediate layer like a jump drive
+or a cloud mounted file system like keybase. All of that is too much of hassle
+to keep in sync though, so I tend to stay out of Windows, especially since the
+other office components (email, calendar, etc), work great in linux even if
+the MS Office components are only 'ok'.
+
+Email
+-----
+
+Email is hub of everything for office work, which means that ideally you can
+interface with things like your calendar from **within** the email client.
+I've been using mutt as my client for some years now, and it actually works
+pretty well at this point...although in truth, it's not really mutt. Really,
+it's neomutt, with offlineimap, with notmuch, with msmpt, with ... well, you
+get the idea, it's modular. It had pgp/gpg set up at some point too, but no
+one in my professional or personal circle actually uses encryption or signing,
+so I've forgotten how that part was setup. Basically, offlineimap handles
+fetching and syncing mail to the imap servers, notmuch does email searching,
+and msmpt does email sending... with neomutt displaying emails, and vim
+editing them.
+
+With this setup, I can sync multiple email accounts to disk, and reply from
+them-- mutt is aware of it's current folder, and will send from the correct
+address depending on where you start composing or replying from. Threads are
+supported and collapsible, and there's an integrated address book that works
+pretty well is smart-ish (it imports names and email addresses on opening an
+email, so if you can't autocomplete an address, just use not-much to find an
+email from the person you're composing to). Notmuch works great, and is
+accessed by a capital 'S' to search everywhere (all fields, and the content of
+the messages), and you can forward pattern match with '/' and whatever you
+want to match. Html emails are reformatted without the pictures, and you can
+view all the parts of the message (attachments, the html version, or plain
+text); you can also select hyperlinks and open them from the client. Beyond
+the sending, receiving, querying parts of email, the most important part of
+mutt is the mailcap file, which tells mutt what to do with various file types.
+Remember above when I mentioned that I have a bash script in my ~/bin folder
+named 'word' that opens any word document as long as you give a relative path?
+Well, if there's a word document attached to an email file, the mailcap entry
+selects that command and launches word from within mutt-- so I can view word,
+powerpoint, and excel documents interactively from inside my text-based mail
+client. I can do the same thing with pdf documents, images, and google-earth
+kml/kmz files; for .cal/.ical files and calendar invites, I can both view the
+event, and add it to my calendar **from within** mutt. The setup works with
+all of the non-standard mail providers that everyone likes to use too; one
+account syncs with Gmail (which requires OATH authentication and an app
+password), and the other account is an MS Exchange server. For both accounts,
+I maintain an INBOX and an 'archive' folder; deleting email in the INBOX keeps
+me sane and lets me know if I've responded to things or completed a task, but
+the copy in archive means that I can search it later if I need any
+information.
+
+So why bother with a text based email client? Well, besides for all of the
+things I mentioned above (the mailcap functionality is stronger then the files
+I can preview and open in gmail if I'm using chrome), there's a couple of key
+features. First, as mentioned, it's less distracting. It's also faster, both
+for writing email, and, especially, for deleting email. For writing, since
+it's in vim, I can correct spelling errors (which are highlighted) using just
+the keyboard, instead of having to click per word...also, the spelling
+dictionary in vim is better, both at guessing what I want to spell, and for
+not thinking that "radiance" or other words are misspelled. For deleting mail,
+the default pager that lists messages with subject lines is pretty fast since
+it's keyboard navigated, and you can select a preview of any given message if
+you need more info before getting rid of it. You can also tag messages en mass
+for a specific sender or term, and then delete all tagged messages. The other
+thing that I like is that it's safe-- there's no 'dangerous' emails in mutt,
+since attachments aren't opened automatically (or at all for file types that
+don't have a mailcap entry), and you can view full headers just by hitting 'h'
+to see if the sender is legit. One of my favorite parts of this is that you
+can avoid a particularly creepy form of tracking that html emails often engage
+in, using 'unique' pixels. Here's how it works-- someone (a company, an ex),
+sends you an html email that looks like it's just plain text, but has a image
+that's a 1-pixel by 1-pixel clear image, hosted at a unique address. When you
+open the email, your email client will go to render the email, and download
+the pixel; which will get logged with the time and number of times that you
+view the message. Sometimes, your email client will ask you if you want to
+display images, partly to combat this...but sometimes it won't, especially if
+it's from someone in your address book or organization, or if you've loaded
+html from them before. I think it also might depend on how the image tag is
+labeled in the html tags...like icons might load by default, but image tags
+don't. Regardless, for mutt, this is a non-issue; html **text** displays just
+fine, but no externally linked content gets loaded, in part because the w3m or
+lynx viewers don't handle image data of any kind.
+
+There are some annoyances that require custom scripts to fix. The biggest is
+dealing with line breaks. Most text editors will wrap lines after 78 or 80
+characters; this is so you can use the 'up' arrow to navigate to the line
+above, instead of holding the 'left' arrow forever, or having to click to get
+the cursor where you want it. The text width of 78 characters is of course a
+hold over from ancient terminals, and is configurable; it doesn't really
+matter when you wrap lines, you just want to wrap at some point so that you
+can jump to a numbered line. The problem is when you send an email, you'd like
+for it to be reflowed, so that it looks nice on whoever's screen is reading
+it. There's even a 'reflowed' standard for this...that none of the major email
+clients seem to respect. Perhaps that's an exaggeration, but the point is that
+you don't want your email formatting to vary depending on the client that the
+receiver is using; you want it to look good regardless. For a long time, just
+using a text width of 78 characters actually worked pretty well-- it's
+narrower than almost all screens or windows for computers, so you end up with
+a slightly narrow but consistent block of text. The problem with 78 characters
+though is that when people look at a really narrow screen, like there phone,
+78 characters is wider than that screen, so there are double wrapped lines,
+that look like this:
+
+You can fix it by not reading email on your phone, or by turning your phone
+horizontal...but it's pretty annoying. Also, it isn't a problem that other
+email clients have when you're using something like gmail in the web browser.
+They solve that problem by just not having any line breaks at all, so that
+text is reflowed by screen width. Fixing that for neomutt and vim takes two
+bits of code-- first in .vimrc:
+
+Then in ~/bin, using this (modified from ___):
+
+The above scripts fix the text flow problem by post-processing your email
+message from multiple lines that are pleasant to navigate around, to 1
+contiguous line that matches what gmail and other clients send...while also
+ignoring special cases like quoted text blocks or previous responses that have
+already had line breaks added. This script is new for me, but so far seems to
+do what I want it to.
+
+Calendar
+--------
+
+Getting a calendar app working on linux was something that I expected to be
+simple, and turned out to be a total pain. There's surprisingly few options;
+there's lots of options for a calendar app, but far less for something that
+plays well with caldav files, and online hosted calendars that you can sync to
+your phone. This is especially true since google/gmail updated all of their
+apps to use OAUTH2 authentication. Currently, I'm using two different
+solutions: gcalcli, and minetime. They work pretty well, although my bar for
+this is probably low after my last solution which would copy any event I
+accepted from a different email (i.e., something sent to grigsby@mines.edu
+that was imported into shane.grigsby@gmail.com) and re-invite everyone else on
+the invitation to a new calendar event. So yeah, using gcalcli doesn't do
+that.
+
+As is apparent from name, gcalcli is a commandline interface to
+google-calendar. It can print your agenda in the terminal in a way that looks
+pretty, or for the week in a way that also looks pretty. It can import .cal
+and exchange invites and files without spamming people, which is great. The
+only thing that I don't use it for is creating calendar events, the rare place
+where having a GUI is actually faster. For that I use Minetime, which is
+multiplatform, supports subscribing and shared calendars, and has some basic
+NLP machine learning to let it parse text like "group meeting every friday at
+4pm" into a reoccurring event, or "Dinner @ Murphy's at 6pm" into a single
+event with location that my phone can open in maps. There's autocompletion
+suggestions for the business name when you type, which is a nice touch.
+
+Getting import and display support in mutt required a bit of extra scripting:
+
+
+Tying everything together
+-------------------------
+
+A lot of things are moving to the web, but there's also quite a bit of
+hybridization where there may be a link that prompts chrome to open an
+application, often with some set of start-up parameters. Zoom is the big thing
+I'm thinking of-- sometimes a zoom link will have the password encoded, or, in
+some really annoying cases, information that will only let you join by link
+and not within the application. When I was teaching for the 2020 ICESat-2
+Hackweek, this was the case. We had a *registered* zoom event, where there was
+a unique zoom link per participant; this meant that a zoomID and password that
+you could type into the application wouldn't work, since there was per user
+restrictions instead of a shared password and room. Being able to open that
+link assumed that google chrome knew how to call zoom, which in linux is done
+by something called xgd-settings... needless to say, there are times when this
+doesn't work how you want it to. Sometimes you have multiple versions of
+software...or even if you don't, you update something, and the old xdg path
+isn't valid anymore. In any case, for a modern office setup on linux in 2020,
+you ideally would like for your programs to be able to talk to each other...
+yes, if someone post a link in slack, you could copy it to your clipboard and
+open chrome yourself to paste it...but it would sure be nice if you could just
+click it. Same thing with zoom links, or just links in general. The best way
+to fix this that I've found is using xxxx, which will prompt you given a file
+what you want the default to be-- with suggestions, and custom options.
+
+The cool thing about this, and how it fits in to the rest of this post, is
+that since you're setting *system* defaults for *filetypes*, you can do things
+like configure word documents that you download or click on in chrome to call
+the wine shortcuts that I showed above...or to use gcalcli on .cal files that
+you open. Basically, you can think of xxxx as mailcap for the entire system.
+

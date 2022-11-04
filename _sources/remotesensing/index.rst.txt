@@ -16,4 +16,5 @@ thermal sensors.
     :hidden:   
     :maxdepth: 4
 	
+    HealpixCloudParquet.ipynb
     VIIRS_Cloud_Masking.ipynb

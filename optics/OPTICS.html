@@ -1,24 +1,47 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>Comparing OPTICS Implementations (2013) &#8212; Shane Grigsby</title>
-    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Linux Tricks" href="../linux/index.html" />
-    <link rel="prev" title="OPTICS Benchmark" href="Benchmarking.html" /> 
+    <link rel="search" title="Search" href="../search.html" />    
+<style type="text/css">
+  ul.ablog-archive {
+    list-style: none;
+    overflow: auto;
+    margin-left: 0px;
+  }
+  ul.ablog-archive li {
+    float: left;
+    margin-right: 5px;
+    font-size: 80%;
+  }
+  ul.postlist a {
+    font-style: italic;
+  }
+  ul.postlist-style-disc {
+    list-style-type: disc;
+  }
+  ul.postlist-style-none {
+    list-style-type: none;
+  }
+  ul.postlist-style-circle {
+    list-style-type: circle;
+  }
+</style>
+
   </head><body>
 <style type="text/css">
 /*<![CDATA[*/
@@ -42,10 +65,9 @@ background-color: #FFFFFF;
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
-            
-  <div class="section" id="comparing-optics-implementations-2013">
+             <section id="comparing-optics-implementations-2013">
 <h1>Comparing OPTICS Implementations (2013)<a class="headerlink" href="#comparing-optics-implementations-2013" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="background">
+<section id="background">
 <h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
 <p>The OPTICS algorithm is a density based segmentation algorithm
 that orders objects into a hierarchical ordering. It has a number of useful
@@ -58,8 +80,8 @@ that is essentially identical to DBSCAN.</p>
 points) by a variety of distance and density metrics. The handling of these
 pairwise distances are the primary bottleneck for both CPU and memory
 utilization.</p>
-</div>
-<div class="section" id="test-setup">
+</section>
+<section id="test-setup">
 <h2>Test Setup<a class="headerlink" href="#test-setup" title="Permalink to this headline">¶</a></h2>
 <p>The run time of OPTICS is heavily dependent on the underlying spatial
 structure of the dataset. Random generations of data
@@ -78,8 +100,8 @@ that the units in the code below are given in millimeters, hence an
 <em>MinPts</em> parameter is different close to scanner compared to further away;
 a value of 5 is used to match the furthest clusters (the radial scan was
 clipped to a radius of 5 meters to somewhat alleviate the variable density).</p>
-</div>
-<div class="section" id="balltree-optics">
+</section>
+<section id="balltree-optics">
 <h2>Balltree OPTICS<a class="headerlink" href="#balltree-optics" title="Permalink to this headline">¶</a></h2>
 <p>My implementation of OPTICS uses a balltree for neighborhood lookups, and
 runs in three steps. The first step constructs the modified balltree, which
@@ -101,8 +123,8 @@ extract the DBSCAN equivalent labels for a given epsilon.</p>
 <p>Summing the above gives a runtime of 831.588 seconds for the OPTICS
 ordering, with an additional 7.127 seconds for the extraction (total
 838.715 seconds with extraction).</p>
-</div>
-<div class="section" id="cdist-optics">
+</section>
+<section id="cdist-optics">
 <h2>cdist OPTICS<a class="headerlink" href="#cdist-optics" title="Permalink to this headline">¶</a></h2>
 <p>The cdist OPTICS implementation conforms more to the scikit-learn
 API, and can be run in a single step:</p>
@@ -110,8 +132,8 @@ API, and can be run in a single step:</p>
 <p>With a runtime of 56474.643 seconds, the cdist OPTICS runs more
 than 67 times slower then the balltree OPTICS implementation. Memory usage
 for cdist OPTICS is 150MB (balltree OPTICS stays at 250MB).</p>
-</div>
-<div class="section" id="implications">
+</section>
+<section id="implications">
 <h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h2>
 <p>The cdist implementation of OPTICS is basically invariant in runtime with
 respect to epsilon parameter value. Memory usage is O(n), but runtime is
@@ -132,8 +154,8 @@ exponentially as well).</p>
 <p>In summery, the order of magnitude difference in processing time is
 expected to widen with larger datasets, especially with datasets that are
 sparse.</p>
-</div>
-<div class="section" id="scikit-learn-thoughts">
+</section>
+<section id="scikit-learn-thoughts">
 <h2>Scikit-learn thoughts<a class="headerlink" href="#scikit-learn-thoughts" title="Permalink to this headline">¶</a></h2>
 <p>There is currently a gap in scikits learn for handling large unlabeled
 data sets, as pointed out by <a class="reference external" href="http://peekaboo-vision.blogspot.com/2013/01/machine-learning-cheat-sheet-for-scikit.html:">Andy.</a></p>
@@ -148,10 +170,14 @@ to take different distance metrics should simply be a matter of passing
 a construction flag.</p>
 <div class="toctree-wrapper compound">
 </div>
-</div>
+</section>
+</section>
+
+<div class="section">
+   
 </div>
 
-
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -168,33 +194,22 @@ a construction flag.</p>
 
         </div>
         <div class="sidebar">
+          
     
           <h3>Table of Contents</h3>
-          <ul class="current">
+          <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">OPTICS Algorithm</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="Benchmarking.html">OPTICS Benchmark</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Comparing OPTICS Implementations (2013)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#test-setup">Test Setup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#balltree-optics">Balltree OPTICS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cdist-optics">cdist OPTICS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#implications">Implications</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scikit-learn-thoughts">Scikit-learn thoughts</a><ul class="simple">
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../remotesensing/index.html">Remote sensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 </ul>
 
-<strong>Last Updated: Mar 16, 2020</strong>
+<strong>Last Updated: Nov 04, 2022</strong>
 <h3><a href="../_sources/optics/OPTICS.rst.txt"
         rel="nofollow">Show Source</a></h3>
     
+
 
         </div>
         <div class="clearer"></div>

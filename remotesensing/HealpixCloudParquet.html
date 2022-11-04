@@ -1,0 +1,1287 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Complex ICESat-2 Queries in the cloud &#8212; Shane Grigsby</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Cloud Masking in python using VIIRS" href="VIIRS_Cloud_Masking.html" />
+    <link rel="prev" title="Remote sensing" href="index.html" />    
+<style type="text/css">
+  ul.ablog-archive {
+    list-style: none;
+    overflow: auto;
+    margin-left: 0px;
+  }
+  ul.ablog-archive li {
+    float: left;
+    margin-right: 5px;
+    font-size: 80%;
+  }
+  ul.postlist a {
+    font-style: italic;
+  }
+  ul.postlist-style-disc {
+    list-style-type: disc;
+  }
+  ul.postlist-style-none {
+    list-style-type: none;
+  }
+  ul.postlist-style-circle {
+    list-style-type: circle;
+  }
+</style>
+
+  </head><body>
+<style type="text/css">
+/*<![CDATA[*/
+body {
+background-color: #FFFFFF; 
+}
+/*]]>*/
+</style>
+<body id="index">
+<div class="wrapper">
+<div class="clearfix"></div>
+    <div id="header">
+        <!--<img src="graphics/title.png" alt="title_goes_here"/> -->
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+             
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Complex-ICESat-2-Queries-in-the-cloud">
+<h1>Complex ICESat-2 Queries in the cloud<a class="headerlink" href="#Complex-ICESat-2-Queries-in-the-cloud" title="Permalink to this headline">¶</a></h1>
+<p>Although the data referenced in here is stored as columnar parquet files, there is a <a class="reference external" href="https://ui.adsabs.harvard.edu/link_gateway/2007MNRAS.381..865C/doi:10.1111/j.1365-2966.2007.12297.x">compatible raster rotation of the tessalation</a> that keeps the same indexing and nesting structure. Tiling 2 and 3 dimensional arrays at defined chunk intervals may be an elegent way for data fusion across gridded and non-gridded large environmental data sets.</p>
+<section id="Reproducing-this-notebook">
+<h2>Reproducing this notebook<a class="headerlink" href="#Reproducing-this-notebook" title="Permalink to this headline">¶</a></h2>
+<p>The data in this notebook lives in the cloud, and is ‘free’ to access, in that it does not require payment to me. But it does require an AWS account, and amazon will charge you for compute. The data transfer cost will likely not be noticeable if you are in the US East region where we are hosting it… but might be pricey if you cross regions or try and export it at volume outside of the cloud.</p>
+<p>I use an instance with 256GB of ram to run this notebook; the first data pull is ‘small’ at ~20GB in memory. The second pull is over 100GB of memory, and will crash the kernel and dask if you are on too small of a machine. Everything here is under development, but particularly the indexing scheme, which has already changed. The most recent version of <a class="reference external" href="https://doi.org/10.1016/j.heliyon.2017.e00332">healpix morton indexing</a> is at the <a class="reference external" href="https://github.com/espg/mortie">mortie library</a>… but it
+produces breaking changes will not work with the data reference in this notebook (i.e., the data already stored in S3), which is why the old functions are replicated instead of imported.</p>
+<p>One obvious way to run this as a smaller notebook would be to modify to only grab a single orbital period; as written, this grabs a two year time series for each of the basins.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">vaex</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">r_</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">mhealpy</span> <span class="k">as</span> <span class="nn">mh</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span> <span class="n">vectorize</span>
+
+<span class="kn">from</span> <span class="nn">dask_gateway</span> <span class="kn">import</span> <span class="n">Gateway</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gateway</span> <span class="o">=</span> <span class="n">Gateway</span><span class="p">()</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">gateway</span><span class="o">.</span><span class="n">cluster_options</span><span class="p">()</span>
+<span class="n">options</span><span class="o">.</span><span class="n">worker_specification</span> <span class="o">=</span> <span class="s1">&#39;4CPU, 16GB&#39;</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">gateway</span><span class="o">.</span><span class="n">new_cluster</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">set_as_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">client</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;"> </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px;">Client</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">Client-00e1c11b-5982-11ed-957e-02fed3e5ba98</p>
+        <table style="width: 100%; text-align: left;">
+
+        <tr>
+
+            <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
+            <td style="text-align: left;"><strong>Cluster type:</strong> dask_gateway.GatewayCluster</td>
+
+        </tr>
+
+
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard: </strong> <a href="/services/dask-gateway/clusters/prod.1115cf8cd0e9418283b3a6207e42bb95/status" target="_blank">/services/dask-gateway/clusters/prod.1115cf8cd0e9418283b3a6207e42bb95/status</a>
+                </td>
+                <td style="text-align: left;"></td>
+            </tr>
+
+
+        </table>
+
+
+            <details>
+            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
+            <div style='background-color: #f2f2f2; display: inline-block; padding: 10px; border: 1px solid #999999;'>
+  <h3>GatewayCluster</h3>
+  <ul>
+    <li><b>Name: </b>prod.1115cf8cd0e9418283b3a6207e42bb95
+    <li><b>Dashboard: </b><a href='/services/dask-gateway/clusters/prod.1115cf8cd0e9418283b3a6207e42bb95/status' target='_blank'>/services/dask-gateway/clusters/prod.1115cf8cd0e9418283b3a6207e42bb95/status</a>
+  </ul>
+</div>
+
+            </details>
+
+
+    </div>
+</div></div>
+</div>
+</section>
+<section id="Tiling">
+<h2>Tiling<a class="headerlink" href="#Tiling" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://mhealpy.readthedocs.io/">mhealpy</a> library is an superset of the <a class="reference external" href="https://healpy.readthedocs.io/">healpy</a> library that adds support for multiresolution healpix maps. The astronomy community uses a different indexing scheme then the ‘morton’ ordering used in this notebook. There’s actually three different schemes that are provided for: <code class="docutils literal notranslate"><span class="pre">ring</span></code>, <code class="docutils literal notranslate"><span class="pre">nested</span></code> and <code class="docutils literal notranslate"><span class="pre">uniq</span></code>, with the first two being fixed resolution, and the last being multiresolution.</p>
+<p>There are facilities for converting between to representations, and certain index methods are optimized for different types of plotting methods. We use the optimized healpix code, and then convert from nested format to morton indexing.</p>
+<p>A few things to note here–</p>
+<ol class="arabic simple">
+<li><p>The data has already been tiled and uploaded; what is being shown is traversing the morton/healpix embedding space tree to retrieve that data. How to write the data shards is a post for another day.</p></li>
+<li><p>All of the functions in the next cell are out of date; the mortie library has an updated number scheme that fixes several bugs, and marks southern hemisphere data as negative integers. However, the S3 shards were uploading using this previous scheme, so we’re using old functions to index to that data structure.</p></li>
+<li><p>The shard and chunk sizes add 2 levels to the tree. An updated data upload would add an addition tree level for the S3 partitions. The reason will be apparent later on; we’re downloading quite a lot of data for fine scale queries. This would be an even more pronounced issue if this was ATL03 data.</p></li>
+</ol>
+<p>In other words, the next update to this will break the numbering scheme here, change tree depth, and be more amenable to ATL03 data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># These are old and outdated</span>
+<span class="k">def</span> <span class="nf">unique2parent</span><span class="p">(</span><span class="n">unique</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Assumes input is UNIQ</span>
+<span class="sd">    Currently only works on single resolution</span>
+<span class="sd">    Returns parent base cell</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nside</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">uniq2nside</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nside</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">nside</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="n">unique</span> <span class="o">//</span> <span class="mi">4</span><span class="o">**</span><span class="p">(</span><span class="n">order</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">unique</span> <span class="o">-</span> <span class="mi">16</span><span class="p">)</span> <span class="o">//</span> <span class="mi">4</span>
+    <span class="k">return</span> <span class="n">parent</span>
+
+<span class="k">def</span> <span class="nf">heal_norm</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">addr_nest</span><span class="p">):</span>
+    <span class="n">N_pix</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">order2nside</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">addr_norm</span> <span class="o">=</span> <span class="n">addr_nest</span> <span class="o">-</span> <span class="p">(</span><span class="n">base</span> <span class="o">*</span> <span class="n">N_pix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">addr_norm</span>
+
+<span class="nd">@vectorize</span><span class="p">([</span><span class="n">int64</span><span class="p">(</span><span class="n">int64</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span> <span class="n">int64</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">fastNorm2Mort</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">normed</span><span class="p">,</span> <span class="n">parents</span><span class="p">):</span>
+    <span class="c1"># General version, for arbitary order</span>
+    <span class="k">if</span> <span class="n">order</span> <span class="o">&gt;</span> <span class="mi">18</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Max order is 18 (to output to 64-bit int).&quot;</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="o">**</span><span class="p">(</span><span class="n">order</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">nextBit</span> <span class="o">=</span> <span class="p">(</span><span class="n">normed</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">+=</span> <span class="p">(</span><span class="n">nextBit</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">parents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">parents</span><span class="o">-</span> <span class="mi">6</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">parents</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">+</span> <span class="n">parents</span>
+    <span class="k">return</span> <span class="n">num</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read in drainage basin polylines</span>
+<span class="c1"># Source: http://icesat4.gsfc.nasa.gov/cryo_data/drainage_divides/Ant_Grounded_DrainageSystem_Polygons.txt</span>
+<span class="n">basins</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./Ant_Grounded_DrainageSystem_Polygons.txt&#39;</span><span class="p">,</span>
+                     <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Lat&#39;</span><span class="p">,</span> <span class="s1">&#39;Lon&#39;</span><span class="p">,</span> <span class="s1">&#39;basin&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">basins</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Lat</th>
+      <th>Lon</th>
+      <th>basin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>-74.525273</td>
+      <td>-61.122545</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-74.525435</td>
+      <td>-61.123664</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-74.525467</td>
+      <td>-61.123826</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-74.525576</td>
+      <td>-61.124567</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>-74.525609</td>
+      <td>-61.124498</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1238996</th>
+      <td>-74.523392</td>
+      <td>-61.109736</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <th>1238997</th>
+      <td>-74.523938</td>
+      <td>-61.113444</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <th>1238998</th>
+      <td>-74.524484</td>
+      <td>-61.117151</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <th>1238999</th>
+      <td>-74.525030</td>
+      <td>-61.120859</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <th>1239000</th>
+      <td>-74.525273</td>
+      <td>-61.122545</td>
+      <td>27</td>
+    </tr>
+  </tbody>
+</table>
+<p>1239001 rows × 3 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Querying-Data">
+<h2>Querying Data<a class="headerlink" href="#Querying-Data" title="Permalink to this headline">¶</a></h2>
+<p><img alt="basins" class="no-scaled-link" src="https://earth.gsfc.nasa.gov/sites/default/files/lab_cryo/data/polar_ice_altimetry/antarctic_and_greenland_drainage_systems/ant_icesatdsmaps_fig_1.jpg" style="width: 600px;" /></p>
+<p>Healpix spatial queries occur seperate from the data; all that we need to do is define the grid cell resolution:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">order2res</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">111</span><span class="o">*</span> <span class="mf">58.6323</span><span class="o">*</span><span class="mf">.5</span><span class="o">**</span><span class="n">order</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+<span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">order2res</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">+</span> <span class="s1">&#39; km at tesselation order &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+6508.1853 km at tesselation order 0
+3254.09265 km at tesselation order 1
+1627.046325 km at tesselation order 2
+813.5231625 km at tesselation order 3
+406.76158125 km at tesselation order 4
+203.380790625 km at tesselation order 5
+101.6903953125 km at tesselation order 6
+50.84519765625 km at tesselation order 7
+25.422598828125 km at tesselation order 8
+12.7112994140625 km at tesselation order 9
+6.35564970703125 km at tesselation order 10
+3.177824853515625 km at tesselation order 11
+1.5889124267578125 km at tesselation order 12
+0.7944562133789063 km at tesselation order 13
+0.39722810668945313 km at tesselation order 14
+0.19861405334472657 km at tesselation order 15
+0.09930702667236328 km at tesselation order 16
+0.04965351333618164 km at tesselation order 17
+0.02482675666809082 km at tesselation order 18
+0.01241337833404541 km at tesselation order 19
+</pre></div></div>
+</div>
+<p>Requesting an ‘order’ of 11 will select grid cells that roughly 3km per side. However, the healpix query only guarantees that the observation is <em>somewhere</em> in that cell; we don’t know if it is at the edge, or at center. Going up one order of resolution doesn’t solve this problem for us– if we want to execute a ‘buffer’, we need to calculate a neighborhood function. Fortunately, the base healpix library provides functions to do this, and we can cast the results to the morton numbering scheme.
+The neighborhood function will return all of the cells touching cell that the observation is present in, so calling it at order 11 will return a 9km area about the observation location, with a guarantee of at least 3km of buffer in every direction. This is quite fast:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Set order</span>
+<span class="n">order</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="c1"># Subset basin 2</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">basins</span><span class="p">[</span><span class="n">basins</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="c1"># Get all nieghbors</span>
+<span class="n">B2_11</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">pixelfunc</span><span class="o">.</span><span class="n">get_all_neighbours</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="p">,</span> <span class="n">b2</span><span class="o">.</span><span class="n">Lon</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                           <span class="n">b2</span><span class="o">.</span><span class="n">Lat</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Drop repeats</span>
+<span class="n">Basin2_11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">B2_11</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 24.6 ms, sys: 0 ns, total: 24.6 ms
+Wall time: 20.6 ms
+</pre></div></div>
+</div>
+<p>Again, with healpix the <em>query</em> is separate from the data, and we can visualize what our cells will look like, even if we don’t know <em>a priori</em> if those cells actually have anything inside them:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nside</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">11</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">nside2npix</span><span class="p">(</span><span class="n">nside</span><span class="p">))</span>
+<span class="n">m</span><span class="p">[</span><span class="n">Basin2_11</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_12_0.png" src="../_images/remotesensing_HealpixCloudParquet_12_0.png" />
+</div>
+</div>
+<p>That’s our 3km buffer for basin 2.</p>
+<p>Our parquet data is sharded and stored at a different resolution; we can down-sample our result to figure out the S3 paths that we need to download to get the data:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Convert to Morton indexing</span>
+<span class="n">order</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="n">uniq</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">nest2uniq</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="p">,</span> <span class="n">Basin2_11</span><span class="p">)</span>
+<span class="n">parents</span> <span class="o">=</span> <span class="n">unique2parent</span><span class="p">(</span><span class="n">uniq</span><span class="p">)</span>
+<span class="n">normed</span> <span class="o">=</span> <span class="n">heal_norm</span><span class="p">(</span><span class="n">parents</span><span class="p">,</span><span class="n">order</span><span class="p">,</span> <span class="n">uniq</span><span class="p">)</span>
+<span class="c1"># Get &#39;full&#39; resolution</span>
+<span class="n">mortonsB2_11</span> <span class="o">=</span> <span class="n">fastNorm2Mort</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">normed</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">parents</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="c1"># Degrade to shard resolution</span>
+<span class="n">Basin2_6</span> <span class="o">=</span> <span class="n">mortonsB2_11</span> <span class="o">//</span> <span class="mi">10</span><span class="o">**</span><span class="mi">5</span>
+<span class="n">Basin2_6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Basin2_6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 2.28 ms, sys: 0 ns, total: 2.28 ms
+Wall time: 1.86 ms
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">mortonsB2_11</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">Basin2_6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(6106, 64)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Approximate view of data in S3</span>
+<span class="n">nside</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">6</span>
+<span class="n">b2idx</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="n">nside</span><span class="p">,</span><span class="n">b2</span><span class="o">.</span><span class="n">Lon</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">b2</span><span class="o">.</span><span class="n">Lat</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">nside2npix</span><span class="p">(</span><span class="n">nside</span><span class="p">))</span>
+<span class="n">m</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">b2idx</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="c1"># Centered on the south pole</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span><span class="c1"># , nest=True)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">b2idx</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+60
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_16_1.png" src="../_images/remotesensing_HealpixCloudParquet_16_1.png" />
+</div>
+</div>
+<p>We can see that the basin outline for 3km resolution is split over 6,106 ‘cells’, but those cells are in turn split over 64 parquet files– at most, the pole hole actually results in some empty shards.</p>
+<p>You might notice a discrepancy above– there’s 64 parquet files, but the plot above only shows 60 shards plotted. That’s because when we degraded to the shard resolution, we did it off the 3km buffer, which crossed over to a few adjacent cells… 4 of which pushed to adjacent shards. By doing the buffer at the higher resolution we don’t miss any potential points, but also don’t over subscribe to unneeded shards if we did the buffer at the lower resolution.</p>
+<p>We can build the file list in a loop, and get the data in parallel on distributed workers:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;5&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">,</span><span class="s1">&#39;11&#39;</span><span class="p">]</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;s3://geostacks/icesat_2/shards=&#39;</span>
+<span class="n">mid</span> <span class="o">=</span> <span class="s1">&#39;/cycle=&#39;</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;/atl06.parquet&#39;</span>
+
+<span class="n">filelist</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Basin2_6</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span>
+        <span class="n">s3path</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">mid</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s3path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 64 shards repeated for years / 8 cycles</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">filelist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+512
+</pre></div></div>
+</div>
+<p>We could request all the data be returned using this:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_thing_full</span><span class="p">(</span><span class="n">s3file</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">vaex</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">s3file</span><span class="p">)</span><span class="o">.</span><span class="n">to_arrow_table</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>…but we’ll go one step further and do the subsetting on the workers as well:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_thing</span><span class="p">(</span><span class="n">s3file</span><span class="p">,</span> <span class="n">cells</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">vaex</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">s3file</span><span class="p">)</span>
+    <span class="c1"># Get to our query resolution</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;midx11&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">midx</span> <span class="o">//</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;basin2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">midx11</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">basin2</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_arrow_table</span><span class="p">(</span><span class="n">selection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmp</span>
+</pre></div>
+</div>
+</div>
+<p>The next cell will fail if the cluster workers aren’t spun up yet, so it’s good practice to check if they’re online… and to resubmit the scale call if not. The failure is related to the semantics of <code class="docutils literal notranslate"><span class="pre">scatter</span></code>, which expects to distribute the data to workers at execution time. This is different than <code class="docutils literal notranslate"><span class="pre">client.submit</span></code>, which will be more than happy to submit jobs to non-existent workers; the jobs will just queue until workers come online without error. For the latter case, sometimes this will
+actually speed up worker allocation, as ad hoc workers tend to activate faster when they <strong>know</strong> there is work for them!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mortonsB2_11</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<strong>Future: ndarray</strong>
+<span style="color: var(--jp-ui-font-color2, gray)"> status: </span>
+
+
+<span style="color: var(--jp-error-color0, black)">finished</span>,
+
+
+
+<span style="color: var(--jp-ui-font-color2, gray)"> type:</span> numpy.ndarray,
+
+
+<span style="color: var(--jp-ui-font-color2, gray)"> key:</span> ndarray-56609e93e968cc406bde452fcdc64f7d</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+    <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">get_thing</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">mortonsB2_11</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ~22GB return</span>
+<span class="n">quiver</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">futures</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;skip&#39;</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">big_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">arrow</span> <span class="ow">in</span> <span class="n">quiver</span><span class="p">:</span>
+    <span class="n">big_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vaex</span><span class="o">.</span><span class="n">from_arrow_table</span><span class="p">(</span><span class="n">arrow</span><span class="p">))</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">vaex</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">big_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table>
+<thead>
+<tr><th>#                                      </th><th>id     </th><th>lat               </th><th>lon                </th><th>slope_y               </th><th>slope_x               </th><th>slope_x_sigma         </th><th>h_li             </th><th>s_li                </th><th>q_flag  </th><th>s_fg  </th><th>snr  </th><th>h_rb               </th><th>bsnow_conf  </th><th>cloud_flg_asr  </th><th>cloud_flg_atm  </th><th>msw_flag  </th><th>fbsnow_h          </th><th>bsnow_od            </th><th>layer_flag  </th><th>bckgrd         </th><th>e_bckgrd  </th><th>n_fit_photons  </th><th>w_surface_window_final  </th><th>t_year                    </th><th>track  </th><th>x                 </th><th>y                 </th><th>midx               </th><th>shards  </th><th>cycle  </th><th>midx11      </th><th>basin2  </th></tr>
+</thead>
+<tbody>
+<tr><td><i style='opacity: 0.6'>0</i>          </td><td>1523093</td><td>-86.14954851360491</td><td>33.92593579210944  </td><td>-0.0395953431725502   </td><td>0.00046188640408217907</td><td>0.0006559690809808671 </td><td>2939.65185546875 </td><td>0.012169521301984787</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16256438195705414</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>56.94702911376953 </td><td>0.07961465418338776 </td><td>1           </td><td>23297.232421875</td><td>0.0       </td><td>482            </td><td>3.0                     </td><td>2019-07-10 02:32:02.307540</td><td>gt1l   </td><td>232881.35931420964</td><td>346225.37644100154</td><td>2111134242242111122</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>1</i>          </td><td>1523094</td><td>-86.14939581927959</td><td>33.92457007097016  </td><td>-0.06023023650050163  </td><td>-0.006562550086528063 </td><td>0.0006581993075087667 </td><td>2939.58447265625 </td><td>0.01336896326392889 </td><td>0       </td><td>0     </td><td>0.0  </td><td>0.1646553874015808 </td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>59.05659103393555 </td><td>0.08079415559768677 </td><td>1           </td><td>25988.84375    </td><td>0.0       </td><td>465            </td><td>3.0                     </td><td>2019-07-10 02:32:02.310355</td><td>gt1l   </td><td>232882.34804547214</td><td>346244.66751049814</td><td>2111134242242111124</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>2</i>          </td><td>1523095</td><td>-86.14924304204673</td><td>33.92320645695685  </td><td>-0.06262587010860443  </td><td>-0.003759956220164895 </td><td>0.0007193252677097917 </td><td>2939.484375      </td><td>0.013828647322952747</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.18167147040367126</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>58.752349853515625</td><td>0.08070683479309082 </td><td>1           </td><td>27742.94921875 </td><td>0.0       </td><td>461            </td><td>3.0                     </td><td>2019-07-10 02:32:02.313168</td><td>gt1l   </td><td>232883.35374213205</td><td>346263.95772095054</td><td>2111134242242111142</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>3</i>          </td><td>1523096</td><td>-86.14909011053149</td><td>33.92184672722354  </td><td>-0.025539278984069824 </td><td>0.008118819445371628  </td><td>0.0006527432706207037 </td><td>2939.517578125   </td><td>0.012108918279409409</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16191399097442627</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>56.649208068847656</td><td>0.07967527210712433 </td><td>1           </td><td>28792.603515625</td><td>0.0       </td><td>475            </td><td>3.0                     </td><td>2019-07-10 02:32:02.315974</td><td>gt1l   </td><td>232884.39146603562</td><td>346283.2462720065 </td><td>2111134242242111142</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>4</i>          </td><td>1523097</td><td>-86.14893700260534</td><td>33.92049143181697  </td><td>-0.03492480516433716  </td><td>0.011287172324955463  </td><td>0.0006484501645900309 </td><td>2939.72021484375 </td><td>0.012137381359934807</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16041499376296997</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>54.551910400390625</td><td>0.07864658534526825 </td><td>1           </td><td>24003.869140625</td><td>0.0       </td><td>487            </td><td>3.0                     </td><td>2019-07-10 02:32:02.318772</td><td>gt1l   </td><td>232885.46588380224</td><td>346302.53291968664</td><td>2111134242242111144</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td>...                                    </td><td>...    </td><td>...               </td><td>...                </td><td>...                   </td><td>...                   </td><td>...                   </td><td>...              </td><td>...                 </td><td>...     </td><td>...   </td><td>...  </td><td>...                </td><td>...         </td><td>...            </td><td>...            </td><td>...       </td><td>...               </td><td>...                 </td><td>...         </td><td>...            </td><td>...       </td><td>...            </td><td>...                     </td><td>...                       </td><td>...    </td><td>...               </td><td>...               </td><td>...                </td><td>...     </td><td>...    </td><td>...         </td><td>...     </td></tr>
+<tr><td><i style='opacity: 0.6'>116,343,239</i></td><td>1549043</td><td>-81.82003381242077</td><td>-49.04448300989648 </td><td>4.835084837395698e-05 </td><td>0.0017873976612463593 </td><td>0.0004322136810515076 </td><td>88.74310302734375</td><td>0.007835650816559792</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.10365600883960724</td><td>-1          </td><td>2              </td><td>1              </td><td>1         </td><td>29.979246139526367</td><td>0.028110453858971596</td><td>1           </td><td>148184.5625    </td><td>0.0       </td><td>424            </td><td>3.0                     </td><td>2021-06-11 21:24:54.182550</td><td>gt3r   </td><td>-670302.7729052545</td><td>581772.2705912268 </td><td>5111432111414434313</td><td>5111432 </td><td>11     </td><td>511143211141</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>116,343,240</i></td><td>1549044</td><td>-81.81986157860989</td><td>-49.04480402632936 </td><td>0.0001920364156831056 </td><td>-0.0016964105889201164</td><td>0.000489795405883342  </td><td>88.74688720703125</td><td>0.007848388515412807</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.11242944747209549</td><td>-1          </td><td>2              </td><td>1              </td><td>1         </td><td>29.979246139526367</td><td>0.027972066774964333</td><td>1           </td><td>146144.84375   </td><td>0.0       </td><td>426            </td><td>3.0                     </td><td>2021-06-11 21:24:54.185357</td><td>gt3r   </td><td>-670320.1922462292</td><td>581780.8045149728 </td><td>5111432111414434314</td><td>5111432 </td><td>11     </td><td>511143211141</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>116,343,241</i></td><td>1549045</td><td>-81.81968929358989</td><td>-49.04512368181247 </td><td>0.0005683625931851566 </td><td>0.0004018144973088056 </td><td>0.0005003189435228705 </td><td>88.71788024902344</td><td>0.009416015818715096</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.11978613585233688</td><td>-1          </td><td>2              </td><td>1              </td><td>1         </td><td>29.979246139526367</td><td>0.027833567932248116</td><td>1           </td><td>131252.15625   </td><td>0.0       </td><td>426            </td><td>3.0                     </td><td>2021-06-11 21:24:54.188167</td><td>gt3r   </td><td>-670337.6020975797</td><td>581789.3578408199 </td><td>5111432111414434332</td><td>5111432 </td><td>11     </td><td>511143211141</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>116,343,242</i></td><td>1549046</td><td>-81.81951694599303</td><td>-49.04544167739985 </td><td>0.0005571695510298014 </td><td>0.001968930708244443  </td><td>0.00044805006473325193</td><td>88.7217788696289 </td><td>0.007712152320891619</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.10411503911018372</td><td>-1          </td><td>2              </td><td>1              </td><td>1         </td><td>29.979246139526367</td><td>0.027694901451468468</td><td>1           </td><td>128720.234375  </td><td>0.0       </td><td>439            </td><td>3.0                     </td><td>2021-06-11 21:24:54.190980</td><td>gt3r   </td><td>-670355.0003577591</td><td>581797.9348786987 </td><td>5111432111414434334</td><td>5111432 </td><td>11     </td><td>511143211141</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>116,343,243</i></td><td>1549047</td><td>-81.81934457364784</td><td>-49.045759009733075</td><td>-7.287902553798631e-05</td><td>-0.0009209429263137281</td><td>0.00045299253542907536</td><td>88.7392578125    </td><td>0.00943058729171753 </td><td>0       </td><td>0     </td><td>0.0  </td><td>0.11246149241924286</td><td>-1          </td><td>2              </td><td>1              </td><td>1         </td><td>29.979246139526367</td><td>0.02755611203610897 </td><td>1           </td><td>135125.71875   </td><td>0.0       </td><td>458            </td><td>3.0                     </td><td>2021-06-11 21:24:54.193796</td><td>gt3r   </td><td>-670372.3940364019</td><td>581806.5212699741 </td><td>5111432111414434334</td><td>5111432 </td><td>11     </td><td>511143211141</td><td>True    </td></tr>
+</tbody>
+</table></div>
+</div>
+<p>We can also do the same for <strong>all</strong> of the basins, and do a 3km buffer for the entire continent:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Set order</span>
+<span class="n">order</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="c1"># Get all neighbors</span>
+<span class="n">B11</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">pixelfunc</span><span class="o">.</span><span class="n">get_all_neighbours</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="p">,</span> <span class="n">basins</span><span class="o">.</span><span class="n">Lon</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                           <span class="n">basins</span><span class="o">.</span><span class="n">Lat</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Drop repeats</span>
+<span class="n">B_11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">B11</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+
+<span class="n">uniq</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">nest2uniq</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="p">,</span> <span class="n">B_11</span><span class="p">)</span>
+<span class="n">parents</span> <span class="o">=</span> <span class="n">unique2parent</span><span class="p">(</span><span class="n">uniq</span><span class="p">)</span>
+<span class="n">normed</span> <span class="o">=</span> <span class="n">heal_norm</span><span class="p">(</span><span class="n">parents</span><span class="p">,</span><span class="n">order</span><span class="p">,</span> <span class="n">uniq</span><span class="p">)</span>
+<span class="c1"># Get &#39;full&#39; resolution</span>
+<span class="n">mortons11</span> <span class="o">=</span> <span class="n">fastNorm2Mort</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">normed</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">parents</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="c1"># Degrade to shard resolution</span>
+<span class="n">Basin11</span> <span class="o">=</span> <span class="n">mortons11</span> <span class="o">//</span> <span class="mi">10</span><span class="o">**</span><span class="mi">5</span>
+<span class="n">Basin11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Basin11</span><span class="p">)</span>
+
+<span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;5&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">,</span><span class="s1">&#39;11&#39;</span><span class="p">]</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;s3://geostacks/icesat_2/shards=&#39;</span>
+<span class="n">mid</span> <span class="o">=</span> <span class="s1">&#39;/cycle=&#39;</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;/atl06.parquet&#39;</span>
+
+<span class="n">filelist</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Basin11</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span>
+        <span class="n">s3path</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">mid</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s3path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 353 ms, sys: 29.4 ms, total: 382 ms
+Wall time: 381 ms
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">filelist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+5432
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mortons11</span><span class="p">,</span> <span class="n">broadcast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<strong>Future: ndarray</strong>
+<span style="color: var(--jp-ui-font-color2, gray)"> status: </span>
+
+
+<span style="color: var(--jp-error-color0, black)">finished</span>,
+
+
+
+<span style="color: var(--jp-ui-font-color2, gray)"> type:</span> numpy.ndarray,
+
+
+<span style="color: var(--jp-ui-font-color2, gray)"> key:</span> ndarray-45290d95a6ffdfd8d6e31725309b1ea1</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">get_thing</span><span class="p">,</span> <span class="n">thing</span><span class="p">,</span> <span class="n">mortons11</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="c1"># extra logic for bigger dataset-- start download to host pre-emptively</span>
+<span class="n">lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">big_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">quiver</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">futures</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;skip&#39;</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
+        <span class="n">future</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">arrow</span> <span class="ow">in</span> <span class="n">quiver</span><span class="p">:</span>
+        <span class="n">big_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vaex</span><span class="o">.</span><span class="n">from_arrow_table</span><span class="p">(</span><span class="n">arrow</span><span class="p">))</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e348f9974c954c908f602b0c2a05c522", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 2min 59s, sys: 1min 2s, total: 4min 2s
+Wall time: 24min 8s
+</pre></div></div>
+</div>
+<p>Slightly different logic for the larger run– we’re chunking the download into 10 partitions, and asynchronously transferring the data back as it completes. This does three things:</p>
+<ol class="arabic simple">
+<li><p>Avoids brittle behavior in dask, which likes to crash when you start to exceed a dozen or so data GB to transfer in one go</p></li>
+<li><p>Speeds up the computation by allowing us to send results back parallel to additional computation occurring</p></li>
+<li><p>Clears the results off of the workers, which frees memory– this allows us to save money by sizing smaller workers</p></li>
+</ol>
+<p>Note that not only is the download from S3 data stores occurring in parallel, but also the filtering of the subsets is also occurring on the worker for more efficient horizontal scaling.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">vaex</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">big_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table>
+<thead>
+<tr><th>#                                      </th><th>id     </th><th>lat               </th><th>lon               </th><th>slope_y               </th><th>slope_x               </th><th>slope_x_sigma        </th><th>h_li             </th><th>s_li                </th><th>q_flag  </th><th>s_fg  </th><th>snr  </th><th>h_rb               </th><th>bsnow_conf  </th><th>cloud_flg_asr  </th><th>cloud_flg_atm  </th><th>msw_flag  </th><th>fbsnow_h          </th><th>bsnow_od           </th><th>layer_flag  </th><th>bckgrd         </th><th>e_bckgrd  </th><th>n_fit_photons  </th><th>w_surface_window_final  </th><th>t_year                    </th><th>track  </th><th>x                  </th><th>y                 </th><th>midx               </th><th>shards  </th><th>cycle  </th><th>midx11      </th><th>basin2  </th></tr>
+</thead>
+<tbody>
+<tr><td><i style='opacity: 0.6'>0</i>          </td><td>1523093</td><td>-86.14954851360491</td><td>33.92593579210944 </td><td>-0.0395953431725502   </td><td>0.00046188640408217907</td><td>0.0006559690809808671</td><td>2939.65185546875 </td><td>0.012169521301984787</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16256438195705414</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>56.94702911376953 </td><td>0.07961465418338776</td><td>1           </td><td>23297.232421875</td><td>0.0       </td><td>482            </td><td>3.0                     </td><td>2019-07-10 02:32:02.307540</td><td>gt1l   </td><td>232881.35931420964 </td><td>346225.37644100154</td><td>2111134242242111122</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>1</i>          </td><td>1523094</td><td>-86.14939581927959</td><td>33.92457007097016 </td><td>-0.06023023650050163  </td><td>-0.006562550086528063 </td><td>0.0006581993075087667</td><td>2939.58447265625 </td><td>0.01336896326392889 </td><td>0       </td><td>0     </td><td>0.0  </td><td>0.1646553874015808 </td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>59.05659103393555 </td><td>0.08079415559768677</td><td>1           </td><td>25988.84375    </td><td>0.0       </td><td>465            </td><td>3.0                     </td><td>2019-07-10 02:32:02.310355</td><td>gt1l   </td><td>232882.34804547214 </td><td>346244.66751049814</td><td>2111134242242111124</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>2</i>          </td><td>1523095</td><td>-86.14924304204673</td><td>33.92320645695685 </td><td>-0.06262587010860443  </td><td>-0.003759956220164895 </td><td>0.0007193252677097917</td><td>2939.484375      </td><td>0.013828647322952747</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.18167147040367126</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>58.752349853515625</td><td>0.08070683479309082</td><td>1           </td><td>27742.94921875 </td><td>0.0       </td><td>461            </td><td>3.0                     </td><td>2019-07-10 02:32:02.313168</td><td>gt1l   </td><td>232883.35374213205 </td><td>346263.95772095054</td><td>2111134242242111142</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>3</i>          </td><td>1523096</td><td>-86.14909011053149</td><td>33.92184672722354 </td><td>-0.025539278984069824 </td><td>0.008118819445371628  </td><td>0.0006527432706207037</td><td>2939.517578125   </td><td>0.012108918279409409</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16191399097442627</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>56.649208068847656</td><td>0.07967527210712433</td><td>1           </td><td>28792.603515625</td><td>0.0       </td><td>475            </td><td>3.0                     </td><td>2019-07-10 02:32:02.315974</td><td>gt1l   </td><td>232884.39146603562 </td><td>346283.2462720065 </td><td>2111134242242111142</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>4</i>          </td><td>1523097</td><td>-86.14893700260534</td><td>33.92049143181697 </td><td>-0.03492480516433716  </td><td>0.011287172324955463  </td><td>0.0006484501645900309</td><td>2939.72021484375 </td><td>0.012137381359934807</td><td>0       </td><td>0     </td><td>0.0  </td><td>0.16041499376296997</td><td>6           </td><td>2              </td><td>0              </td><td>4         </td><td>54.551910400390625</td><td>0.07864658534526825</td><td>1           </td><td>24003.869140625</td><td>0.0       </td><td>487            </td><td>3.0                     </td><td>2019-07-10 02:32:02.318772</td><td>gt1l   </td><td>232885.46588380224 </td><td>346302.53291968664</td><td>2111134242242111144</td><td>2111134 </td><td>4      </td><td>211113424224</td><td>True    </td></tr>
+<tr><td>...                                    </td><td>...    </td><td>...               </td><td>...               </td><td>...                   </td><td>...                   </td><td>...                  </td><td>...              </td><td>...                 </td><td>...     </td><td>...   </td><td>...  </td><td>...                </td><td>...         </td><td>...            </td><td>...            </td><td>...       </td><td>...               </td><td>...                </td><td>...         </td><td>...            </td><td>...       </td><td>...            </td><td>...                     </td><td>...                       </td><td>...    </td><td>...                </td><td>...               </td><td>...                </td><td>...     </td><td>...    </td><td>...         </td><td>...     </td></tr>
+<tr><td><i style='opacity: 0.6'>502,554,965</i></td><td>1643664</td><td>-65.1595352894234 </td><td>-64.14736624840631</td><td>3.4028234663852886e+38</td><td>0.4343118965625763    </td><td>0.08810029178857803  </td><td>814.0770263671875</td><td>2.443772315979004   </td><td>1       </td><td>2     </td><td>0.0  </td><td>5.0                </td><td>127         </td><td>5              </td><td>1              </td><td>3         </td><td>29.979246139526367</td><td>-2.748199462890625 </td><td>1           </td><td>95096.1171875  </td><td>0.0       </td><td>32             </td><td>30.0                    </td><td>2021-06-02 22:11:39.206742</td><td>gt3r   </td><td>-2458716.895432818 </td><td>1191377.9171924246</td><td>5134112212142221244</td><td>5134112 </td><td>11     </td><td>513411221214</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>502,554,966</i></td><td>1643665</td><td>-65.1593575757191 </td><td>-64.14740984828781</td><td>3.4028234663852886e+38</td><td>-1.3402669429779053   </td><td>0.09628021717071533  </td><td>794.2894897460938</td><td>2.651156425476074   </td><td>1       </td><td>2     </td><td>0.0  </td><td>5.0                </td><td>127         </td><td>5              </td><td>1              </td><td>3         </td><td>29.979246139526367</td><td>-2.748805522918701 </td><td>1           </td><td>94514.2890625  </td><td>0.0       </td><td>30             </td><td>34.18221664428711       </td><td>2021-06-02 22:11:39.209570</td><td>gt3r   </td><td>-2458735.934009656 </td><td>1191384.8320884425</td><td>5134112212142221422</td><td>5134112 </td><td>11     </td><td>513411221214</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>502,554,967</i></td><td>1643666</td><td>-65.15917990299222</td><td>-64.14745429112405</td><td>0.026572395116090775  </td><td>0.13136883080005646   </td><td>0.09426511079072952  </td><td>778.3578491210938</td><td>2.0801053047180176  </td><td>1       </td><td>2     </td><td>0.0  </td><td>5.0                </td><td>127         </td><td>5              </td><td>1              </td><td>3         </td><td>29.979246139526367</td><td>-2.749412775039673 </td><td>1           </td><td>98183.234375   </td><td>0.0       </td><td>25             </td><td>30.0                    </td><td>2021-06-02 22:11:39.212404</td><td>gt3r   </td><td>-2458754.985957636 </td><td>1191391.7087620741</td><td>5134112212142221424</td><td>5134112 </td><td>11     </td><td>513411221214</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>502,554,968</i></td><td>1643667</td><td>-65.15900240514684</td><td>-64.14750247559053</td><td>3.4028234663852886e+38</td><td>0.4388608932495117    </td><td>0.06979343295097351  </td><td>782.5272216796875</td><td>1.838956356048584   </td><td>1       </td><td>2     </td><td>0.0  </td><td>5.0                </td><td>127         </td><td>5              </td><td>1              </td><td>3         </td><td>29.979246139526367</td><td>-2.750018835067749 </td><td>1           </td><td>105618.1640625 </td><td>0.0       </td><td>39             </td><td>30.0                    </td><td>2021-06-02 22:11:39.215232</td><td>gt3r   </td><td>-2458774.0978894485</td><td>1191398.4161995882</td><td>5134112212142222313</td><td>5134112 </td><td>11     </td><td>513411221214</td><td>True    </td></tr>
+<tr><td><i style='opacity: 0.6'>502,554,969</i></td><td>1643668</td><td>-65.15882489514628</td><td>-64.14755037468672</td><td>3.4028234663852886e+38</td><td>0.23369531333446503   </td><td>0.07562870532274246  </td><td>785.801025390625 </td><td>2.3799521923065186  </td><td>1       </td><td>2     </td><td>0.0  </td><td>5.0                </td><td>127         </td><td>5              </td><td>1              </td><td>3         </td><td>29.979246139526367</td><td>-2.7506251335144043</td><td>1           </td><td>106303.5546875 </td><td>0.0       </td><td>39             </td><td>30.0                    </td><td>2021-06-02 22:11:39.218061</td><td>gt3r   </td><td>-2458793.2051524017</td><td>1191405.1364588912</td><td>5134112212142222331</td><td>5134112 </td><td>11     </td><td>513411221214</td><td>True    </td></tr>
+</tbody>
+</table></div>
+</div>
+<p>It’s difficult to describe exactly how computationally complicated the above query is. In plain language, we’ve taken all of the drainage basins borders and applied a ~3km buffer about them, and extracted that data over 8 orbital cycles– two full years of ICESat-2 data. The original data files were <em>time ordered</em>, such that each file was a roughly north/south transect going to or from the pole. Because the drainage basins span the full continent and are complex polylines, it’s hard to tell how
+many ICESat-2 data granules they touch… but a good estimate would be most (i.e., well over half) of them. There’s ~4,000 hdf5 data files per 91-day orbit repeat that covers Antarctica, so for 8 orbit repetitions we can safely assume over 10,000 files having data in them related to this query, although I suspect it’s likely even more files. Of course, you’d need a way to execute the metadata query to know which ones to open; or you’d need to inspect all 16,000 of them.</p>
+<p>Above we’ve subset a half billion data points from a set that was over 10 billion, culling through a few terabytes of data to retrieve the ~100GB that we actually care about. Run times vary, but seem to be between 15 and 30 minutes, although one run finished in under 10.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nside</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">18</span>
+
+<span class="k">def</span> <span class="nf">convertcoords</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">):</span>
+    <span class="n">healp</span> <span class="o">=</span> <span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">ang2pix</span><span class="p">(</span><span class="n">nside</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">healp</span>
+
+<span class="c1"># Convert locations to healpix</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;nest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">convertcoords</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">lat</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Takes a bit of time to process the nest coordinates for the next few plots...</span>
+<span class="c1"># ...it is a billion numbers to convert!</span>
+<span class="n">nside</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">18</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">nside2npix</span><span class="p">(</span><span class="n">nside</span><span class="p">))</span>
+<span class="n">m</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;nest&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Showing the Antarctic Peninsula where</span>
+<span class="c1"># ICESat-2 is within 3km of the basin boundary</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="o">-</span><span class="mi">75</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_41_0.png" src="../_images/remotesensing_HealpixCloudParquet_41_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># More inland, by basins 2 and 18, same zoom</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_42_0.png" src="../_images/remotesensing_HealpixCloudParquet_42_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Higher zoom to see more detail</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_43_0.png" src="../_images/remotesensing_HealpixCloudParquet_43_0.png" />
+</div>
+</div>
+<p>That thin band in the center adjacent to dense observation coverage is actually the pole hole. Why are there observations in the hole? Because the first orbital cycle had pointing issues and wasn’t looking nadir for a few overpasses and partially filled it in…</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># half a billion points, sparse over the continent</span>
+<span class="n">mh</span><span class="o">.</span><span class="n">hp</span><span class="o">.</span><span class="n">gnomview</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">],</span> <span class="n">xsize</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">ysize</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/remotesensing_HealpixCloudParquet_45_0.png" src="../_images/remotesensing_HealpixCloudParquet_45_0.png" />
+</div>
+</div>
+</section>
+<section id="Next-Steps">
+<h2>Next Steps<a class="headerlink" href="#Next-Steps" title="Permalink to this headline">¶</a></h2>
+<p>Healpix, and by extension morton ordering, does one thing exceedingly well– it separates the <em>searching of space</em> from the <em>searching of data</em>… although if you store your data using the morton numbers as your directory and file hierarchy, you are effectively doing both.</p>
+<p>The morton indexing here sits on a software stack; JPL maintains the base compiled distribution of the healpix library, which is written mostly in fortran and C/C++. Healpy serves as the primary interface (and documentation source), wrapping the numeric routines in python, and providing numerous convenience functions. The mhealpy library provides support for multiresolution functions– especially plotting. Finally, the mortie library that I’ve been developing brings morton indexing which casts
+the ‘nest’ and ‘unique’ orderings as a more intuitive Hilbert space filling curve that combines both the resolution and location of each address into a single number.</p>
+<p>The base JPL library provides fast conversion routines, and also three search methods:</p>
+<ol class="arabic simple">
+<li><p>Neighbor query. This is what we use in this notebook to make sure our buffer is valid and not missing data by chance.</p></li>
+<li><p>Disk query, in radians. Not shown, but a very common spatial indexing operator.</p></li>
+<li><p>Polygon query</p></li>
+</ol>
+<p>Sadly, the last of these query methods is less robust than I had originally hoped. There are constraints, specifically, that the query polygons need to be convex. This makes the function much less useful, serving potentially as a fast preprocess filter at the cost of additional code complexity. There seem to be two potential fixes– first is in vaex, which has methods for checking for point in polygon. Since vaex is multithreaded by default, and handles large amounts of data well, this is
+probably the quickest way to enable complex polygon query. I will post a follow up notebook that investigates this functionality, although it will likely be suboptimal in the polar regions if it assumes Euclidean geometry (which most point in polygon algorithms do).</p>
+<p>The second option is that the morton reference paper mentions a polygon query method distinct from the base healpix routine. It is not clear to me if the algorithm avoids the non-convex restrictions of the JPL implementation, but it is certainly worth exploring. I am also convinced that the adjacency relations mean that there is a recursive algorithm to fill in the polygon in a fast and efficient way– at the expense of not allowing any ‘holes’ or ‘multipart’ polygons, which seems like a
+reasonable trade off.</p>
+<p>Of course, the more immediate things to do are to update the indexing schema to match the new release of mortie, add the additional level to the tree depth, and experiment with ingesting the much larger ATL03 data.</p>
+</section>
+</section>
+
+<div class="section">
+    
+
+<div class="section">
+  <span style="float: left">
+     Previous:
+    
+    <a href="VIIRS_Cloud_Masking.html">
+       Cloud Masking in python using VIIRS
+    </a>
+    
+  </span>
+  <span>&nbsp;</span>
+  <span style="float: right">
+    
+  </span>
+</div>
+  
+</div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+
+    <div id="hyvor-talk-view"></div>
+<script type="text/javascript">
+    var HYVOR_TALK_WEBSITE = 294; // DO NOT CHANGE THIS
+    var HYVOR_TALK_CONFIG = {
+        url: false,
+        id: false
+    };
+</script>
+<script async type="text/javascript" src="//talk.hyvor.com/web-api/embed"></script>
+
+        </div>
+        <div class="sidebar">
+          
+    
+          <h3>Table of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Remote sensing</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Complex ICESat-2 Queries in the cloud</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Reproducing-this-notebook">Reproducing this notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Tiling">Tiling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Querying-Data">Querying Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VIIRS_Cloud_Masking.html">Cloud Masking in python using VIIRS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
+</ul>
+
+<strong>Last Updated: Nov 04, 2022</strong>
+<h3><a href="../_sources/remotesensing/HealpixCloudParquet.ipynb.txt"
+        rel="nofollow">Show Source</a></h3>
+    
+
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="push"></div>
+</div>
+<div id="footer">
+    <!-- start footer -->
+
+    <div id="left-footer">
+        <a href="http://mines.edu/glaciology" title="Colorado School of Mines">
+<img src="https://www.mines.edu/wp-content/uploads/assets/logo_eee_4c_r.png" 
+            border="none" alt="Colorado School of Mines" style="width:500px;" /></a>                                 
+
+    </div>
+        <div id="right-footer">
+            <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
+                <img src="http://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
+                "Cooperative Institute for Research in Environmental Sciences" /></a>
+        </div><!-- end footer -->
+        
+  </body>
+</html>

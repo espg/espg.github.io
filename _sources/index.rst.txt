@@ -8,7 +8,10 @@ Shane Grigsby
     :alt: Shane 
     :align: right
     
-I'm currently a postdoctoral fellow at the Colorado School of Mines, with
+Currently a Research & Development Scientist for the Federal Government;
+previously I was an Assistant Scientist for the ICESat-2 Project Science
+office at NASA Goddard (Section 615). Prior to moving to D.C., I was 
+lucky enough to be a postdoctoral fellow at the Colorado School of Mines, with
 `Matthew Siegfried <https://www.mines.edu/glaciology/people/siegfried/>`__. I
 completed my doctoral degree in 2019 under my advisor `Waleed Abdalati
 <https://en.wikipedia.org/wiki/Waleed_Abdalati>`__, at the University of
@@ -20,20 +23,19 @@ on the Greenland and Antarctic ice sheets. In addition to `polar field work
 <https://ciresblogs.colorado.edu/firncover/>`__, I use both remote sensing and
 machine learning to better characterize crevasses throughout the ice sheets.
 
-My resume is here: :download:`pdf <./grigsby_resume_2019.pdf>`.
+My resume is here: :download:`pdf <./grigsby_resume_2022.pdf>`.
 
-**2020 posts:**
+**Recent posts:**
 
 .. postlist:: 3
     :list-style: disk
     :date: %A, %B %d, %Y 
-    :sort:
 
 Contact Information
 ===================
 
-My CU office is in CIRES, S236, and my emails are `grigsby@mines.edu
-<mailto:grigsby@mines.edu>`__, and `shane.grigsby@colorado.edu
+My office number is 571-558-2525, and good emails to reach me are `refuge@rocktalus.com
+<mailto:refuge@rocktalus.com>`__, and `shane.grigsby@colorado.edu
 <mailto:shane.grigsby@colorado.edu>`__. I occasionally post pull requests and
 code to `github as espg <https://github.com/espg>`__.
 
@@ -43,6 +45,6 @@ code to `github as espg <https://github.com/espg>`__.
 
     Home <self>
     publications/index
+    remotesensing/index
     algorithms/index
     linux/index
-    remotesensing/index

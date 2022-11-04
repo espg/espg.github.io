@@ -1,22 +1,47 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>OPTICS Benchmark &#8212; Shane Grigsby</title>
-    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />    
+<style type="text/css">
+  ul.ablog-archive {
+    list-style: none;
+    overflow: auto;
+    margin-left: 0px;
+  }
+  ul.ablog-archive li {
+    float: left;
+    margin-right: 5px;
+    font-size: 80%;
+  }
+  ul.postlist a {
+    font-style: italic;
+  }
+  ul.postlist-style-disc {
+    list-style-type: disc;
+  }
+  ul.postlist-style-none {
+    list-style-type: none;
+  }
+  ul.postlist-style-circle {
+    list-style-type: circle;
+  }
+</style>
+
   </head><body>
 <style type="text/css">
 /*<![CDATA[*/
@@ -40,10 +65,9 @@ background-color: #FFFFFF;
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
-            
-  <div class="section" id="optics-benchmark">
+             <section id="optics-benchmark">
 <h1>OPTICS Benchmark<a class="headerlink" href="#optics-benchmark" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="test-data-for-benchmarks">
+<section id="test-data-for-benchmarks">
 <h2>Test data for benchmarks<a class="headerlink" href="#test-data-for-benchmarks" title="Permalink to this headline">¶</a></h2>
 <p>For these benchmarks I’m going to use real data– the data is
 heterogenous, large, and publicly available. More specifically, the
@@ -97,10 +121,10 @@ on this point is described in the narrative documentation of OPTICS).</p>
 <span class="kn">from</span> <span class="nn">sklearn.cluster.optics</span> <span class="kn">import</span> <span class="n">OPTICS</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="testing-data">
+</section>
+<section id="testing-data">
 <h2>Testing Data<a class="headerlink" href="#testing-data" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span> <span class="c1"># For test data</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># For test data</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This dataset is availible at:</span>
@@ -217,7 +241,7 @@ on this point is described in the narrative documentation of OPTICS).</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz4k</span><span class="p">)</span>
     <span class="n">eps_times_OPT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="k">print</span> <span class="n">epsilon</span>
+    <span class="nb">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
@@ -258,7 +282,7 @@ on this point is described in the narrative documentation of OPTICS).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span>
 </pre></div>
 </div>
-<img alt="../_images/Benchmarking_21_1.png" src="../_images/Benchmarking_21_1.png" />
+<img alt="../_images/Benchmarking_21_11.png" src="../_images/Benchmarking_21_11.png" />
 <p>Note: Because of both long run times, and crashes with DBSCAN, some
 cells below were run on previous iPython kernels, and cell numbering is
 not</p>
@@ -274,7 +298,7 @@ not</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz40k</span><span class="p">)</span>
     <span class="n">eps_times_OPT_40k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="k">print</span> <span class="n">epsilon</span>
+    <span class="nb">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">0.15</span>
@@ -302,7 +326,7 @@ not</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x11133c410</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="../_images/Benchmarking_24_1.png" src="../_images/Benchmarking_24_1.png" />
+<img alt="../_images/Benchmarking_24_11.png" src="../_images/Benchmarking_24_11.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eps_times_DB_40k</span><span class="p">,</span><span class="n">eps_times_OPT_40k</span>
 </pre></div>
 </div>
@@ -357,7 +381,7 @@ not</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x1463a0110</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="../_images/Benchmarking_27_1.png" src="../_images/Benchmarking_27_1.png" />
+<img alt="../_images/Benchmarking_27_11.png" src="../_images/Benchmarking_27_11.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying min_points plot</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_DB_40k_</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span><span class="n">eps_times_OPT_40k_</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
@@ -368,7 +392,7 @@ not</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span>
 </pre></div>
 </div>
-<img alt="../_images/Benchmarking_28_1.png" src="../_images/Benchmarking_28_1.png" />
+<img alt="../_images/Benchmarking_28_11.png" src="../_images/Benchmarking_28_11.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Varying eps benchmark</span>
 <span class="n">eps_times_DB_400k</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">eps_times_OPT_400k</span> <span class="o">=</span> <span class="p">[]</span>
@@ -381,7 +405,7 @@ not</p>
     <span class="n">outputOPT</span> <span class="o">=</span> <span class="n">average_time</span><span class="p">(</span><span class="n">benchmark_cluster</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span><span class="n">xyz400k</span><span class="p">)</span>
     <span class="n">eps_times_OPT_400k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputOPT</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="k">print</span> <span class="n">epsilon</span>
+    <span class="nb">print</span> <span class="n">epsilon</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eps_times_DB_400k</span><span class="p">,</span><span class="n">eps_times_OPT_400k</span>
@@ -399,10 +423,14 @@ not</p>
 <span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
+</section>
+</section>
+
+<div class="section">
+   
 </div>
 
-
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -419,19 +447,22 @@ not</p>
 
         </div>
         <div class="sidebar">
+          
     
           <h3>Table of Contents</h3>
           <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">OPTICS Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../remotesensing/index.html">Remote sensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 </ul>
 
-<strong>Last Updated: Mar 16, 2020</strong>
+<strong>Last Updated: Nov 04, 2022</strong>
 <h3><a href="../_sources/optics/Benchmarking_.rst.txt"
         rel="nofollow">Show Source</a></h3>
     
+
 
         </div>
         <div class="clearer"></div>

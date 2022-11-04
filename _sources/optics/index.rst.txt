@@ -1,0 +1,24 @@
+.. ASPRS documentation master file, created by
+   sphinx-quickstart on Fri Oct 26 10:13:39 2012.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+OPTICS Algorithm
+================
+
+OPTICS, or 'Ordering Points To Identify Clustering Structure', is a
+density based clustering algorithm that I use for segmentation of 
+LiDAR points.
+
+I'm currently working on a cluster visualizer, and also a recursive
+implementation of the algorithm. You can find my current base-level
+OPTICS code on `my github page.`_
+
+.. _my github page.: https://github.com/espg/OPTICS
+
+.. toctree::
+    :hidden:   
+    :maxdepth: 4
+	
+    Benchmarking.ipynb
+    OPTICS

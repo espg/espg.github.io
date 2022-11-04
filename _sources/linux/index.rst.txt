@@ -12,3 +12,4 @@ hopefully some what is documented here is also useful to others.
     :maxdepth: 4
 	
     nix
+    desktop

@@ -22,17 +22,7 @@ html,body {
   	height:100%;
 	font-size:100%;
 	font-family: Verdana, Geneva, sans-serif;
-    zoom: 80%;
 	}
-
-.document li,ol {
-	margin-left: 2.5em;
-}
-
-.document ul > li {
-    margin-left: 5em;
-}
-
 #wrapper {
 	
 }
@@ -72,14 +62,12 @@ html,body {
 }
 #menu ul{
 	padding:0;
-    padding-left: 0;
 	margin:0;
 	list-style:none;
 	
 }
 #menu ul li {
 	display:block;
-    padding-left: 0;
 	float: left;
 	margin-left:0em;
 	margin-right:.2em;
@@ -154,9 +142,7 @@ html,body {
 	border:thin solid #CCC;
 	background:url(./gradient_1.png) bottom left repeat-x #FFF;
 }
-.document {
-    margin-left: 10px;
-}
+.content {margin-left: 10px;}
 #content {
 	padding:1.2em;
 	float: left;
@@ -172,7 +158,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 h4, h5, h6 {font-weight:bold;}
 #column h1, #column h2, #column h3, #column h4, #column h5, #column h6 {border-bottom: 1px solid #ccc;}
-p {padding:0 0 0 0; 	line-height:150%; margin:0;}
+p {padding:.5em 0 1em 0; 	line-height:150%; margin:0;}
 img {border:0 !important; padding:7px;}
 #footer img {border:0 !important; padding:0px;}
 button {
@@ -294,12 +280,6 @@ blockquote {
 #E6E6FA
 F0F8FF
 */
-
-div.sidebar {
-  position: fixed;
-  right: 0;
-  padding-right: 2em;
-}
 div.sidebar li.toctree-l2 a {
   background-color: #F0F8FF;
   border: none;

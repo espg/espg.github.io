@@ -1,34 +1,50 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>Cloud Masking in python using VIIRS &#8212; Shane Grigsby</title>
-    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/agogo.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Remote sensing" href="index.html" />
-   
-  
-  
-  <style type="text/css">
-    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
-    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
-    ul.postlist a {font-style: italic;}
-    ul.postlist-style-disc {list-style-type: disc;}
-    ul.postlist-style-none {list-style-type: none;}
-    ul.postlist-style-circle {list-style-type: circle;}
-  </style>
+    <link rel="next" title="Algorithms" href="../algorithms/index.html" />
+    <link rel="prev" title="Complex ICESat-2 Queries in the cloud" href="HealpixCloudParquet.html" />    
+<style type="text/css">
+  ul.ablog-archive {
+    list-style: none;
+    overflow: auto;
+    margin-left: 0px;
+  }
+  ul.ablog-archive li {
+    float: left;
+    margin-right: 5px;
+    font-size: 80%;
+  }
+  ul.postlist a {
+    font-style: italic;
+  }
+  ul.postlist-style-disc {
+    list-style-type: disc;
+  }
+  ul.postlist-style-none {
+    list-style-type: none;
+  }
+  ul.postlist-style-circle {
+    list-style-type: circle;
+  }
+</style>
 
   </head><body>
 <style type="text/css">
@@ -53,37 +69,50 @@ background-color: #FFFFFF;
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
-            
-  
+             
 <style>
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput,
-div.nbinput div.prompt,
-div.nbinput div.input_area,
-div.nbinput div[class*=highlight],
-div.nbinput div[class*=highlight] pre,
-div.nboutput,
-div.nbinput div.prompt,
-div.nbinput div.output_area,
-div.nboutput div[class*=highlight],
-div.nboutput div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
 }
 
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
 /* avoid gaps between output lines */
-div.nboutput div[class*=highlight] pre {
+div.nboutput.container div[class*=highlight] pre {
     line-height: normal;
 }
 
 /* input/output containers */
-div.nbinput,
-div.nboutput {
+div.nbinput.container,
+div.nboutput.container {
     display: -webkit-flex;
     display: flex;
     align-items: flex-start;
@@ -91,92 +120,104 @@ div.nboutput {
     width: 100%;
 }
 @media (max-width: 540px) {
-    div.nbinput,
-    div.nboutput {
+    div.nbinput.container,
+    div.nboutput.container {
         flex-direction: column;
     }
 }
 
 /* input container */
-div.nbinput {
+div.nbinput.container {
     padding-top: 5px;
 }
 
 /* last container */
-div.nblast {
+div.nblast.container {
     padding-bottom: 5px;
 }
 
 /* input prompt */
-div.nbinput div.prompt pre {
+div.nbinput.container div.prompt pre {
     color: #307FC1;
 }
 
 /* output prompt */
-div.nboutput div.prompt pre {
+div.nboutput.container div.prompt pre {
     color: #BF5B3D;
 }
 
 /* all prompts */
-div.nbinput div.prompt,
-div.nboutput div.prompt {
-    min-width: 4ex;
-    padding-top: 0.4em;
-    padding-right: 0.4em;
-    text-align: right;
-    flex: 0;
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
 }
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
 @media (max-width: 540px) {
-    div.nbinput div.prompt,
-    div.nboutput div.prompt {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
         text-align: left;
         padding: 0.4em;
     }
-    div.nboutput div.prompt.empty {
+    div.nboutput.container div.prompt.empty {
         padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
     }
 }
 
 /* disable scrollbars on prompts */
-div.nbinput div.prompt pre,
-div.nboutput div.prompt pre {
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
     overflow: hidden;
 }
 
 /* input/output area */
-div.nbinput div.input_area,
-div.nboutput div.output_area {
-    padding: 0.4em;
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
     -webkit-flex: 1;
     flex: 1;
     overflow: auto;
 }
 @media (max-width: 540px) {
-    div.nbinput div.input_area,
-    div.nboutput div.output_area {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
         width: 100%;
     }
 }
 
 /* input area */
-div.nbinput div.input_area {
+div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
-div.nboutput div[class*=MathJax] {
+div.nboutput.container div[class*=MathJax] {
     text-align: left !important;
 }
 
 /* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput div.math p {
+div.nboutput.container div.math p {
     text-align: left;
 }
 
 /* standard error */
-div.nboutput div.output_area.stderr {
+div.nboutput.container div.output_area.stderr {
     background: #fdd;
 }
 
@@ -220,6 +261,28 @@ div.nboutput div.output_area.stderr {
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
 
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
 /* Some additional styling taken form the Jupyter notebook CSS */
 div.rendered_html table {
   border: none;
@@ -254,7 +317,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Cloud-Masking-in-python-using-VIIRS">
+<section id="Cloud-Masking-in-python-using-VIIRS">
 <h1>Cloud Masking in python using VIIRS<a class="headerlink" href="#Cloud-Masking-in-python-using-VIIRS" title="Permalink to this headline">¶</a></h1>
 <p>Cloud masking is an common problem for remote sensing; clouds often contaminate signals (like ICESat returns), or completely obscure spectral data for visible and multispectral sensors (like Landsat, Sentinel-2, or commercial imagery). There are two common approaches to masking out clouds:</p>
 <ol class="arabic simple">
@@ -271,7 +334,7 @@ have their own independent QAQC. However, using a different sensor to provide a 
 <li><p>The data acquisition grids are not aligned</p></li>
 </ol>
 <p>We’ll show a simple real world use case here.</p>
-<div class="section" id="Processing-pipeline">
+<section id="Processing-pipeline">
 <h2>Processing pipeline<a class="headerlink" href="#Processing-pipeline" title="Permalink to this headline">¶</a></h2>
 <p>I’ll refer the image that we want correct as the ‘target’, and the image that we are retrieving cloud data from as the ‘source’. There are three basic steps for cloud masking:</p>
 <ol class="arabic simple">
@@ -285,8 +348,8 @@ distance metrics that obey the triangle inequality (e.g., both euclidean and hav
 the closest cloud using a distance threshold to decide if the area is cloud free for cheaper; or you could also do them on a GPU. There are options.</p>
 <p>If the target pixels that you are seeking to mask are <strong>larger</strong> than the VIIRS/MODIS source pixels, the process is a little different. For that case, you normally need to leave spherical coordinates (i.e., convert to a euclidean projection), and then do a chebyshev distance lookup (i.e., square distance): basically, you are checking to see what the count of cloud pixels inside of your data pixel, and then masking based on some sort of rule ( &gt; 0 , or maybe &gt;= N / 2, or perhaps do a fancy
 probability-based mask). Since the target pixels (generally 30 m or smaller) tend to be smaller than the source data (generally 100’s of m to multiple km per pixel), I’ll focus on that more common case here and follow up with the special case in a different notebook.</p>
-</div>
-<div class="section" id="A-real-world-example:-Landsat-correction">
+</section>
+<section id="A-real-world-example:-Landsat-correction">
 <h2>A real world example: Landsat correction<a class="headerlink" href="#A-real-world-example:-Landsat-correction" title="Permalink to this headline">¶</a></h2>
 <p>This example is (heavily) modified from <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0034425716302267">Mahsa’s 2016 paper</a>; for that work, I was actually using MODIS data to look at water vapor and ozone retrievals as possible sources error, since she had already examined the Landsat images by hand for cloud contamination. Since the Landsat images from that project intentionally didn’t have clouds, I’ve grabbed a Landsat scene for the same area that does. Note that this notebook will
 take 8-to-9 GB’s of memory to run.</p>
@@ -297,8 +360,7 @@ take 8-to-9 GB’s of memory to run.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">pylab</span> inline
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pylab</span> inline
 </pre></div>
 </div>
 </div>
@@ -314,8 +376,7 @@ Populating the interactive namespace from numpy and matplotlib
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Fixing figure output for all figures</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fixing figure output for all figures</span>
 <span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span>
 <span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span>
 <span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span>
@@ -329,16 +390,15 @@ Populating the interactive namespace from numpy and matplotlib
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pyproj</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyproj</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 
-<span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">osr</span><span class="p">,</span> <span class="n">gdal</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">osr</span><span class="p">,</span> <span class="n">gdal</span>
 
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
 
-<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">BallTree</span><span class="p">,</span> <span class="n">ball_tree</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">BallTree</span><span class="p">,</span> <span class="n">ball_tree</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 </pre></div>
 </div>
 </div>
@@ -346,8 +406,7 @@ Populating the interactive namespace from numpy and matplotlib
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Define source data locations</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define source data locations</span>
 
 <span class="n">b2</span> <span class="o">=</span> <span class="s2">&quot;http://landsat-pds.s3.amazonaws.com/L8/006/013/LC80060132014195LGN00/LC80060132014195LGN00_B2.TIF&quot;</span>
 <span class="n">b3</span> <span class="o">=</span> <span class="s2">&quot;http://landsat-pds.s3.amazonaws.com/L8/006/013/LC80060132014195LGN00/LC80060132014195LGN00_B3.TIF&quot;</span>
@@ -381,16 +440,15 @@ CLDMSK_L2_VIIRS_SNP 100%[===================&gt;]  49.84M  49.5MB/s    in 1.0s
 
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Target-Data:-Landsat">
+</section>
+<section id="Target-Data:-Landsat">
 <h2>Target Data: Landsat<a class="headerlink" href="#Target-Data:-Landsat" title="Permalink to this headline">¶</a></h2>
 <p>Since we’re just taking the spatial data for the Landsat granule, we don’t need the actual data file at all; metadata is fine. That said, it’s usually easiest to grab the metadata directly from the geotiff:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># get the existing coordinate system</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the existing coordinate system</span>
 <span class="c1"># may take a sec to download depending on connection speed</span>
 <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
 <span class="n">old_cs</span><span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
@@ -415,10 +473,10 @@ CLDMSK_L2_VIIRS_SNP 100%[===================&gt;]  49.84M  49.5MB/s    in 1.0s
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>&#39;PROJCS[&quot;WGS 84 / UTM zone 22N&quot;,GEOGCS[&quot;WGS 84&quot;,DATUM[&quot;WGS_1984&quot;,SPHEROID[&quot;WGS 84&quot;,6378137,298.257223563,AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],PRIMEM[&quot;Greenwich&quot;,0,AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],UNIT[&quot;degree&quot;,0.0174532925199433,AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]],PROJECTION[&quot;Transverse_Mercator&quot;],PARAMETER[&quot;latitude_of_origin&quot;,0],PARAMETER[&quot;central_meridian&quot;,-51],PARAMETER[&quot;scale_factor&quot;,0.9996],PARAMETER[&quot;false_easting&quot;,500000],PARAMETER[&quot;false_northing&quot;,0],UNIT[&quot;metre&quot;,1,AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],AXIS[&quot;Easting&quot;,EAST],AXIS[&quot;Northing&quot;,NORTH],AUTHORITY[&quot;EPSG&quot;,&quot;32622&quot;]]&#39;
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;PROJCS[&#34;WGS 84 / UTM zone 22N&#34;,GEOGCS[&#34;WGS 84&#34;,DATUM[&#34;WGS_1984&#34;,SPHEROID[&#34;WGS 84&#34;,6378137,298.257223563,AUTHORITY[&#34;EPSG&#34;,&#34;7030&#34;]],AUTHORITY[&#34;EPSG&#34;,&#34;6326&#34;]],PRIMEM[&#34;Greenwich&#34;,0,AUTHORITY[&#34;EPSG&#34;,&#34;8901&#34;]],UNIT[&#34;degree&#34;,0.0174532925199433,AUTHORITY[&#34;EPSG&#34;,&#34;9122&#34;]],AUTHORITY[&#34;EPSG&#34;,&#34;4326&#34;]],PROJECTION[&#34;Transverse_Mercator&#34;],PARAMETER[&#34;latitude_of_origin&#34;,0],PARAMETER[&#34;central_meridian&#34;,-51],PARAMETER[&#34;scale_factor&#34;,0.9996],PARAMETER[&#34;false_easting&#34;,500000],PARAMETER[&#34;false_northing&#34;,0],UNIT[&#34;metre&#34;,1,AUTHORITY[&#34;EPSG&#34;,&#34;9001&#34;]],AXIS[&#34;Easting&#34;,EAST],AXIS[&#34;Northing&#34;,NORTH],AUTHORITY[&#34;EPSG&#34;,&#34;32622&#34;]]&#39;
+</pre></div></div>
 </div>
 <p>The information above tells us everything we need to know to setup a spatial grid– the number samples, number of lines, the upper left corner coordinates in x and y, and the pixel spacing for both x and y, with the UTM and EPSG codes provided as well. The upper left coordinate values are slightly different than what is defined in a NASA metadata file; in the NASA metadata file, the grid is given in relation to the pixel centers. By contrast, the geotiff metadata defines <strong>the edge of the
 pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half pixel to get the grid defined on the center of the pixel coordinates. Note that since the Y coordinates decrease from the upper left corner, the pixel spacing is negative.</p>
@@ -426,8 +484,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ULX</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">15</span> <span class="c1"># Upper left X Coord</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ULX</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">15</span> <span class="c1"># Upper left X Coord</span>
 <span class="n">Xres</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>     <span class="c1"># Resolution in X dim (positive)</span>
 <span class="n">ULY</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">15</span> <span class="c1"># Upper left Y Coord</span>
 <span class="n">Yres</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()[</span><span class="mi">5</span><span class="p">]</span>     <span class="c1"># Resolution in Y dim (negative)</span>
@@ -441,8 +498,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Manual</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Manual</span>
 <span class="n">p1</span> <span class="o">=</span> <span class="n">pyproj</span><span class="o">.</span><span class="n">Proj</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;utm&#39;</span><span class="p">,</span><span class="n">zone</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span><span class="n">ellps</span><span class="o">=</span><span class="s1">&#39;WGS84&#39;</span><span class="p">)</span>
 
 <span class="c1"># ...or, the same thing, automated from Landsat file</span>
@@ -456,8 +512,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The grid is large enough (~5GB) that it will be a hassle on</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The grid is large enough (~5GB) that it will be a hassle on</span>
 <span class="c1"># smaller machines =/</span>
 <span class="nb">print</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="n">ULX</span><span class="p">:</span><span class="n">ULX</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="o">*</span><span class="n">Xres</span><span class="p">):</span><span class="n">Xres</span><span class="p">]),</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="n">ULY</span><span class="p">:</span><span class="n">ULY</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="o">*</span><span class="n">Yres</span><span class="p">):</span><span class="n">Yres</span><span class="p">]),</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">))</span>
@@ -477,8 +532,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Setting up the coordinate grid</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setting up the coordinate grid</span>
 <span class="n">LSx</span> <span class="p">,</span> <span class="n">LSy</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="n">ULX</span><span class="p">:</span><span class="n">ULX</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="o">*</span><span class="n">Xres</span><span class="p">):</span><span class="n">Xres</span><span class="p">],</span>
                                  <span class="n">r_</span><span class="p">[</span><span class="n">ULY</span><span class="p">:</span><span class="n">ULY</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="o">*</span><span class="n">Yres</span><span class="p">):</span><span class="n">Yres</span><span class="p">])</span>
 <span class="n">LScoords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">LSx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">LSy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span><span class="o">.</span><span class="n">T</span>
@@ -489,8 +543,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Check if we can invert to UL lat and long</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check if we can invert to UL lat and long</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">p2</span><span class="p">(</span><span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 <span class="c1"># Double check that p1 and p2 refer to the same transform</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">p1</span><span class="p">(</span><span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
@@ -510,8 +563,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The coordinate inversion is within machine precision</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The coordinate inversion is within machine precision</span>
 <span class="c1"># Sadly, the current version of proj ignores the radian flag:</span>
 <span class="n">p2</span><span class="p">(</span><span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">LScoords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">radians</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -521,18 +573,17 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>(-50.71668082659874, 68.08618253329952)
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-50.71668082659874, 68.08618253329952)
+</pre></div></div>
 </div>
 <p>There is actually a <a class="reference external" href="https://github.com/pyproj4/pyproj/pull/639">fix for the radian issue</a> in the pyproj master branch, but it hasn’t made it to a stable release yet… So we’ll just do our own conversion to radians for distance calculations:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">LS_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">p2</span><span class="p">(</span><span class="n">LScoords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">LScoords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LS_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">p2</span><span class="p">(</span><span class="n">LScoords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">LScoords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 <span class="n">LS_rad</span> <span class="o">*=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
 <span class="n">LS_rad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -542,18 +593,17 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>array([-0.88517307,  1.18832806])
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([-0.88517307,  1.18832806])
+</pre></div></div>
 </div>
 <p>Before we move on to the target data, let’s get a bit of spatial context and plot our Landsat imagery:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Stretch functions from Matt (siegfried@mines.edu)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Stretch functions from Matt (siegfried@mines.edu)</span>
 <span class="c1"># Creates true color image</span>
 <span class="k">def</span> <span class="nf">landsat_stretch</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -589,8 +639,7 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># may take a sec to download depending on connection speed</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># may take a sec to download depending on connection speed</span>
 <span class="n">ls8</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
 <span class="c1"># Make a band stack to display. If you give imshow an MxNx3 matrix, it interprets the matrix at</span>
@@ -627,21 +676,20 @@ pixel</strong>. Since the pixel spacing is 30 meters, we’ll offset by a half p
 <p>This area is the same as Mahsa’s 2016 paper looks at (around Russell glacier, in Southwest Greenland). The date of the image is July 14th, 2014; acquisition time for center of the image is 14:42:28.18 UTC. This image has a few features that make it a useful example (mainly, the cloud bank in the east of the image), and since we’re looking in mid-July, there are active melt ponds visible (blue spots running north/south in the center of the image).</p>
 <p>If you plot bands 6, 5, 4 as RGB (called somewhat sillily “Natural Color” by USGS) instead of bands 4, 3, 2 as RGB (aptly called “True Color”), you can distinguish clouds from ice easier. Comment out the three lines to make the True Color band stack (lines 10-12) and uncomment the three lines that produce the Natural Color band stack (lines 15-17) to try this out. Ice should turn blue and clouds should stay white.</p>
 <p>That’s enough basic glaciology imagery analysis for today; let’s take a look at source data for cloud masking now.</p>
-</div>
-<div class="section" id="Source-Data:-VIIRS">
+</section>
+<section id="Source-Data:-VIIRS">
 <h2>Source Data: VIIRS<a class="headerlink" href="#Source-Data:-VIIRS" title="Permalink to this headline">¶</a></h2>
 <p>There are a couple of candidates to use for our source data; we’re going to use <a class="reference external" href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/CLDPROP_L2_VIIRS_SNPP/">CLDMSK</a>, which is a level 2 product produced for both VIIRS Suomi-NPP, <a class="reference external" href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/CLDMSK_L2_MODIS_Aqua/">and the Aqua MODIS sensor</a>. The <a class="reference external" href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/viirs/">VIIRS</a> instrument has a wider field
 of view than MODIS, and also has better pixel resolution (750 meters vs 1 km). There are currently <a class="reference external" href="https://earthdata.nasa.gov/earth-observation-data/near-real-time/download-nrt-data/viirs-nrt">two VIIRS sensors</a>, but the CLDMSK product is only available for Suomi-NPP, although it’s possible to process NOAA-20 on demand using the same software package… likewise, only MODIS Aqua is used for CLDMSK, while Terra isn’t. The MOD35 and MYD35 products are available for both Aqua and Terra, and go
 back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terra and Aqua). A deeper dive into CLDMSK <a class="reference external" href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/viirs/MODIS_VIIRS_Cloud-Mask_UG_Feb_2019.pdf">is here</a>, with <a class="reference external" href="http://cimss.ssec.wisc.edu/icwg/program/Tuesday/Platnick%20et%20al.%20ICWG-2%202018.pdf">additional background here</a>.</p>
 <p>Broadly speaking, there’s four satellites that each image the entire earth twice a day, with much better repeat times at the poles. Between these four satellites, there’s <a class="reference external" href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/science-domain/cloud-mask/">two products (MOD35 and CLDMSK)</a> that can be used for masking. Here’s the orbital path for VIIRS on July 14th, 2014:</p>
-<p><img alt="img" src="https://www.ssec.wisc.edu/datacenter/npp/archive/ARCTIC/2014_07(182-212)/ARCTIC2014_07_14_195_npp.gif" /></p>
+<img alt="img" src="https://www.ssec.wisc.edu/datacenter/npp/archive/ARCTIC/2014_07(182-212)/ARCTIC2014_07_14_195_npp.gif" />
 <p>The paths are plotted in 5-min intervals, but the satellite captures 6-minute granules. For our source granule that has the closest match to the target Landsat-8 scene, acquisition starts at 14:42 UTC and goes till 14:48 UTC ; so the overpasses from both source and target acquisitions over our area of interest are likely within 2 or 3 minutes of one another.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># https://espg.keybase.pub/cloudmasking/CLDMSK_L2_VIIRS_SNPP.A2014195.1442.001.2019071103127.nc</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># https://espg.keybase.pub/cloudmasking/CLDMSK_L2_VIIRS_SNPP.A2014195.1442.001.2019071103127.nc</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;./CLDMSK_L2_VIIRS_SNPP.A2014195.1442.001.2019071103127.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -650,8 +698,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -659,8 +706,9 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&#39;QA_dimension&#39;,
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;QA_dimension&#39;,
  &#39;byte_segment&#39;,
  &#39;geolocation_data&#39;,
  &#39;geophysical_data&#39;,
@@ -668,15 +716,13 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
  &#39;number_of_pixels&#39;,
  &#39;number_of_scans&#39;,
  &#39;scan_line_attributes&#39;]
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geophysical_data&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geophysical_data&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -684,20 +730,19 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&#39;Clear_Sky_Confidence&#39;,
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Clear_Sky_Confidence&#39;,
  &#39;Cloud_Mask&#39;,
  &#39;Integer_Cloud_Mask&#39;,
  &#39;Quality_Assurance&#39;]
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Flip and mirror to show Greenland in more normal orientation</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Flip and mirror to show Greenland in more normal orientation</span>
 <span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geophysical_data&#39;</span><span class="p">][</span><span class="s1">&#39;Cloud_Mask&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
 <span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x [pixels]&#39;</span><span class="p">);</span> <span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y [pixels]&#39;</span><span class="p">)</span>
 <span class="n">colorbar</span><span class="p">()</span>
@@ -717,8 +762,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Cloud mask data</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cloud mask data</span>
 <span class="c1"># 0 is cloudy</span>
 <span class="c1"># 1 is probably cloudy</span>
 <span class="c1"># 2 is probably clear</span>
@@ -745,8 +789,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geolocation_data&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geolocation_data&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -754,22 +797,21 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>[&#39;latitude&#39;,
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;latitude&#39;,
  &#39;longitude&#39;,
  &#39;sensor_azimuth&#39;,
  &#39;sensor_zenith&#39;,
  &#39;solar_azimuth&#39;,
  &#39;solar_zenith&#39;]
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">latE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geolocation_data&#39;</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">latE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geolocation_data&#39;</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">])</span>
 <span class="n">lonE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geolocation_data&#39;</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
 <span class="n">clouds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;geophysical_data&#39;</span><span class="p">][</span><span class="s1">&#39;Integer_Cloud_Mask&#39;</span><span class="p">])</span>
 </pre></div>
@@ -780,8 +822,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Using 300 meter spacing for display</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using 300 meter spacing for display</span>
 <span class="n">LSx_small</span> <span class="p">,</span> <span class="n">LSy_small</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="n">ULX</span><span class="p">:</span><span class="n">ULX</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="o">*</span><span class="n">Xres</span><span class="p">):</span><span class="n">Xres</span><span class="o">*</span><span class="mi">10</span><span class="p">],</span>
                                  <span class="n">r_</span><span class="p">[</span><span class="n">ULY</span><span class="p">:</span><span class="n">ULY</span><span class="o">+</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="o">*</span><span class="n">Yres</span><span class="p">):</span><span class="n">Yres</span><span class="o">*</span><span class="mi">10</span><span class="p">])</span>
 <span class="n">LScoords_small</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">LSx_small</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">LSy_small</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span><span class="o">.</span><span class="n">T</span>
@@ -793,17 +834,16 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>((835, 828), (835, 828))
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+((835, 828), (835, 828))
+</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Radians are needed to use haversine distances, which</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Radians are needed to use haversine distances, which</span>
 <span class="c1"># do spherical distance calculation correctly...</span>
 <span class="n">LS_rad_small</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">p2</span><span class="p">(</span><span class="n">LScoords_small</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
                             <span class="n">LScoords_small</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
@@ -817,8 +857,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%time</span>it
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>it
 <span class="n">VIIRS_Ball</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">VIIRS_rad</span><span class="p">,</span><span class="n">metric</span><span class="o">=</span><span class="s1">&#39;haversine&#39;</span><span class="p">)</span>
 <span class="c1"># VIIRS search object</span>
 <span class="c1"># This is one of two &#39;heavy&#39; computational steps</span>
@@ -837,8 +876,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">VIIRS_Ball</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">VIIRS_rad</span><span class="p">,</span><span class="n">metric</span><span class="o">=</span><span class="s1">&#39;haversine&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">VIIRS_Ball</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">VIIRS_rad</span><span class="p">,</span><span class="n">metric</span><span class="o">=</span><span class="s1">&#39;haversine&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -846,8 +884,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># We&#39;re going to determine, for each &#39;coarsened landsat</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We&#39;re going to determine, for each &#39;coarsened landsat</span>
 <span class="c1"># pseudo pixel&#39;, what the closest corresponding VIIRS</span>
 <span class="c1"># pixel is. This will let us plot the VIIRS pixels (source)</span>
 <span class="c1"># at the same locations and extent as the target pixels</span>
@@ -863,8 +900,7 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">clouds</span><span class="p">[:]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">indiciesVIIRS</span><span class="p">],</span> <span class="p">(</span><span class="mi">835</span><span class="p">,</span> <span class="mi">828</span><span class="p">)))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">clouds</span><span class="p">[:]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">indiciesVIIRS</span><span class="p">],</span> <span class="p">(</span><span class="mi">835</span><span class="p">,</span> <span class="mi">828</span><span class="p">)))</span>
 <span class="n">cbar</span> <span class="o">=</span> <span class="n">colorbar</span><span class="p">()</span>
 <span class="n">cbar</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="n">cbar</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([</span><span class="s1">&#39;0 - cloudy&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3 - clear&#39;</span><span class="p">])</span>
@@ -882,8 +918,8 @@ back further in time (NPP launched in 2011, compared with 1999 and 2002 for Terr
 <img alt="../_images/remotesensing_VIIRS_Cloud_Masking_37_0.png" src="../_images/remotesensing_VIIRS_Cloud_Masking_37_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Pixel-by-pixel-masking">
+</section>
+<section id="Pixel-by-pixel-masking">
 <h2>Pixel by pixel masking<a class="headerlink" href="#Pixel-by-pixel-masking" title="Permalink to this headline">¶</a></h2>
 <p>Above is a good visual indicator of how cloudy the scene is, but normally we want exact indices for masking data. To do this, we need exact pixel-to-pixel alignment and matching. There are two steps to this; building a spatial index tree, and then querying it. Above, we already (in cells 24-25) built the index tree on the VIIRS coords (the source coordinates), and used a <strong>small</strong> subset of the target coordinates to query. Since there are <span class="math notranslate nohighlight">\(8,271 * 8,341 = 68,988,411\)</span> <strong>total</strong> Landsat
 pixels, we’ll do some simple parallelization to speed things up, chunking the distance queries into blocks of 1 million points and distributing among however many cores our machine has. On our compute node with 28 cores, this takes about a minute; for my laptop with 4 cores, it takes between 7 and 10 minutes. There are also GPU options for distance queries– see <a class="reference external" href="https://medium.com/aspectum/acceleration-for-the-nearest-neighbor-search-on-earths-surface-using-python-513fc75984aa">this post</a> for
@@ -892,8 +928,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">c</span> <span class="o">=</span> <span class="mi">28</span>    <span class="c1"># Replace with your core count</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="mi">28</span>    <span class="c1"># Replace with your core count</span>
 <span class="n">qq</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">VIIRS_Ball</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">LS_rad</span><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="mi">1000000</span><span class="p">:(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000000</span><span class="p">],</span>
                                 <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">breadth_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                 <span class="n">return_distance</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -904,8 +939,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%time</span>it
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>it
 <span class="n">first</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">c</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">qq</span><span class="p">)(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">68</span><span class="p">))</span>
 <span class="n">second</span> <span class="o">=</span> <span class="n">VIIRS_Ball</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">LS_rad</span><span class="p">[</span><span class="mi">68</span><span class="o">*</span><span class="mi">1000000</span><span class="p">:],</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                           <span class="n">breadth_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -925,8 +959,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">first</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">c</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">qq</span><span class="p">)(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">68</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">c</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">qq</span><span class="p">)(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">68</span><span class="p">))</span>
 <span class="n">second</span> <span class="o">=</span> <span class="n">VIIRS_Ball</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">LS_rad</span><span class="p">[</span><span class="mi">68</span><span class="o">*</span><span class="mi">1000000</span><span class="p">:],</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                           <span class="n">breadth_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                           <span class="n">return_distance</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -938,8 +971,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># smush all the indices together</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># smush all the indices together</span>
 <span class="n">ls_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">first</span><span class="p">),</span><span class="n">second</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -948,8 +980,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Define conservative cloud mask-- only keep clear pixels</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define conservative cloud mask-- only keep clear pixels</span>
 <span class="n">clouds_filter</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">clouds</span><span class="p">[:]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
 <span class="c1"># (we could leave in the &#39;probably clear&#39; pixels with)</span>
 <span class="n">clouds_filter2</span> <span class="o">=</span> <span class="p">(</span><span class="n">clouds</span><span class="p">[:]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">clouds</span><span class="p">[:]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
@@ -960,8 +991,7 @@ some in depth ideas on speeding things up.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># We&#39;ll remove the clouds from the data array directly,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We&#39;ll remove the clouds from the data array directly,</span>
 <span class="c1"># replacing clouds with nans</span>
 <span class="n">final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">LSC</span><span class="p">)</span>
 <span class="n">final</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">clouds_filter</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="n">ls_idx</span><span class="p">],</span>
@@ -985,8 +1015,8 @@ some in depth ideas on speeding things up.</p>
 </div>
 </div>
 <p>The cloud detection from VIIRS is based in part on liquid water detection; you can see that some outlet streams are wet enough to get masked as clouds, but not wet enough to get classified as stand alone water bodies. Fortunately, the lakes and melt ponds on the ice sheet are <strong>not</strong> identified as clouds. The eastern bank of clouds a well identified, although the resolution difference (750m vs 30m) is visible.</p>
-</div>
-<div class="section" id="How-does-this-compare?">
+</section>
+<section id="How-does-this-compare?">
 <h2>How does this compare?<a class="headerlink" href="#How-does-this-compare?" title="Permalink to this headline">¶</a></h2>
 <p>As I mentioned at the very top, the more common approach for sensors that have the spectral resolution for cloud detection is a sensor specific cloud mask. Landsat 1-7 lacked channels for detecting clouds, but Landsat 8 added a few targeted bands to enable cloud detection without using external data. The cloud mask for Landsat 8 isn’t produced automatically; it is an on demand product that is delivered when you request calibrated reflectance retrieval from USGS. I grabbed the LS8 specific
 product for comparison– you can grab it at:</p>
@@ -996,8 +1026,7 @@ product for comparison– you can grab it at:</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Read in the QA / aerosol band for LS8</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read in the QA / aerosol band for LS8</span>
 <span class="c1"># may take a sec to download depending on connection speed</span>
 <span class="n">qa</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">aero_mask</span><span class="p">)</span>
 </pre></div>
@@ -1007,8 +1036,7 @@ product for comparison– you can grab it at:</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># define data mask</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># define data mask</span>
 <span class="n">data_mask</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
 
 <span class="c1"># LS8 clouds are coded as &#39;8&#39;; get them</span>
@@ -1020,8 +1048,7 @@ product for comparison– you can grab it at:</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The &#39;QA&#39; band is 10 pixels shorter per side,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The &#39;QA&#39; band is 10 pixels shorter per side,</span>
 <span class="c1"># and 5 pixels shorter top to bottom...</span>
 <span class="c1"># ...which is a hassle...</span>
 <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">qa</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
@@ -1032,17 +1059,16 @@ product for comparison– you can grab it at:</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>((8321, 8261), (8341, 8271))
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+((8321, 8261), (8341, 8271))
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">compare</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">qa</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">qa</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 <span class="n">compare</span><span class="p">[</span><span class="o">~</span><span class="n">data_mask</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 <span class="n">compare</span><span class="p">[</span><span class="n">data_mask</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">LS8_QA</span><span class="p">[</span><span class="n">data_mask</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]]</span><span class="o">*</span><span class="mi">10</span>
 <span class="c1"># Awful indexing</span>
@@ -1074,8 +1100,8 @@ there is a bit of a temporal mismatch, and my guess is that cloud is at a higher
 <p>Although the two mask agree in the upper right, I think that VIIRS may be more trustworthy in the lower right where there is disagreement. The LS8 mask is based off of brightness, and discrimination of white clouds from white snow by relying on other shortwave sources of spectral contrast. This is different from VIIRS, which is doing a full precipitable water inversion, and basing the classification off of water content (hence the VIIRS artifacts in the West of the image around streams). Looking
 at the original true color image, I think that VIIRS is more conservative than LS8 for a lot of the cloud bank, and may be more accurate for some of the less dense clouds– although the spatial resolution is obviously not as high.</p>
 <p>Overall though, the two mask agree pretty well, and both look like they do a decent job of masking clouds, although the risk adverse should buffer them for spectral retrievals.</p>
-</div>
-<div class="section" id="Next-steps">
+</section>
+<section id="Next-steps">
 <h2>Next steps<a class="headerlink" href="#Next-steps" title="Permalink to this headline">¶</a></h2>
 <p>So if Landsat 8 has an on demand cloud mask that is passably good, why bother with all of this in the first place? Well, the main reason is that the same process works with other sensors that <strong>don’t</strong> have in-sensor cloud detection capabilities. More explicitly, this includes both ICESat missions, <em>previous</em> Landsat missions (Landsat 5 and 7), Sentinel 2 (which lacks the thermal bands used by Landsat 8), and any sort of commercial imagery. Cloud masking for the ICESat missions is particularly
 challenging, as cloud attenuated signals can be easily misinterpreted as expressing different surface phenomenon (i.e., surface roughness).</p>
@@ -1121,34 +1147,34 @@ challenging, as cloud attenuated signals can be easily misinterpreted as express
 <li><p>Return masks without much code</p></li>
 </ul>
 <p>For item 1 above, getting cloud compatible retrieval would be best… I think that MODIS granules are available on Google’s cloud, but I’m not sure exactly what products, or how to access them.</p>
-</div>
-</div>
-
-  <div class="section">
-  
-    
-
+</section>
+</section>
 
 <div class="section">
-  <span style="float: left;">
-  
-  Previous: 
-  <a href="../linux/nix.html">
     
-    Reproducible Builds Using Nix
-  </a>
-  
+
+<div class="section">
+  <span style="float: left">
+     Previous:
+    
+    <a href="../linux/nix.html">
+       Reproducible Builds Using Nix
+    </a>
+    
   </span>
   <span>&nbsp;</span>
-  <span style="float: right;">
-  
+  <span style="float: right">
+     Next: 
+    <a href="HealpixCloudParquet.html">
+      Complex ICESat-2 Queries in the cloud 
+    </a>
+    
   </span>
 </div>
-
   
-  
-  </div>
+</div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -1171,9 +1197,8 @@ challenging, as cloud attenuated signals can be easily misinterpreted as express
           <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../publications/index.html">Publications &amp; Talks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Remote sensing</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="HealpixCloudParquet.html">Complex ICESat-2 Queries in the cloud</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Cloud Masking in python using VIIRS</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Processing-pipeline">Processing pipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#A-real-world-example:-Landsat-correction">A real world example: Landsat correction</a></li>
@@ -1186,9 +1211,11 @@ challenging, as cloud attenuated signals can be easily misinterpreted as express
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linux/index.html">Linux Tricks</a></li>
 </ul>
 
-<strong>Last Updated: May 19, 2020</strong>
+<strong>Last Updated: Nov 04, 2022</strong>
 <h3><a href="../_sources/remotesensing/VIIRS_Cloud_Masking.ipynb.txt"
         rel="nofollow">Show Source</a></h3>
     
@@ -1205,14 +1232,14 @@ challenging, as cloud attenuated signals can be easily misinterpreted as express
     <!-- start footer -->
 
     <div id="left-footer">
-        <a href="https://mines.edu/glaciology" title="Colorado School of Mines">
+        <a href="http://mines.edu/glaciology" title="Colorado School of Mines">
 <img src="https://www.mines.edu/wp-content/uploads/assets/logo_eee_4c_r.png" 
             border="none" alt="Colorado School of Mines" style="width:500px;" /></a>                                 
 
     </div>
         <div id="right-footer">
-            <a href="https://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
-                <img src="https://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
+            <a href="http://cires.colorado.edu" title="Cooperative Institute for Research in Environmental Sciences">
+                <img src="http://cires1.colorado.edu/shane/_static/cireslogo2.png" border="none" alt=
                 "Cooperative Institute for Research in Environmental Sciences" /></a>
         </div><!-- end footer -->
         
