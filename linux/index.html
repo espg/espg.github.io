@@ -74,6 +74,27 @@ environments. Getting things working can take quite a bit work (depending), so
 hopefully some what is documented here is also useful to others.</p>
 <div class="toctree-wrapper compound">
 </div>
+<ul class="postlist-style-disk postlist">
+<li class="ablog-post"><p class="ablog-post-title">Sunday, March 15, 2020 - <a class="reference internal" href="nix.html">Reproducible Builds Using Nix</a></p>
+<p class="ablog-post-excerpt">Before I was a scientist, I worked for UnixOps supporting research computing–
+mainly building software. The fact that the University of Colorado, Boulder
+campus needed almost a dozen system admins to build and rebuild software tells
+you something about how much of a hassle it is; builds are often cryptic,
+requirements conflict, and things constantly break between versions.</p>
+<p class="ablog-post-excerpt">I’ve used various package managers over the years– homebrew when I had a mac,
+pip and conda for python, and various linux platform specific managers like
+pacman and apt-get. None of them have been particularly great; homebrew tends
+to be a mess and is specific to only OS X. Conda and pip work ok, but they only
+manage python packages, and reasonably complex software always includes
+non-python dependencies… linear algebra routines for numerics written in
+fortran or C, hdf5 libraries, and projection libraries like GDAL come to mind
+most quickly. Things have actually gotten worse in the last couple years with
+machine learning; builds now expect CUDA, and some frameworks are working on
+multi-gpu instances. Getting software up and running is a hassle, to say
+nothing of trying to have a colleague replicate your setup when you share code.</p>
+</li>
+</ul>
+<p>(Read more at the link…)</p>
 </section>
 
 <div class="section">
@@ -97,7 +118,6 @@ hopefully some what is documented here is also useful to others.</p>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Linux Tricks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nix.html">Reproducible Builds Using Nix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="desktop.html">Setting up a modern linux desktop in 2020</a></li>
 </ul>
 </li>
 </ul>

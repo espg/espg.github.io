@@ -13,7 +13,7 @@
     "Reproducing this notebook\n",
     "-------------------------\n",
     "\n",
-    "The data in this notebook lives in the cloud, and is 'free' to access, in that it does not require payment to me. But it does require an AWS account, and amazon will charge you for compute. The data transfer cost will likely not be noticeable if you are in the US East region where we are hosting it... but might be pricey if you cross regions or try and export it at volume outside of the cloud.\n",
+    "The data in this notebook lives in the cloud, and is 'free' to access, in that it does not require payment to me. But it does require an AWS account, and amazon will charge you for compute. The data transfer cost will likely not be noticeable if you are in the US West-2 region where we are hosting it... but might be pricey if you cross regions or try and export it at volume outside of the cloud.\n",
     "\n",
     "I use an instance with 256GB of ram to run this notebook; the first data pull is 'small' at ~20GB in memory. The second pull is over 100GB of memory, and will crash the kernel and dask if you are on too small of a machine. Everything here is under development, but particularly the indexing scheme, which has already changed. The most recent version of [healpix morton indexing](https://doi.org/10.1016/j.heliyon.2017.e00332) is at the [mortie library](https://github.com/espg/mortie)... but it produces breaking changes will not work with the data reference in this notebook (i.e., the data already stored in S3), which is why the old functions are replicated instead of imported.\n",
     "\n",
@@ -1173,10 +1173,10 @@
   },
   {
    "cell_type": "markdown",
-   "id": "3b412703",
+   "id": "8b0d7697",
    "metadata": {},
    "source": [
-    ".. post:: 01 Nov, 2022"
+    ".. post:: 04 Nov, 2022"
    ]
   }
  ],

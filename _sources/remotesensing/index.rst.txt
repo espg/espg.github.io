@@ -18,3 +18,10 @@ thermal sensors.
 	
     HealpixCloudParquet.ipynb
     VIIRS_Cloud_Masking.ipynb
+
+.. postlist:: 2
+    :list-style: disk
+    :date: %A, %B %d, %Y 
+    :excerpts:
+
+(Read more at the links...)

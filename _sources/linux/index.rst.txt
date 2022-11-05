@@ -12,4 +12,11 @@ hopefully some what is documented here is also useful to others.
     :maxdepth: 4
 	
     nix
-    desktop
+
+.. postlist:: 1
+    :list-style: disk
+    :date: %A, %B %d, %Y 
+    :tags: Linux 
+    :excerpts:
+
+(Read more at the link...)

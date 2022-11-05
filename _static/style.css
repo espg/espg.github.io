@@ -24,6 +24,7 @@ html,body {
 	font-family: Verdana, Geneva, sans-serif;
     zoom: 80%;
 	}
+h1 {font-size:2em;}
 figure.align-right {
     float: right;
 }
