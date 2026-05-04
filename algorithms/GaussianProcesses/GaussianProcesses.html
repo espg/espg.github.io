@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gaussian Processes Prediction &#8212; My Jupyter Book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'GaussianProcesses__edits';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">My Jupyter Book</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Gaussian Processes Prediction
+                </a>
+            </li>
+        </ul>
+        
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/GaussianProcesses__edits.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Gaussian Processes Prediction</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-kriging-informally">What is kriging (informally)?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-gold-and-the-variogram-model">Covariance, Gold, and the variogram model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-i-use-gaussian-processes-for">What I use Gaussian Processes for</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-note-tasha-s-memory-error-problem">Computational note (Tasha’s memory error problem)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-kriging-formally">What is kriging (formally)?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-prediction">Why Prediction?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-note-stochastic-simulations">Computational note– stochastic simulations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covarience-kernels">Covarience Kernels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gaussian-processes-prediction">
+<h1>Gaussian Processes Prediction<a class="headerlink" href="#gaussian-processes-prediction" title="Link to this heading">#</a></h1>
+<p>Principle Component Analysis (PCA) <a class="reference external" href="https://doi.org/10.1007/bf00889887">Cressie, 1990</a> and  and Empirical Orthogonal functions (EOF) are functionally the same numerical method, with EOFs being the preferred term in Atmospheric communities and PCA being the more general term used in broader statistical discussions. Similarly, Gaussian Processes is the general term used in physics and statistical learning for what the geosciences has traditionally termed ‘kriging’, and which some branches of math refer to as Wiener–Kolmogorov prediction.</p>
+<p>Gaussian Processes (GP) are perhaps best thought of as a collection of enhancements to the traditional kriging system. They are functionally equivalent to kriging (Williams, 1998), and differ only in implantation details and slightly in philosophy; although the philosophical differences are in general extensions to ideas explicitly espoused by many kriging giants. <strong>The GP philosophy treats interpolation as model selection from an infinite number of functions (Rassmussen, 2006)</strong>.</p>
+<p><img alt="gp.png" src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Gaussian_Process_Regression.png" /></p>
+<p>This characterization certainly fits with Matheron’s (1973) discussion of random fields, and is a close match to Journal’s (1977) description of projection into various solution spaces. These functions are not strictly required to be linear (Matheron, 1973; Journal, 1977).</p>
+<p><img alt="animation.gif" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Gaussianprocess.gif" /></p>
+<p><em>As number of predictions ‘P’ grows to be large above, the mean of all ‘P’ approaches the best estimate, with the variance of predictions indicating confidence (std. dev. of predictions)</em></p>
+<p><strong>The primary object of interest in kriging is the variogram, which is the main method by which practitioners fit a covariance function. In contrast, the primary object of interest in GPs is the kernel, which is directly equivalent to covariances (Genton, 2002).</strong> The kernel formulation has direct computational savings, enabling solving of high dimensional kernel functions in low dimensional space via the kernel trick (i.e., computing only the inner products) (Genton, 2002); the kernel formulation also admits easy translation to Fourier based methods when interpolating regular spaces (Wilson 2014). The kernel architecture is flexible, as valid kernels can be added or multiplied to form new synthesis kernels (Cressie and Huang 1999; Genton, 2002; Rassmussen, 2006). For instance, non-stationary kernels can be combined with stationary kernels and white noise kernels, such that large spatial trends, local correlation and structure, and intrinsic random noise and error can be modeled and specified as discrete submodules and functions. Kernels can also be bounded for more efficient computation—for instance, circular and spherical kernels give rise to sparse gram matrices that can be reordered and solved be efficient sparse solvers; the Matérn kernel (Matérn, 1960) can be modified to do the same (Genton, 2002). Separable non-stationary kernels can be written as a Kronecker tensor product (Genton, 2002), and solved in circulant matrixes by efficient Fourier methods (Wilson 2014; Wilson and Nickisch, 2015).</p>
+<p>Although Gaussian Processes is the more general statistical term for covariance methods of prediction, the practice and term of kriging predates Gaussian Processes. Thus, to explain the history and theory of Gaussian Processes, we’ll start with kriging first.</p>
+<section id="what-is-kriging-informally">
+<h2>What is kriging (informally)?<a class="headerlink" href="#what-is-kriging-informally" title="Link to this heading">#</a></h2>
+<p>Generally speaking, most people use kriging as an interpolator. Classic interpolators can be split into ‘estimators’ and ‘predictors’; this distinction (in line with Cressie, 1990) mainly applies to highlight that ‘estimators’ provide an estimate of the surface, while ‘predictors’ assign a prediction that is accompanied by measures of confidence (probability, confidence interval).</p>
+<p><img alt="image.jpg" src="https://github.com/YuePanEdward/PPE_Kriging/blob/main/figures/result_dense_dataset.jpg?raw=true" /></p>
+<p>Traditional ‘estimators’ are of the fairly boring type that most are fairly familiar with— canonical examples are bilinear interpolation, Inverse Distance Weighting (IDW), cubic convolution, etc. Other non-traditional examples of ‘estimators’ include things like nearest and natural neighbor interpolation, which are appropriate for specific domain cases when you want to preserve original data values. If your <strong>goal</strong> is <strong>just</strong> interpolation <strong>and you have sufficient data</strong>, using an estimator is perfectly fine– and fast! However, if your data is <strong>sparse</strong>, kriging starts to become more appealing:</p>
+<p><img alt="image.jpg" src="https://github.com/YuePanEdward/PPE_Kriging/blob/main/figures/result_sparse_dataset.jpg?raw=true" /></p>
+<p>This sparse estimation capability is why kriging was originally developed. Kriging is named after Danie G. Krige, who’s 1951 master’s thesis developed and described what we call ‘Ordinary Kriging’. Danie Krige was a prospector looking for gold in South Africa, an application that had sparse input measurements, and expensive sampling. Krige’s method was coined ‘kriging’ by the early 1960’s by French mathematician Georges Matheron, who formalized and expanded the method.</p>
+<p>Of course, the other case where kriging is appealing is when you need to use the method as a <em>predictor</em>.</p>
+</section>
+<section id="covariance-gold-and-the-variogram-model">
+<h2>Covariance, Gold, and the variogram model<a class="headerlink" href="#covariance-gold-and-the-variogram-model" title="Link to this heading">#</a></h2>
+<p><img alt="image.gif" src="https://vsp.pnnl.gov/help/assets/images/image/Variogram.gif" /></p>
+<p>Traditional kriging defines a <strong>model of covariance</strong> by fitting a function to the empirical ‘variogram’, which plots the variance between observations as a function of distance between those observations. The variogram ‘sill’ refers to variance between uncorrelated samples, and the ‘range’ is the lag-distance at which this paired observation decorrelation occurs. The ‘nugget’ refers to the intrinsic variance (i.e., the observational uncertainty) at distance zero– that is, the variance of a single point observation with itself. The term ‘nugget’ is literally referring to ‘gold nugget’ in the context of prospecting; i.e., finding a ‘nugget’ of gold which has been displaced from the source gold deposit… just because a ‘nugget’ is present at a location, does not guarantee that you are coincident with the deposit <em>that generated that observation</em>; however, the expectation is that the nugget is close!</p>
+<p><img alt="image.png" src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gpr_noisy_targets_003.png" /></p>
+<p>Mathematically, specifying a ‘nugget’ value (or <code class="docutils literal notranslate"><span class="pre">alpha</span></code> in GP terminology) is effectively adding a constant to the diagonal of the covariance matrix such that each observation has some level of variance with itself. Doing this allows the BLUE estimate to <em>not</em> intersect all of the observation points– if covariance is set to zero along the diagonal, then any estimation will be a ‘rubber sheeting’ that ensures the output surface passes through the original data points. Of course, we can also specify covariance <em>per observation</em> rather than as a constant along the diagonal, and selectively <em>down weight</em> low confidence observations.</p>
+</section>
+<section id="what-i-use-gaussian-processes-for">
+<h2>What I use Gaussian Processes for<a class="headerlink" href="#what-i-use-gaussian-processes-for" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pylab</span> inline
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>%pylab is deprecated, use %matplotlib inline and import the required libraries.
+Populating the interactive namespace from numpy and matplotlib
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">osr</span>
+<span class="kn">import</span> <span class="nn">pyproj</span>
+<span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.gaussian_process.kernels</span> <span class="kn">import</span> <span class="n">Matern</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span> <span class="c1"># new numpy sampling API</span>
+
+<span class="c1"># Fixing figure output for all figures</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.titlesize&#39;</span><span class="p">]</span> <span class="o">=</span><span class="s1">&#39;x-small&#39;</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;legend.fontsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;xx-small&#39;</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">160</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;/Users/espg/home/thesis/AGU2017/Matches/&#39;</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s2">&quot;Z62SU06&quot;</span> <span class="o">+</span> <span class="s2">&quot;.h5&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="c1"># ICESat data</span>
+<span class="n">coordlist</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span> <span class="c1"># Needed for distance calculations / plotting</span>
+<span class="n">df_indices</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span> <span class="c1"># UUID to link to observations to slope retrievals</span>
+<span class="n">df_corr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]</span> <span class="c1"># Filter and weight data</span>
+
+<span class="n">gslope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s1">&#39;General_slopes.npy&#39;</span><span class="p">)</span> <span class="c1"># Sub ICESat footprint slope retrievals</span>
+<span class="n">mean_slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coordlist</span><span class="p">))</span>
+<span class="n">std_slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coordlist</span><span class="p">))</span>
+
+<span class="c1"># Merge and aggregate slope</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coordlist</span><span class="p">))):</span>
+    <span class="n">sweights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_corr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">weightidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sweights</span><span class="p">)</span>
+    <span class="n">sweights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sweights</span><span class="p">[</span><span class="n">weightidx</span><span class="p">])</span>
+    <span class="n">sidx</span> <span class="o">=</span> <span class="n">df_indices</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">weightidx</span><span class="p">]</span>
+    <span class="n">sidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sidx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">mean_slope</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">gslope</span><span class="p">[</span><span class="n">sidx</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">sweights</span><span class="p">)</span>
+    <span class="n">std_slope</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">gslope</span><span class="p">[</span><span class="n">sidx</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "b69ea3cd8ec444478b0821bd04a57321"}</script></div>
+</div>
+<p>This example is meant to be larger than a ‘toy’ dataset, but still small enough to interact with and demonstrate. Our input data consist of 23,359 observations (from the summer of 2006), which are within footprint slope retrievals from the first ICESat mission (which flew from 2003 to 2009, although laser power was strongest in the first three years).</p>
+<p>Here’s what the data looks like:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coordlist</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">coordlist</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">mean_slope</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">std_slope</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">im</span><span class="o">.</span><span class="n">set_clim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">mean_slope</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">mean_slope</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Degrees of slope </span><span class="se">\n</span><span class="s2"> (points scaled by retrieval variance)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x116b32410&gt;
+</pre></div>
+</div>
+<img alt="_images/68ebe57aee733ecef7d1dd6a6c4e492dc8e3c48e12cefe454023f82ff740cbed.png" src="_images/68ebe57aee733ecef7d1dd6a6c4e492dc8e3c48e12cefe454023f82ff740cbed.png" />
+</div>
+</div>
+<p>This is an interesting case of geostatistics because the sampling is quite odd– the along track resolution is dense, but the across track resolution is sparse. Most of the code is actually setting up the <strong>source</strong> and <strong>target</strong> coordinate systems for the model. The input observational data is irregularly spaced and in lat/lon coordinates, but we want our distance measurements to be in euclidean space and output to a grid.</p>
+<p>We also want to ‘clip’ the results to a drainage basin. This is for two reasons– first, the drainage basin boundries are of zero surface slope and provide a physically meaningful way to bound, divide, and tile the analysis. And second, covariance functions are expensive, so clipping and masking the edges of our area of interest helps things run faster… it also makes the output look good!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Projection object</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">ImportFromEPSG</span><span class="p">(</span><span class="mi">3411</span><span class="p">)</span> <span class="c1"># polar projection</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">ExportToProj4</span><span class="p">()</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">pyproj</span><span class="o">.</span><span class="n">Proj</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">ExportToProj4</span><span class="p">())</span>
+
+<span class="c1"># Observations to meters from lat / lon</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">p2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coordlist</span><span class="o">.</span><span class="n">lon</span><span class="p">),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coordlist</span><span class="o">.</span><span class="n">lat</span><span class="p">))</span>
+<span class="c1"># To vector form sklearn</span>
+<span class="n">coords_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">coordlist</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">coords_m</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span>
+<span class="n">coords_m</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span>
+
+<span class="c1"># Drainage basin boundries</span>
+<span class="n">zwally</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/Users/espg/data/School/CIRES/2017/AGU/AGU2017/Matches/GrnDrainageSystems_Ekholm.txt&#39;</span><span class="p">,</span> 
+                     <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;basin&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;long&#39;</span><span class="p">])</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="s1">&#39;6.2&#39;</span>
+<span class="n">LL</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">zwally</span><span class="p">[</span><span class="n">zwally</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">basin</span><span class="p">)]</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+         <span class="n">zwally</span><span class="p">[</span><span class="n">zwally</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">basin</span><span class="p">)]</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+<span class="n">LL</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">LL</span><span class="p">)</span>
+<span class="c1"># Convert basin boundries to meters from lat / lon</span>
+<span class="n">pX</span><span class="p">,</span> <span class="n">pY</span> <span class="o">=</span> <span class="n">p2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">LL</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">LL</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># Polygon object for masking</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pX</span><span class="p">,</span> <span class="n">pY</span><span class="p">)))</span>
+
+<span class="c1"># Setting up kriging grid</span>
+<span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pX</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1000</span><span class="p">:</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pX</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1000</span><span class="p">:</span><span class="mi">2000</span><span class="p">],</span>
+                  <span class="n">r_</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pY</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1000</span><span class="p">:</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pY</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1000</span><span class="p">:</span><span class="mi">2000</span><span class="p">])</span>
+<span class="n">kcoords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x1</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">y1</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span><span class="o">.</span><span class="n">T</span>
+
+<span class="c1"># Masking kriging grid</span>
+<span class="n">Zidx</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">kcoords</span><span class="p">[:])</span>
+<span class="n">target_c</span> <span class="o">=</span> <span class="n">kcoords</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="c1"># Target coordinates</span>
+<span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/espg/miniforge3/envs/pangeo/lib/python3.11/site-packages/osgeo/osr.py:410: FutureWarning: Neither osr.UseExceptions() nor osr.DontUseExceptions() has been explicitly called. In GDAL 4.0, exceptions will be enabled by default.
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((267, 273), 34984)
+</pre></div>
+</div>
+</div>
+</div>
+<p>At this point, we’ve setup a 2-km grid to predict on that’s 267 by 273 (a little over 500km per side), which after masking has 34,984 target coordinate locations to predict at. The actual Gaussian Process model specification is fairly short:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">kern</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">Matern</span><span class="p">(</span><span class="n">length_scale</span><span class="o">=</span><span class="p">[</span><span class="mi">80000</span><span class="p">,</span><span class="mi">80000</span><span class="p">],</span> <span class="n">length_scale_bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">),</span>
+                        <span class="n">nu</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">gp1</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kern</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">std_slope</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">coords_m</span><span class="p">,</span> <span class="n">mean_slope</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are specifying a <code class="docutils literal notranslate"><span class="pre">Matern</span></code> kernel to calculate and estimate our covarience, which is defined by the single parameter <code class="docutils literal notranslate"><span class="pre">nu</span></code>; this parameter controls how smooth the fuctions are within our prior distribution of possible surface functions. It is set at 0.5 (i.e., ‘1 / 2’, equivelent the absolute exponential kernel) to allow rough, non-differentiable candidate functions; a <code class="docutils literal notranslate"><span class="pre">nu=1.5</span></code> (3 / 2) will select from functions that are once differentiable, <code class="docutils literal notranslate"><span class="pre">nu=2.5</span></code> (5 / 2) will select from functions that are twice differentiable, and <code class="docutils literal notranslate"><span class="pre">nu=inf</span></code> will converge to the infinately differentiable RBF kernel.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">length_scale</span></code> parameter would typically be optimized during model fit based on the spatial structure of the data… however, because our input data is heavily unbalanced (i.e., dense in the along track direction, sparse in the across track), hyper-parameter optimization sets a length scale that is too short, so it is fixed at 80km, with similar settings applied for the <code class="docutils literal notranslate"><span class="pre">length_scale_bounds</span></code>.</p>
+<p>After model specification, at <code class="docutils literal notranslate"><span class="pre">fit</span></code> time we provide the coordinates, and slope values, along with an <code class="docutils literal notranslate"><span class="pre">alpha</span></code> that is set to varience of slope retrieval (i.e., estimates of varience per observation).</p>
+<p>Doubling the number of observations (by adding a second summer of orbits) pushes the model fit time from under two minutes to about a half hour (although some of this is due to the higher memory footprint and pressure causing the OS to begin swapping to disk).</p>
+<p>We can get the mean surface estimate and target-to-target covariances with the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">y_mean</span><span class="p">,</span> <span class="n">y_cov</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target_c</span><span class="p">,</span> <span class="n">return_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 5min 32s, sys: 29 s, total: 6min 1s
+Wall time: 3min 41s
+</pre></div>
+</div>
+</div>
+</div>
+<p>The mean predictions need to be reshaped before plotting:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># slope</span>
+<span class="n">results1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results1</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="o">=</span>  <span class="n">y_mean</span>
+<span class="n">show_res1</span> <span class="o">=</span> <span class="n">results1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res1</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x14bb50d90&gt;
+</pre></div>
+</div>
+<img alt="_images/008bd4857dbabb57e4b80ec289ca1ae6378d6089a5b696c92d44b83805eb48ab.png" src="_images/008bd4857dbabb57e4b80ec289ca1ae6378d6089a5b696c92d44b83805eb48ab.png" />
+</div>
+</div>
+<section id="computational-note-tasha-s-memory-error-problem">
+<h3>Computational note (Tasha’s memory error problem)<a class="headerlink" href="#computational-note-tasha-s-memory-error-problem" title="Link to this heading">#</a></h3>
+<p>Complexity of model fitting is determined by the input number of obserations– however, complexity of prediction is determined by the number of output prediction nodes. The mean of the output prediction is invarient, which means that it can be run in <em>batches</em>. The output grid that I selected above was 2km spacing because that fits in memory for my machine, and 1km doesn’t… but I can still run a 1km output surface if I batch the output. This doesn’t require refitting the model, only specifying the grid and batch sizes:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setting up kriging grid at 1km</span>
+<span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="n">r_</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pX</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">500</span><span class="p">:</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pX</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">500</span><span class="p">:</span><span class="mi">1000</span><span class="p">],</span>
+                  <span class="n">r_</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pY</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">500</span><span class="p">:</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pY</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">500</span><span class="p">:</span><span class="mi">1000</span><span class="p">])</span>
+<span class="n">kcoords2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x2</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">y2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span><span class="o">.</span><span class="n">T</span>
+<span class="c1"># Mapping and clipping higher resolution output grid</span>
+<span class="n">Zidx2</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">kcoords2</span><span class="p">[:])</span>
+<span class="n">target_c2</span> <span class="o">=</span> <span class="n">kcoords2</span><span class="p">[</span><span class="n">Zidx2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_per_1_fixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_c2</span><span class="p">))</span>
+
+<span class="n">batches</span> <span class="o">=</span> <span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">target_c2</span><span class="p">):</span><span class="mi">5000</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c1"># &#39;Batch&#39; Kriging at 1-km resolution</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">batches</span><span class="p">):</span>
+    <span class="n">target_per_1_fixed</span><span class="p">[</span><span class="n">batch</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">:</span><span class="n">batch</span><span class="p">]</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target_c2</span><span class="p">[</span><span class="n">batch</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">:</span><span class="n">batch</span><span class="p">])</span>
+
+<span class="n">target_per_1_fixed</span><span class="p">[</span><span class="n">batches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target_c2</span><span class="p">[</span><span class="n">batches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "0ee31aed8cbe4802a4ac6bda29b6faa1", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords2</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results2</span><span class="p">[</span><span class="n">Zidx2</span><span class="p">]</span> <span class="o">=</span>  <span class="n">target_per_1_fixed</span>
+<span class="n">show_res2</span> <span class="o">=</span> <span class="n">results2</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res2</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyterlab_myst</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="what-is-kriging-formally">
+<h2>What is kriging (formally)?<a class="headerlink" href="#what-is-kriging-formally" title="Link to this heading">#</a></h2>
+<p>Mathematically, kriging is the Best Unbiased Linear <strong>Predictor</strong> (Journel, 1977; Cressie, 1990; Handcock and Stein, 1993), and provides the Best Linear Unbiased Prediction, or BLUP; this means that kriging prediction is a linear combination of weighted observations at point p that minimizes prediction variance. Note that this is different (but related) to the Best Linear Unbiased <strong>Estimation</strong>, or BLUE… although when using kriging to <em>estimate</em> a quantity, the results will be equivilent to the BLUE, which is why kriging is often conceptually understood as equivalent to spatially weighted generalized least squares regression. There are of course various flavors of kriging (simple, ordinary, universal, etc.) (see Journel, 1977), but below is mathematical formulation for simple kriging (other flavors are similar):</p>
+<p>Given N observations (s1…sn), and CovF(distance) covariance function, calculate D distances of N observations; note the convention of using <span class="math notranslate nohighlight">\(t\)</span> for <em>target</em> and <span class="math notranslate nohighlight">\(s\)</span> for <em>source</em>:</p>
+<div class="math notranslate nohighlight">
+\[D(s_1 ... s_n, s_1 ... s_n) = D_{obs}\]</div>
+<div class="math notranslate nohighlight">
+\[C_{obs} = f_{cov}(D_{obs}) \quad \textrm{or} \quad C(\mathbf{x}_n, \mathbf{x}_m) = k(\mathbf{x}_n, \mathbf{x}_m)\]</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Dist(s1…sn, s1…sn) = Dobs  		# square distance matrix
+Cobs = CovF(Dobs)                       # observation covarience, i.e., source-to-source cov
+</pre></div>
+</div>
+<p><strong>This is what is happening here:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kern</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">Matern</span><span class="p">(</span><span class="n">length_scale</span><span class="o">=</span><span class="p">[</span><span class="mi">80000</span><span class="p">,</span><span class="mi">80000</span><span class="p">],</span> <span class="n">length_scale_bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">),</span>
+                        <span class="n">nu</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">gp1</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kern</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">std_slope</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">coords_m</span><span class="p">,</span> <span class="n">mean_slope</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>We are selecting a covariance function (the Matern kernel), and then fitting that fuction to our observations on the basis of distance in order to estimate source-to-source cov</strong></p>
+<p>Define p1…pn prediction nodes; calculate distances and Cpred (covariance of predictions):</p>
+<div class="math notranslate nohighlight">
+\[D(t_1 ... t_n, t_1 ... t_n) = D_{pred}\]</div>
+<div class="math notranslate nohighlight">
+\[C_{pred} = f_{cov}(D_{pred})\]</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Dist(t1…tn, t1…tn) = Dpred  		# square distance matrix
+Cpred = CovF(Dpred)                     # target covarience, i.e., target-to-target cov
+</pre></div>
+</div>
+<p>Note that for above, we don’t actually know p1…pn <em>but we do know the locations</em> of p1…pn, and hence we can calculate their distances, and given that our covariance function is a function of distances, we can <strong>model</strong> the covariance of the predictions p1…pn as a function of distance.</p>
+<p>As mentioned above, kriging is equivalent to spatial least squares regression. Hence, we can retrieve our best estimate at locations p1…pn though least square regression—see below for useful equivalencies:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Lstsq( s1…sn, t1…tn) == Lstsq( Cobs, Cobs_pred) == kriging_wieghts
+</pre></div>
+</div>
+<p>…where <code class="docutils literal notranslate"><span class="pre">Cobs_pred</span></code> is the covariance between our observations and predictions, i.e., our target-to-source <code class="docutils literal notranslate"><span class="pre">cov</span></code>. Of course, we don’t know our predictions yet; all we have are our observations, and our observation covariances. However, we have defined a covariance function, <em><strong>based</strong></em> on our observation covariances, that provides covariance as a function of distance; hence above we defined our prediction to prediction covariance.</p>
+<p><strong>The kriging weights are used to weight a combination of our observations at each prediction location– with the weights being determined by distance and the covariance structure. Our ‘mean’ prediction and target-to-target cov (and the steps above and below to retrieve them), happen at this call:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_mean</span><span class="p">,</span> <span class="n">y_cov</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">target_c</span><span class="p">,</span> <span class="n">return_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>(Note, this call is also implicitly calculating the source to target covariance!)</strong></p>
+<p>Using the same assumption that covariance can be specified as a function of distance, we can get an estimate of covariance between our observations and prediction locations:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Cobs_pred = CovF(Dist(s1…sn, t1…tn)
+</pre></div>
+</div>
+<p>…now we obtain the kriging weights by:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>kriging_wieghts = dot(inv(Cobs), Cobs_pred)
+</pre></div>
+</div>
+<p>Above we see the key computational constraint for kriging; we need to be able to invert an N by N observation covariance matrix.</p>
+<p>Given that the regression/kriging weights are identical for both the observations and their covariances, we now have enough information to make a kriging/Lstsq’s prediction of t1…tn:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t1…tn =  dot(kriging_wieghts.T, s1…sn)
+</pre></div>
+</div>
+<p>We can calculate partial correlation/covariance, which is equivalent to the covariance of the residual error from kriging/regression. We get conditional covariance with:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Cpred – dot(dot(Cobs_pred.T, inv(Cobs)), Cobs_pred)
+</pre></div>
+</div>
+<p>The above gives the estimation error covariance, and allows for simulation, i.e., <em>prediction</em>. Specifically, we can preform simulation via Cholesky decomposition* using the derived mean target predictions, and the target-to-target covariance:</p>
+<p>(from <a class="reference external" href="https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/gaussian_process/_gpr.py">sklearn gaussian process module</a>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">sample_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw samples from Gaussian process and evaluate at X.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like of shape (n_samples_X, n_features) or list of object</span>
+<span class="sd">            Query points where the GP is evaluated.</span>
+
+<span class="sd">        n_samples : int, default=1</span>
+<span class="sd">            Number of samples drawn from the Gaussian process per query point.</span>
+
+<span class="sd">        random_state : int, RandomState instance or None, default=0</span>
+<span class="sd">            Determines random number generation to randomly draw samples.</span>
+<span class="sd">            Pass an int for reproducible results across multiple function</span>
+<span class="sd">            calls.</span>
+<span class="sd">            See :term:`Glossary &lt;random_state&gt;`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_samples : ndarray of shape (n_samples_X, n_samples), or \</span>
+<span class="sd">            (n_samples_X, n_targets, n_samples)</span>
+<span class="sd">            Values of n_samples samples drawn from Gaussian process and</span>
+<span class="sd">            evaluated at query points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="n">y_mean</span><span class="p">,</span> <span class="n">y_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">return_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y_mean</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y_samples</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">y_mean</span><span class="p">,</span> <span class="n">y_cov</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_samples</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
+                    <span class="n">y_mean</span><span class="p">[:,</span> <span class="n">target</span><span class="p">],</span> <span class="n">y_cov</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">n_samples</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">]</span>
+            <span class="n">y_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">y_samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y_samples</span>
+</pre></div>
+</div>
+<p>Several things are apparent for the kriging description above, that highlight both the strengths and weakness of the approach. First and foremost, <em>the approach is completely dependent on specification of a proper covariance function</em>. <strong>The covariance function must be invertible; that is it must be positive definite (Genton, 2002)</strong>, and the machine that runs the computation must be capable of inverting a N by N matrix. In practice, the N by N inversion can be relaxed if only the ‘best’ prediction is desired (since it can be derived via lstsq calculation); <em>however, simulation and error estimation requires inversion of an N by N matrix.</em> <strong>In practice, empirical covariance almost always provides a non-invertible (not positive definite) gram matrix (Handcock and Stein, 1993); further, a model of covariance is needed to estimate source to target and target to target covariance—so estimation of a covariance function, either via a variogram or by other methods, is always required for geostatistical interpolation and simulation.</strong> The error estimation that kriging gives per prediction is error estimation on the assumption that modeled covariance structure is true! Kriging has been characterized as the Best Unbiased Linear Predictor (BULP)… which it is, for a given covariance function. Swapping covariance functions gives different and competing BLUPs, which then need to be evaluated via inter-model comparison (MacKay, 1992a; Handcock and Stein, 1993). In short, the kriging error and uncertainty estimation is not the absolute error estimate for the surface, and probability estimation of a prediction must be obtained with other models to give realistic confidence bounds.</p>
+<p>*Traditional kriging involves estimation of a variogram, however, the variogram is simply a way of producing a covariance function that produces a positive definite gram matrix of covariances (Genton, 2002). Since we know that our covariance function produces a positive definite gram matrix of covariances, we use cholesky because <a class="reference external" href="https://numpy.org/doc/2.2/reference/random/generated/numpy.random.Generator.multivariate_normal.html#numpy.random.Generator.multivariate_normal">it is faster than SVD or eigen decomposition</a>.</p>
+</section>
+<section id="why-prediction">
+<h2>Why Prediction?<a class="headerlink" href="#why-prediction" title="Link to this heading">#</a></h2>
+<p>Slope is an important variable for glaciologists, but it also doesn’t vary much on the icesheet– it goes from about 2 degrees at the edge where it’s ‘steep’, before gradually dropping down to 1 in the interior and eventually 0 at the drainage boundary. However, things change when the surface is crevassed; cracks present a range of surface heights and angles, and generally those retrievals are <strong>not</strong> flat.</p>
+<p>So if we are looking for crevasses, and we know that the ‘background’ slope of the ice sheet is 2 degrees of slope or lower, it would be nice to know when that slope is exceeded. Unfortunately, our mean prediction of surface slope is smoothing the variation in slope retrievals– if we have a distribution of slope values, the best prediction will trend towards the mean, resulting in surface that suppresses variation we know is present.</p>
+<p>What we can do though, is simulate possible surfaces, and count how often we exceed 2 degrees of slope for a given location:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">realizations</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">y_mean</span><span class="p">,</span> <span class="n">y_cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;cholesky&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results1</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="o">=</span>  <span class="n">realizations</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">show_res1</span> <span class="o">=</span> <span class="n">results1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res1</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results1</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="o">=</span>  <span class="n">realizations</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+<span class="n">show_res1</span> <span class="o">=</span> <span class="n">results1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res1</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">occurance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">34984</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">realizations</span><span class="p">:</span>
+    <span class="n">occurance</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results1</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="o">=</span>  <span class="n">occurance</span><span class="o">*</span><span class="mi">5</span>
+<span class="n">show_res1</span> <span class="o">=</span> <span class="n">results1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res1</span><span class="p">))</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="computational-note-stochastic-simulations">
+<h3>Computational note– stochastic simulations<a class="headerlink" href="#computational-note-stochastic-simulations" title="Link to this heading">#</a></h3>
+<p>Earlier, we could batch estimates of the prediction mean; however, we <strong>can’t</strong> do that for stochastic simulations!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_per_1_fixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_c</span><span class="p">))</span>
+
+<span class="n">batches</span> <span class="o">=</span> <span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">target_c</span><span class="p">):</span><span class="mi">5000</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c1"># Sims at 2km resolution</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">batches</span><span class="p">):</span>
+    <span class="n">target_per_1_fixed</span><span class="p">[</span><span class="n">batch</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">:</span><span class="n">batch</span><span class="p">]</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">sample_y</span><span class="p">(</span><span class="n">target_c</span><span class="p">[</span><span class="n">batch</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">:</span><span class="n">batch</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="n">target_per_1_fixed</span><span class="p">[</span><span class="n">batches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">sample_y</span><span class="p">(</span><span class="n">target_c</span><span class="p">[</span><span class="n">batches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># slope patchy realization</span>
+<span class="n">results1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kcoords</span><span class="p">))</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">results1</span><span class="p">[</span><span class="n">Zidx</span><span class="p">]</span> <span class="o">=</span>  <span class="n">target_per_1_fixed</span>
+<span class="n">show_res1</span> <span class="o">=</span> <span class="n">results1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">show_res1</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="covarience-kernels">
+<h2>Covarience Kernels<a class="headerlink" href="#covarience-kernels" title="Link to this heading">#</a></h2>
+<p>Observe the following GP kernels (i.e., covarience models), fitted to the same data; note that every model consistently <em>predicts</em> an additional drop <em>beyond the observations</em> between x=4 and x=5; interpolation using most estimators cannot exceed the min/max of the observation space!</p>
+<p><img alt="gp1.png" src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gpr_prior_posterior_001.png" />
+<img alt="gp1.png" src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gpr_prior_posterior_002.png" /></p>
+<p><em>Note that the next kernel is modeling period functions (applicable to basin and range features)</em></p>
+<p><img alt="gp1.png" src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gpr_prior_posterior_003.png" />
+<img alt="gp1.png" src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gpr_prior_posterior_005.png" /></p>
+<p>Note that one major benefit to the GP kernel formulation is that <a class="reference external" href="https://towardsdatascience.com/gaussian-process-kernels-96bafb4dd63e/">kernels can be <em>combined</em></a>. This approach models kernels to account for the non-stationarity of the processes within the kernel formulation, rather than seperating out a</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Cressie, Noel. “The origins of kriging.” Mathematical geology 22.3 (1990): 239-252.</p></li>
+<li><p>Cressie, Noel, and Hsin-Cheng Huang. “Classes of nonseparable, spatio-temporal stationary covariance functions.” Journal of the American Statistical Association 94.448 (1999): 1330-1339.</p></li>
+<li><p>Genton, Marc G. “Classes of kernels for machine learning: a statistics perspective.” The Journal of Machine Learning Research 2 (2002): 299-312.</p></li>
+<li><p>Handcock, Mark S., and Michael L. Stein. “A Bayesian analysis of kriging.” Technometrics 35.4 (1993): 403-410.</p></li>
+<li><p>Journel, Andre G. “Kriging in terms of projections.” Journal of the International Association for Mathematical Geology 9.6 (1977): 563-586.</p></li>
+<li><p>MacKay, David JC. “Bayesian interpolation.” Neural computation 4.3 (1992): 415-447.</p></li>
+<li><p>MacKay, David JC. “A practical Bayesian framework for backpropagation networks.” Neural computation 4.3 (1992b): 448-472.</p></li>
+<li><p>Matérn, Bertil. “Spatial variation.” (1960).</p></li>
+<li><p>Matheron, Georges. “The intrinsic random functions and their applications.” Advances in applied probability (1973): 439-468.</p></li>
+<li><p>Rasmussen, Carl Edward. “Gaussian processes for machine learning.” (2006).</p></li>
+<li><p>Simpson, Daniel, Finn Lindgren, and Håvard Rue. “In order to make spatial statistics computationally feasible, we need to forget about the covariance function.” Environmetrics 23.1 (2012): 65-74.</p></li>
+<li><p>Williams, Christopher KI. “Prediction with Gaussian processes: From linear regression to linear prediction and beyond.” Learning in graphical models. Springer Netherlands, 1998. 599-621.</p></li>
+<li><p>Wilson, Andrew Gordon. Covariance kernels for fast automatic pattern discovery and extrapolation with Gaussian processes. Diss. PhD thesis, University of Cambridge, 2014.</p></li>
+<li><p>Wilson, Andrew Gordon, and Hannes Nickisch. “Kernel interpolation for scalable structured Gaussian processes (KISS-GP).” arXiv preprint arXiv:1503.01057 (2015).</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-kriging-informally">What is kriging (informally)?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance-gold-and-the-variogram-model">Covariance, Gold, and the variogram model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-i-use-gaussian-processes-for">What I use Gaussian Processes for</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-note-tasha-s-memory-error-problem">Computational note (Tasha’s memory error problem)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-kriging-formally">What is kriging (formally)?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-prediction">Why Prediction?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-note-stochastic-simulations">Computational note– stochastic simulations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covarience-kernels">Covarience Kernels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
