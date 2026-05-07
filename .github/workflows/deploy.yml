@@ -1,0 +1,91 @@
+name: Deploy MyST site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # Project page at espg.github.io/blog → '/blog'. Switch to '' when
+  # we move to the user-page repo (espg.github.io serves at root).
+  BASE_URL: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Bun (for the patched mystmd build)
+        uses: oven-sh/setup-bun@v2
+
+      - name: Build the patched mystmd CLI (PR #2770 site_static_files)
+        run: cd vendor/mystmd && bun install && bunx turbo run build
+
+      - name: Build the blog-plugin dist
+        run: cd vendor/blog-plugin && npm install && npm run build
+
+      - name: Build the site (myst-theme installs+builds itself
+              via template.yml's build.install)
+        run: |
+          node vendor/mystmd/packages/mystmd/dist/myst.cjs build --html
+
+      - name: Generate redirect HTML files
+        run: |
+          # One-line meta-refresh redirect generator. Add more pairs as needed.
+          # Format: "old_path|new_path"
+          declare -a REDIRECTS=(
+            "algorithms/GaussianProcesses/GaussianProcesses.html|/gaussianprocesses"
+          )
+          for pair in "${REDIRECTS[@]}"; do
+            old="${pair%%|*}"
+            new="${pair##*|}"
+            mkdir -p "_build/html/$(dirname "$old")"
+            cat > "_build/html/$old" <<HTML
+          <!DOCTYPE html>
+          <meta charset="utf-8">
+          <title>Redirecting…</title>
+          <meta http-equiv="refresh" content="0; url=${BASE_URL}${new}">
+          <link rel="canonical" href="${BASE_URL}${new}">
+          <p>Redirecting to <a href="${BASE_URL}${new}">${BASE_URL}${new}</a>…</p>
+          HTML
+            echo "wrote redirect: /$old → ${BASE_URL}${new}"
+          done
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

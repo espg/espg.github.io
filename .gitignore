@@ -1,0 +1,44 @@
+# mystmd build output
+_build/
+.cache/
+
+# editor
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# stale files from the old Sphinx site (kept for reference)
+# (we keep _static/tree_compare/ — OPTICS.md still references those slides)
+_static/*
+!_static/tree_compare/
+_templates/
+_doctoring/
+_doctrees/
+__pycache__/
+disqus.snip
+conf.py
+conf.py~
+conf_py.swp
+make.bat
+Makefile
+default.nix
+default.nix~
+osx*.nix
+osx*.nix~
+prog.nix
+index.rst
+index.rst~
+*.rst
+*.rst~
+*.ipynb~
+.ipynb_checkpoints/
+
+# old site output
+espg.github.io/
+myst-test/
+
+# previous workflow / scratch
+todo.md

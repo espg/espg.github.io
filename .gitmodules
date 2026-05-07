@@ -1,0 +1,9 @@
+[submodule "vendor/blog-plugin"]
+	path = vendor/blog-plugin
+	url = https://github.com/espg/blog-plugin.git
+[submodule "vendor/myst-theme"]
+	path = vendor/myst-theme
+	url = https://github.com/espg/myst-theme.git
+[submodule "vendor/mystmd"]
+	path = vendor/mystmd
+	url = https://github.com/jupyter-book/mystmd.git

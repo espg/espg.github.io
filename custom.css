@@ -1,0 +1,75 @@
+/* Brand-color CSS layer for the mystmd port — knock the book-theme toward
+   the agogo-era CIRES blue (#006189) and a softer link green (#288e17). */
+
+:root {
+  --myst-color-text-primary: #1a1a1a;
+  --myst-color-text-link: #006189;
+  --myst-color-text-link-hover: #288e17;
+  --myst-color-text-heading: #0469B3;
+  --myst-color-bg-primary: #ffffff;
+}
+
+a, a:visited {
+  color: #006189;
+  text-decoration: none;
+}
+a:hover {
+  color: #288e17;
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Helvetica, "Trebuchet MS", Arial, sans-serif;
+  color: #0469B3;
+}
+
+body {
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+/* Site-wide image banner — ports the original rugo.us #header strip.
+   Rendered into the new `parts.header` slot from the local fork of
+   myst-theme. The slot is non-dismissible by design. We just style the
+   .myst-blog-site-header element with our brand color and Banner.png. */
+.myst-blog-site-header {
+  height: 150px;
+  background: #006189 url('/Banner.png') repeat-x bottom left;
+}
+
+/* Sidebars:
+   - LEFT primary nav uses position:fixed (theme default). The theme
+     injects a JS scroll listener (root.tsx) that updates the inline
+     `top` based on banner height and scrollY. We provide a static
+     fallback below for first paint before JS hydrates.
+   - RIGHT document outline is already position:sticky via the theme's
+     lg:sticky class; just override its inline top:60px → top:0 so it
+     pins at viewport top once scrolled past the banner. Sticky
+     handles the natural-position-below-banner flow on its own (the
+     outline lives inside the article, naturally below the banner).
+*/
+.myst-primary-sidebar {
+  /* Initial fallback before JS scroll-listener hydrates. JS uses
+     setProperty('top', x, 'important'), which beats this. */
+  top: 150px !important;
+}
+[class*="col-margin-right"][style*="top"] {
+  top: 0 !important;
+}
+
+/* Figure float: bio content on the home page is wrapped in
+   :::{div} (with class bio-content) so we have a block-level container
+   inside the otherwise-grid article. Inside that wrapper, the tagged
+   figure floats right and text wraps around it without bleeding into
+   the left sidebar's column. */
+.bio-content {
+  display: block;
+}
+.bio-content figure.float-right-figure {
+  float: right;
+  margin: 0 0 1rem 1.5rem;
+  max-width: 50%;
+}
+.bio-content figure.float-right-figure picture > img,
+.bio-content figure.float-right-figure > img {
+  margin-left: 0 !important;
+}

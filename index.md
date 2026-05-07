@@ -1,0 +1,95 @@
+---
+title: Shane Grigsby
+site:
+  hide_outline: true
+---
+
+::::{div}
+:class: bio-content
+
+:::{figure} ./12828545_10209023848340295_5190138515747847678_o.jpg
+:alt: Shane
+:width: 200px
+:align: right
+:class: float-right-figure
+:::
+
+Currently taking a sabbatical to travel, train, and reflect on my next career steps.
+
+It's been 12 years since I took any sort of extended break. In 2007 I took
+about a year and a half break from my undergraduate studies to figure out
+what I wanted to do with my education — it was incredibly helpful, and when
+I returned to school in 2009 I was a *far* better student. I finished my
+bachelors in the summer of 2011 (checking off a freshman writing course I
+needed to graduate), and then went to grad school that same fall. I did a
+three year Master's at UCSB under Dr. Dar Roberts, working on research thru
+the summers as you do in graduate school, and then immediately started
+working for my PhD Advisor [Dr. Waleed Abdalati](https://en.wikipedia.org/wiki/Waleed_Abdalati),
+at CU in the summer of 2014 even as I continued to draw a 25% appointment
+to close up projects back at UCSB. I defended in 2019, and then had two and
+a half weeks before I started working as a postdoctoral fellow at the
+Colorado School of Mines, with [Matthew Siegfried](https://www.mines.edu/glaciology/people/siegfried/).
+I secured a position as an Assistant Scientist for the ICESat-2 Project
+Science office at NASA Goddard (Section 615) — a fantastic opportunity that
+took me from Boulder, CO to Washington, DC… with the 2021 three day Martin
+Luther King weekend being the only time that separated my employment at
+Mines from the start of my time at NASA. The National Geospatial-Intelligence
+Agency (NGA) recruited me while I was at NASA, offering a position as
+Research & Development Scientist. I actually initially declined, but NGA
+made a revised offer that would have me skip a full GS equivalent grade
+within the Federal Government, and I was curious to see what that world
+looked like behind the curtain. Since I loved my project at NASA, I elected
+to keep working on it as long as possible, and took two days off (a weekend)
+in November of 2021 between ending my role as a NASA contractor and starting
+as a civil servant within the Intelligence Community.
+
+I learned quite a lot at NGA from 2021 to 2023. I ran a program, made policy,
+and started initiatives within the agency that continue to this day. But
+ultimately, I decided that I wanted to aim my career in a different
+direction. The Intelligence Community has incredible resources, but it's
+also a place that can be a bit sticky and hard to transition out of once you
+arrive — there are restrictions on publishing (prepublication review, which
+makes it difficult to collaborate), on engaging with policy (the Hatch Act),
+and even what work and projects you can put on a resume. I wasn't sure what
+I wanted to do when I took my sabbatical from college in 2007, but I knew
+very well what I wanted to do when I returned in 2009… clearly enough that
+I followed that path for over a decade with excitement and passion. So in
+January of 2023, I decided to take a risk and do the same thing again —
+take some intentional time off to make a new plan for the next decade or two.
+
+I still hold a research affiliation (although not a paid appointment) at the
+[Cooperative Institute for Research in Environmental Sciences (CIRES)](https://cires.colorado.edu),
+but my research focus is shifting. For the last decade, I worked on
+understanding the dynamic changes in the polar regions, particularly changes
+that are happening on the Greenland and Antarctic ice sheets. Most of that
+work used remote sensing and machine learning to better characterize
+crevasses throughout the ice sheets, with some occasional
+[polar field work](https://ciresblogs.colorado.edu/firncover/). Currently,
+I'm taking a harder look at Machine Learning and Artificial Intelligence
+more broadly. It's a fast moving field, but I think I can make a real
+impact given my science background, which is just broad enough to make me
+look at things slightly differently than the deluge of ML and AI engineers.
+
+::::
+
+## Recent posts
+
+```{blog-posts}
+:path: {linux,algorithms,remotesensing,posts}/*.{md,ipynb}
+:limit: 8
+:sort: date-desc
+:kind: list
+:list-style: disc
+```
+
+## Contact
+
+Always open to interesting opportunities — my resumes and CV:
+
+- Narrative Resume (7 pages) — [pdf](./FederalResumeGrigsby.pdf)
+- Condensed Resume (2 pages) — [pdf](./ShaneGrigsby_Resume_2023.pdf)
+- Condensed Academic CV (5 pages) — [pdf](./grigsby_shane_cv.pdf)
+
+Good emails to reach me are [refuge@rocktalus.com](mailto:refuge@rocktalus.com) and
+[shane.grigsby@colorado.edu](mailto:shane.grigsby@colorado.edu). I occasionally
+post pull requests and code to [github as espg](https://github.com/espg).

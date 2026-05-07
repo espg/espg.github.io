@@ -1,0 +1,73 @@
+version: 1
+project:
+  title: Shane Grigsby
+  description: Personal site — research notes, posts, and code samples (mystmd port of rugo.us)
+  authors:
+    - name: Shane Grigsby
+      email: refuge@rocktalus.com
+      affiliations:
+        - CIRES, University of Colorado Boulder
+  github: https://github.com/espg
+  bibliography:
+    - references.bib
+    - ref.bib
+    - myst.doi.bib
+
+  # Blog config (consumed by upstream blog-plugin and, later, by myst-blog-archives).
+  blog:
+    path: blog
+    title: Posts
+    post_pattern:
+      - posts/**
+      - linux/nix.md
+      - algorithms/OPTICS.md
+      - algorithms/Benchmarking.ipynb
+      - algorithms/BayesianBeliefNets.ipynb
+      - algorithms/GaussianProcesses.ipynb
+      - remotesensing/VIIRS_Cloud_Masking.ipynb
+      - remotesensing/HealpixCloudParquet.ipynb
+
+  toc:
+    - file: index.md
+    - file: linux/nix.md       # only one Linux post; no need for a parent group
+    - file: algorithms/index.md
+      children:
+        - file: algorithms/OPTICS.md
+        - file: algorithms/Benchmarking.ipynb
+        - file: algorithms/BayesianBeliefNets.ipynb
+        - file: algorithms/GaussianProcesses.ipynb
+    - file: remotesensing/index.md
+      children:
+        - file: remotesensing/VIIRS_Cloud_Masking.ipynb
+        - file: remotesensing/HealpixCloudParquet.ipynb
+    - file: publications/index.md
+
+  plugins:
+    # Vendored fork of jupyter-book/blog-plugin (espg/blog-plugin
+    # @ feature/notebook-frontmatter — stacks: filter-options + update + nb).
+    - vendor/blog-plugin/dist/plugin.mjs
+
+site:
+  # Vendored fork of jupyter-book/myst-theme (espg/myst-theme
+  # @ feature/blog-theme-features). New theme themes/blog-theme adds:
+  #   - parts.header (non-dismissible site header)
+  #   - hide_navbar option
+  #   - pin_theme option ('light' | 'dark')
+  template: vendor/myst-theme/themes/blog-theme
+  options:
+    style: ./custom.css
+    logo_text: Shane Grigsby
+    favicon: ./12828545_10209023848340295_5190138515747847678_o.jpg
+    hide_search: true
+    hide_navbar: true
+    pin_theme: light
+  static_files:
+    - Banner.png
+  parts:
+    footer: ./_parts/footer.md
+    header: ./_parts/header.md
+  nav: []
+  actions:
+    - title: GitHub
+      url: https://github.com/espg
+  domains: []

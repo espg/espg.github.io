@@ -1,0 +1,1 @@
+[Colorado School of Mines — Glaciology](https://mines.edu/glaciology) · [Cooperative Institute for Research in Environmental Sciences (CIRES)](https://cires.colorado.edu) · Licensed [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/)

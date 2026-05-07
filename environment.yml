@@ -1,0 +1,18 @@
+name: sample
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - numpy
+  - matplotlib
+  - pandas
+  - tables
+  - pyproj
+  - tqdm
+  - mystmd
+  - ipywidgets
+  - gdal
+  - scikit-learn
+  - scipy
+  - jupyterlab>=4.0.0
+  - jupyterlab-myst>=2.0.0

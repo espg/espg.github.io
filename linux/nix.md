@@ -1,0 +1,349 @@
+---
+title: Reproducible Builds Using Nix
+date: 2020-03-15
+authors:
+  - Shane Grigsby
+tags: [Linux, CUDA, Nix, Example]
+category: How To
+location: Boulder, CO
+excerpt: 2
+---
+
+(nix-cuda)=
+
+```{update} 2026-05-06
+Ported from the original Sphinx + ablog source onto mystmd. ablog's
+`.. post::` block became frontmatter, and `.. update::` (which used
+free-form English dates) is now this directive with strict ISO-8601 dates.
+```
+
+## Background
+
+Before I was a scientist, I worked for UnixOps supporting research computing —
+mainly building software. The fact that the University of Colorado, Boulder
+campus needed almost a dozen system admins to build and rebuild software tells
+you something about how much of a hassle it is; builds are often cryptic,
+requirements conflict, and things constantly break between versions.
+
+I've used various package managers over the years — homebrew when I had a mac,
+pip and conda for python, and various linux platform specific managers like
+pacman and apt-get. None of them have been particularly great; homebrew tends
+to be a mess and is specific to only OS X. Conda and pip work ok, but they only
+manage python packages, and reasonably complex software always includes
+non-python dependencies… linear algebra routines for numerics written in
+fortran or C, hdf5 libraries, and projection libraries like GDAL come to mind
+most quickly. Things have actually gotten worse in the last couple years with
+machine learning; builds now expect CUDA, and some frameworks are working on
+multi-gpu instances. Getting software up and running is a hassle, to say
+nothing of trying to have a colleague replicate your setup when you share code.
+
+## Nix
+
+For about the past two years I've been using nix to create reproducible,
+portable builds. It is by no means perfect — but it is better than anything
+else that I've tried *by far*. The major highlights:
+
+- Builds don't break. They may take some time to figure out, but once they
+  work, they keep working.
+- Builds are portable. If it builds on my linux tablet, it will build on my
+  HPC cluster. I can email a colleague a human readable text file, and they
+  can replicate by working environment using a single command from the
+  command line.
+- It's reasonably cross platform. Linux builds work perfectly between
+  distros. MacOS tends to be compatible for most things… but some of their
+  display stuff is strange enough that tweaks are occasionally needed.
+- Declarations are functional. I specify what I want, not how to do it. Nix
+  files are short, and tend to be understandable.
+- Multiple builds are both possible, and encouraged. You can maintain
+  libraries built with different options for different projects, even when
+  those libraries conflict. Need hdf4 for a project, but don't want to break
+  hdf5? No problem, the dependency tree for each install has its own
+  namespace.
+
+Despite the above advantages, I maintain a love/hate relationship with nix.
+Nix is best described as a language, and the documentation is very much geared
+toward getting you to learn the language, instead of helping you to solve
+common tasks. Because the real world is messy (new versions that have bugs,
+old versions that don't, or vice versa), getting certain things to work can be
+hacky, and unintuitive.
+
+## A Reproducible CUDA & GPU environment
+
+Recently, some of my work has been running Gaussian Process models for
+stochastic simulation, specifically on flight lines that have acquired lidar
+data over the Antarctic… which is to say that we have a lot of data, and run
+time for numeric Monte Carlo simulation is non-trivial. Gaussian Processes has
+two steps: fitting a model, and running the stochastic simulation. Both take
+about the same amount of runtime. Running prun in ipython shows that the vast
+majority of the runtime is dominated by just three function calls: cholesky,
+cho_solve, and multivariate_normal. [CuPy](https://cupy.chainer.org) does a
+great job at handling cholesky — and in fact, multivariate_normal can be
+rewritten to use cholesky, which is exactly what I've done in
+[this PR](https://github.com/cupy/cupy/pull/3018). However, the last function,
+cho_solve is a hassle.
+
+When I was working for the [Intel Big Data ISTC](http://istc-bigdata.org)
+back in 2013 and 2014, one of the projects that they funded was scalapack,
+headed up by [Jack Dongarra](https://en.wikipedia.org/wiki/Jack_Dongarra),
+and he expanded (or rather, branched) that project to a new linear algebra
+system called magma. [Magma](https://icl.cs.utk.edu/magma/) is a set of
+solvers for heterogeneous compute environments, and will use both CPUs and
+GPUs, in some cases utilizing multiple GPUs. Ideally, a large matrix starts in
+system memory, and magma sends pieces of the problem to GPUs, so that solvers
+are using a hybrid approach.
+
+My normal approach to computing with nix is to define a default.nix script in
+the working directory for my project, and then create the build environment
+using the nix-shell command within the directory; assuming nix is installed
+and in your path, it will check for default.nix and execute the build for you,
+setting all library and executable paths for you, along with whatever
+environmental variables that you need. Here's what my default.nix files looks
+like to build magma (the long literal at the end breaks syntax highlighting):
+
+```{code-block} nix
+:emphasize-lines: 27
+
+# Note, nix-channel == 19.03
+# magma derivation doesn't find mkl libs properly on 19.09
+# ...although magma can be built on 19.09 using openblas
+
+{
+  stable ? import (builtins.fetchTarball {
+             url = "https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz";
+             # Hash obtained using `nix-prefetch-url --unpack <url>`
+             sha256 = "0q2m2qhyga9yq29yz90ywgjbn9hdahs7i8wwlq7b55rdbyiwa5dy";
+           }) {},
+  current ? import (builtins.fetchTarball {
+             url = "https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz";
+             # Hash obtained using `nix-prefetch-url --unpack <url>`
+             sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
+             }) {}
+}:
+
+let
+  mag = pkgs.callPackage ./magma.nix{};
+in
+
+with stable;
+
+stdenv.mkDerivation rec {
+  name = "env" ;
+  env = buildEnv { name = name; paths = buildInputs; };
+  buildInputs = [ git hdf5 mkl mag cudatoolkit
+    (python37.buildEnv.override {
+      ignoreCollisions = true;
+      extraLibs = with python37Packages; [
+        (numpy.override { blas = mkl; })
+        pandas
+        #scikitlearn ## Needs custom build
+        pyproj
+        gdal
+        notebook
+        cython
+        matplotlib
+        pip
+        wheel
+      ];
+     })
+    ];
+
+  shellHook = ''
+    alias pip="PIP_PREFIX='$(pwd)/_build/pip_packages' \pip"
+    export PYTHONPATH="$(pwd)/_build/pip_packages/lib/python3.7/site-packages:\
+                       $PYTHONPATH"
+    export CUDA_PATH=${pkgs.cudatoolkit}
+    export LD_LIBRARY_PATH="/run/opengl-driver:$CUDA_PATH/lib:\
+                            ${pkgs.cudatoolkit.lib}/lib:${mag}/lib"
+    export LDFLAGS="-L/lib -L$/run/opengl-driver"
+    export MAGMA=${mag}
+    unset SOURCE_DATE_EPOCH'';
+  }
+```
+
+Ok, so what's going on here? If you've ever used nix-shell or nix in general,
+you're probably used to the first line of default.nix looking something like
+this `with import <nixpkgs> {};`, which is fine… but less portable. Nix
+packages are pinned to a channel, which updates every 6 months, but this isn't
+automatic. If you email someone a nix script with `with import <nixpkgs> {};`,
+you have no idea what their nix-channel is set to; are they on stable,
+unstable, or 18.03? Nix derivations that work for you once, will always work
+in the future — assuming that you execute them against the same channel. If
+you use a different channel, they might not build because of changes in the
+underlying channel, or they might have different behavior. Case in point: the
+above code builds great for nix-channel 19.03, but doesn't build using Intel's
+math kernel library ([MKL](https://en.wikipedia.org/wiki/Math_Kernel_Library))
+on channel 19.09 as a backend for the cpu portion of magma. Why? Who knows,
+maybe there's something I could change in default.nix or magma.nix that would
+make it use MKL… but I can guarantee that whoever executes the above version
+will get my same build, so I can sidestep the question of if it will build with
+MKL in the future because I'm being explicit to use an older version. The first
+couple lines download a tar archive of what nix-channel looked like for the
+2019 March branch, unpacks it, and uses those package definitions, regardless
+of what channel whoever receives it is on. The other branch 'current' isn't
+actually needed, but is included to illustrate that you can mix and match
+packages between branches — if GDAL has a feature in 19.09 that you need (or a
+bug in 19.03 that you want to avoid), you can build everything using 19.03,
+and then specify per package when you want to use a newer or older branch. As
+an explicit example, if you wanted a different build of hdf5, all you would do
+is change line 27 (emphasized) from `hdf5` to `current.hdf5`; python packages
+are nested one layer of abstraction in, so to change gdal, you'd probably move
+it out of the python package section to buildInputs and specify
+`current.python36Packages.gdal`.
+
+Moving on, `with stable;` sets the default to use stable instead of current.
+Grammar for nix expects most statements to terminate with a semicolon,
+although this isn't the case for individual list items which are white space
+delimited per item. The block
+
+```nix
+let
+  mag = pkgs.callPackage ./magma.nix{};
+in
+```
+
+imports our own custom package declaration for magma; the above expects one
+local file to be present, magma.nix, which looks like this:
+
+```nix
+{ stdenv, fetchurl, cmake, gfortran, cudatoolkit, libpthreadstubs, openblas
+, mklSupport ? true, mkl ? null }:
+
+assert !mklSupport || mkl != null;
+
+with stdenv.lib;
+
+let version = "2.5.0";
+
+in stdenv.mkDerivation {
+  pname = "magma";
+  inherit version;
+  src = fetchurl {
+    url = "https://icl.cs.utk.edu/projectsfiles/magma/downloads/magma-${version}.tar.gz";
+    sha256 = "0czspk93cv1fy37zyrrc9k306q4yzfxkhy1y4lj937dx8rz5rm2g";
+    name = "magma-${version}.tar.gz";
+  };
+
+  buildInputs = [ gfortran cudatoolkit libpthreadstubs cmake ]
+    ++ (if mklSupport then [ mkl ] else [ openblas ]);
+
+
+  cmakeFlags = [ "-DBUILD_SHARED_LIBS=ON"
+        "-DCMAKE_CXX_FLAGS=-fPIC"
+        "-DCMAKE_C_FLAGS=-fPIC" ];
+
+  doCheck = false;
+
+  MKLROOT = optionalString mklSupport mkl;
+
+  preConfigure = ''
+    export CC=${cudatoolkit.cc}/bin/gcc CXX=${cudatoolkit.cc}/bin/g++
+  '';
+
+  enableParallelBuilding=true;
+  buildFlags = [ "magma" "magma_sparse" ];
+
+  # MAGMA's default CMake setup does not care about installation. So we copy files directly.
+  installPhase = ''
+    mkdir -p $out
+    mkdir -p $out/include
+    mkdir -p $out/lib
+    mkdir -p $out/lib/pkgconfig
+    cp -a ../include/*.h $out/include
+    #cp -a sparse-iter/include/*.h $out/include
+    #cp -a lib/*.a $out/lib
+    cp -a lib/*.so $out/lib
+    cat ../lib/pkgconfig/magma.pc.in                   | \
+    sed -e s:@INSTALL_PREFIX@:"$out":          | \
+    sed -e s:@CFLAGS@:"-I$out/include":    | \
+    sed -e s:@LIBS@:"-L$out/lib -lmagma -lmagma_sparse": | \
+    sed -e s:@MAGMA_REQUIRED@::                       \
+        > $out/lib/pkgconfig/magma.pc
+  '';
+
+  meta = with stdenv.lib; {
+    description = "Matrix Algebra on GPU and Multicore Architectures";
+    license = licenses.bsd3;
+    homepage = http://icl.cs.utk.edu/magma/index.html;
+    platforms = platforms.unix;
+    maintainers = with maintainers; [ tbenst ];
+  };
+}
+```
+
+This file is actually nearly identical to this
+[merged PR](https://github.com/NixOS/nixpkgs/pull/61347), but is slightly
+modified to build a dynamic library, and also to show how to build things
+outside of the nixpkgs tree — a useful skill to have when writing your own
+package derivations from scratch, or when modifying things to your liking.
+More specifically, you can't modify anything in the nixpkgs tree that is
+built when you setup nix; any changes have to specified outside of the tree,
+either in the default.nix file, or in a local file that it calls. The
+magma.nix file differs from the github version in that it builds a dynamic
+library instead of a static one, and tells magma to use MKL instead of
+libatlas or openblas. Using MKL could actually be specified from the
+default.nix file substituting `(magma.overrides { mklSupport = true;})` in
+place of `mag` on the emphasized line… but we would have to import the right
+nixpkgs branch (unstable), and that still wouldn't build a shared library.
+Since the magma build file is being changed anyway, we can just change line 2
+in magma.nix from `mklSupport ? false` to `mklSupport ? true` and avoid using
+the override within default.nix.
+
+## Using the environment
+
+The point of all this is to make an environment that works for development —
+the code that is getting hacked on is changing, and isn't prepackaged or ready
+to be prepackaged. That's why the default.nix has the python packages pip and
+wheel, and why we have this long block that sets environmental variables:
+
+```nix
+shellHook = ''
+  alias pip="PIP_PREFIX='$(pwd)/_build/pip_packages' \pip"
+  export PYTHONPATH="$(pwd)/_build/pip_packages/lib/python3.7/site-packages:\
+                     $PYTHONPATH"
+  export CUDA_PATH=${pkgs.cudatoolkit}
+  export LD_LIBRARY_PATH="/run/opengl-driver:$CUDA_PATH/lib:\
+                          ${pkgs.cudatoolkit.lib}/lib:${mag}/lib"
+  export LDFLAGS="-L/lib -L$/run/opengl-driver"
+  export MAGMA=${mag}
+  unset SOURCE_DATE_EPOCH'';
+```
+
+The first two lines tell pip where to build packages (in the current directory
+under _build), and python where to find them. The next three lines make the
+CUDA libraries visible to both pip, and the linker that builds the magma
+library. The CUDA setup is actually divided into a hardware driver, and the
+CUDA library itself; you can have multiple CUDA libraries, but only one
+driver. Sadly, the driver is not something that can be reproducibly built with
+nix, mainly because whatever system you load onto will already have a CUDA
+driver, and there can't be multiple instances of these since they interface
+directly with the hardware. The solution that seems to have the least amount
+of overhead is to tell nix to expect the driver in `/run/opengl-driver`, and
+then to soft link wherever the system driver is to that directory. You could
+absolutely tell nix to build its own driver, but this doesn't work for any
+multi user systems, so it's less portable.
+
+A previous version of this script appended the **LD_LIBRARY_PATH** to the
+**LDFLAGS**, but that only works if you have one path in the
+**LD_LIBRARY_PATH**, since the linker expects space delimited
+"-L/$library_path" instead of the normal colon delimited shell variable. It's
+actually extremely annoying that **LDFLAGS** are even needed, since installers
+should expect and search the **LD_LIBRARY_PATH**, but for some pip installs,
+they don't pick up nvidia hardware driver. The last entry of **LD_LIBRARY_PATH**
+makes sure that when skcuda is run, it loads the magma library.
+
+So what does this all get us? Well, first of all we can clone our branch of
+CuPy and use it as a regular import (since the PR hasn't been merged yet). We
+can also install an editable version of sklearn and replace numpy with CuPy.
+And we can also install [skcuda](https://scikit-cuda.readthedocs.io/) which has
+bindings for magma. The first two of those are simple git clone commands
+followed by pip local installs (sklearn needs to be told to use the installed
+numpy instead of building a sandbox version), while skcuda will pip install
+fine the normal way (there is no nix package for it, hence why it is pip
+installed after the build).
+
+Once the stochastic simulation code is finished, we can roll the git and pip
+installs into their own nix file which is imported to default.nix. In the
+meantime, we can move the build from our development box to a HPC or cloud
+service with a minimum of work — just two files, one nix command, followed by
+two git pulls and three pip installs to access multi GPU computing from a
+jupyter notebook.
