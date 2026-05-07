@@ -1,6 +1,6 @@
 # Shane Grigsby's blog
 
-mystmd port of [rugo.us](https://rugo.us) (formerly Sphinx + ablog).
+mystmd port of a formerly Sphinx + ablog site.
 Deployed to GitHub Pages via the workflow in `.github/workflows/deploy.yml`.
 
 ## Local development
