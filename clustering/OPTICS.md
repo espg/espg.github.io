@@ -4,7 +4,7 @@ date: 2013-06-01
 authors:
   - Shane Grigsby
 tags: [Python, OPTICS, scikit-learn, clustering, LiDAR]
-category: Algorithms
+category: Clustering
 location: Santa Barbara, CA
 excerpt: 2
 ---

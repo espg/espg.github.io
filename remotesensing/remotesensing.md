@@ -11,6 +11,8 @@ thermal sensors.
 ## Recent posts
 
 ```{blog-posts}
-:limit: 5
+:path: {ai,clustering,remotesensing,hacks,reflections,posts}/*.{md,ipynb}
+:category: Remote Sensing
+:limit: 10
 :sort: date-desc
 ```

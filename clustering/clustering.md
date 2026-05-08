@@ -1,8 +1,8 @@
 ---
-title: Algorithms
+title: Clustering
 ---
 
-These are mainly related to distance and density.
+I tend to focus on clustering algorithms that use distance and density.
 
 ## OPTICS
 
@@ -19,6 +19,8 @@ there's also [demo code](https://scikit-learn.org/stable/auto_examples/cluster/p
 ## Posts in this section
 
 ```{blog-posts}
+:path: {ai,clustering,remotesensing,hacks,reflections,posts}/*.{md,ipynb}
+:category: Clustering
 :limit: 10
 :sort: date-desc
 ```

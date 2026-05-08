@@ -36,21 +36,26 @@ body {
   background: #006189 url('/Banner.png') repeat-x bottom left;
 }
 
-/* Sidebars:
-   - LEFT primary nav uses position:fixed (theme default). The theme
-     injects a JS scroll listener (root.tsx) that updates the inline
-     `top` based on banner height and scrollY. We provide a static
-     fallback below for first paint before JS hydrates.
-   - RIGHT document outline is already position:sticky via the theme's
-     lg:sticky class; just override its inline top:60px → top:0 so it
-     pins at viewport top once scrolled past the banner. Sticky
-     handles the natural-position-below-banner flow on its own (the
-     outline lives inside the article, naturally below the banner).
+/* Sidebars — both behave the same way:
+   At rest, sit below the banner (their natural position in document flow);
+   once the banner scrolls past, pin at viewport top.
+
+   The RIGHT document outline already does this via the theme's
+   `lg:sticky lg:h-0`. Its inline `top:60px` just needs to become 0.
+
+   The LEFT primary sidebar is `position:fixed` in the theme, which floats
+   it at a constant offset and prevents it from sliding up with the page.
+   We override to `position:sticky; top:0; height:0` (mirroring the right
+   outline). `height:0 + overflow:visible` keeps it from pushing main down
+   while letting the inner `-pointer` render visibly below.
 */
-.myst-primary-sidebar {
-  /* Initial fallback before JS scroll-listener hydrates. JS uses
-     setProperty('top', x, 'important'), which beats this. */
-  top: 150px !important;
+@media (min-width: 1280px) {
+  .myst-primary-sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    height: 0 !important;
+    overflow: visible !important;
+  }
 }
 [class*="col-margin-right"][style*="top"] {
   top: 0 !important;

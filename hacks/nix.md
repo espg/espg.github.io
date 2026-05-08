@@ -4,7 +4,7 @@ date: 2020-03-15
 authors:
   - Shane Grigsby
 tags: [Linux, CUDA, Nix, Example]
-category: How To
+category: Hacks
 location: Boulder, CO
 excerpt: 2
 ---

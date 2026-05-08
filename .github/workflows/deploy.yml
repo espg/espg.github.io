@@ -47,6 +47,18 @@ jobs:
       - name: Build the blog-plugin dist
         run: cd vendor/blog-plugin && npm install && npm run build
 
+      - name: Stamp last-updated into the site footer
+        run: |
+          # Append the latest commit date to the site-wide footer so every
+          # page shows when the site was last built. Mutates the ephemeral
+          # checkout only; _parts/footer.md in the repo stays clean.
+          DATE=$(git log -1 --format=%cd --date=format:"%B %-d, %Y")
+          {
+            echo
+            echo
+            printf '*Last updated: %s*\n' "$DATE"
+          } >> _parts/footer.md
+
       - name: Build the site (myst-theme installs+builds itself
               via template.yml's build.install)
         run: |

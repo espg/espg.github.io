@@ -1,6 +1,7 @@
 version: 1
 project:
   title: Shane Grigsby
+  short_title: About
   description: Personal site — research notes, posts, and code samples (mystmd port of rugo.us)
   authors:
     - name: Shane Grigsby
@@ -19,28 +20,36 @@ project:
     title: Posts
     post_pattern:
       - posts/**
-      - linux/nix.md
-      - algorithms/OPTICS.md
-      - algorithms/Benchmarking.ipynb
-      - algorithms/BayesianBeliefNets.ipynb
-      - algorithms/GaussianProcesses.ipynb
+      - ai/BayesianBeliefNets.ipynb
+      - ai/GaussianProcesses.ipynb
+      - clustering/OPTICS.md
+      - clustering/Benchmarking.ipynb
       - remotesensing/VIIRS_Cloud_Masking.ipynb
       - remotesensing/HealpixCloudParquet.ipynb
+      - hacks/nix.md
+      - reflections/transitions_2023.md
 
   toc:
     - file: index.md
-    - file: linux/nix.md       # only one Linux post; no need for a parent group
-    - file: algorithms/index.md
+    - file: ai/ai.md
       children:
-        - file: algorithms/OPTICS.md
-        - file: algorithms/Benchmarking.ipynb
-        - file: algorithms/BayesianBeliefNets.ipynb
-        - file: algorithms/GaussianProcesses.ipynb
-    - file: remotesensing/index.md
+        - file: ai/BayesianBeliefNets.ipynb
+        - file: ai/GaussianProcesses.ipynb
+    - file: clustering/clustering.md
+      children:
+        - file: clustering/OPTICS.md
+        - file: clustering/Benchmarking.ipynb
+    - file: remotesensing/remotesensing.md
       children:
         - file: remotesensing/VIIRS_Cloud_Masking.ipynb
         - file: remotesensing/HealpixCloudParquet.ipynb
-    - file: publications/index.md
+    - file: hacks/hacks.md
+      children:
+        - file: hacks/nix.md
+    - file: reflections/reflections.md
+      children:
+        - file: reflections/transitions_2023.md
+    - file: publications/publications.md
 
   plugins:
     # Vendored fork of jupyter-book/blog-plugin (espg/blog-plugin
