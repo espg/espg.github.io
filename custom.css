@@ -61,6 +61,21 @@ body {
   top: 0 !important;
 }
 
+/* Theme styles bare <p><img></p> as ~1.2em inline icons (intended for
+   emoji / status glyphs). On builds where mystmd skips the <picture>+webp
+   wrapper (CI without working sharp deps), every external content image
+   matches that selector and collapses to ~24×19px. Override for any image
+   that mystmd has captured from an external URL — those carry a
+   data-canonical-url attribute and are always meant to render at full size. */
+.article p > img[data-canonical-url],
+.prose p > img[data-canonical-url] {
+  display: block;
+  max-height: none;
+  margin-left: auto;
+  margin-right: auto;
+  vertical-align: baseline;
+}
+
 /* Figure float: bio content on the home page is wrapped in
    :::{div} (with class bio-content) so we have a block-level container
    inside the otherwise-grid article. Inside that wrapper, the tagged
