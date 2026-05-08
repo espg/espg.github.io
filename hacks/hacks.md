@@ -12,4 +12,5 @@ I've put together to try and keep sane.
 :category: Hacks
 :limit: 10
 :sort: date-desc
+:excerpts: true
 ```

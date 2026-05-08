@@ -23,4 +23,5 @@ there's also [demo code](https://scikit-learn.org/stable/auto_examples/cluster/p
 :category: Clustering
 :limit: 10
 :sort: date-desc
+:excerpts: true
 ```

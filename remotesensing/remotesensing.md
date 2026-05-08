@@ -15,4 +15,5 @@ thermal sensors.
 :category: Remote Sensing
 :limit: 10
 :sort: date-desc
+:excerpts: true
 ```

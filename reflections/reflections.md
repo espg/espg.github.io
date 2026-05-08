@@ -12,4 +12,5 @@ the way. Less code, more thinking out loud.
 :category: Reflections
 :limit: 10
 :sort: date-desc
+:excerpts: true
 ```

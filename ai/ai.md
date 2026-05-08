@@ -18,4 +18,5 @@ inference, graphical models, and the wider world of markov processes.
 :category: AI & ML
 :limit: 10
 :sort: date-desc
+:excerpts: true
 ```
