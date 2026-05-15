@@ -46,12 +46,14 @@ project:
     - file: hacks/hacks.md
       children:
         - file: hacks/nix.md
+        - file: hacks/virtualzarr.md
     - file: reflections/reflections.md
       children:
         - file: reflections/transitions_2023.md
     - file: publications/publications.md
 
   plugins:
+    - ismip6-viewer.mjs
     # Vendored fork of jupyter-book/blog-plugin (espg/blog-plugin
     # @ feature/notebook-frontmatter — stacks: filter-options + update + nb).
     - vendor/blog-plugin/dist/plugin.mjs
