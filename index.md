@@ -33,9 +33,9 @@ blog over to myst, am and still doing a bit of a reorder.
 
 Always open to interesting opportunities — my resumes and CV:
 
-- Narrative Resume (7 pages) — [pdf](./FederalResumeGrigsby.pdf)
-- Condensed Resume (2 pages) — [pdf](./ShaneGrigsby_Resume_2023.pdf)
+- Condensed Resume (2 pages) — [pdf](./Grigsby_2PageResume_2026.pdf)
 - Condensed Academic CV (5 pages) — [pdf](./grigsby_shane_cv.pdf)
+- Narrative Resume (7 pages) — [pdf](./FederalResumeGrigsby.pdf)
 
 Good emails to reach me are [refuge@rocktalus.com](mailto:refuge@rocktalus.com) and
 [shane.grigsby@colorado.edu](mailto:shane.grigsby@colorado.edu). I occasionally
